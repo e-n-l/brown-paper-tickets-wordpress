@@ -1,0 +1,81 @@
+/**
+ * Admin Navigation Tabs
+ */
+
+nav#brown_paper_tickets_settings {
+    float: left;
+    width: 100%; 
+    margin-top: 10px;   
+}
+
+    nav#brown_paper_tickets_settings ul {
+        display: inline;
+        list-style-type: none;
+    }
+
+    nav#brown_paper_tickets_settings ul li {
+        display: inline-block;
+        float: left;
+    }
+    a.bpt-admin-tab {
+        padding: 10px;
+        padding-bottom: 6px;
+        color: #999;
+        margin-right: 5px;
+        text-decoration: none;
+    }
+    a.selected-tab {
+        background: #ffffff;
+        color: #0074A2;
+        border: 1px solid #E5E5E5;
+        border-bottom: 1px solid #fff;
+        position: relative;
+    }
+
+
+
+div#settings-wrapper {
+    box-sizing: border-box;
+    float: left;
+    background: #fff;
+    padding: 10px;
+    border: 1px solid #E5E5E5;
+    width: 100%;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+/**
+ * Help Pop Ups
+ */
+
+div.brown_paper_tickets_settings_help {
+    display: inline-block;
+}
+    div.brown_paper_tickets_settings_help span {
+        font-weight: bold;
+        padding: 0 10px;
+        color: #989836;
+        float: left;
+        cursor: pointer;
+
+    }
+
+    div.brown_paper_tickets_settings_help span:hover + p {
+        display: block;
+        float: left;
+    }
+    div.brown_paper_tickets_settings_help p:hover {
+        display: block;
+        float: left;
+    }
+
+    div.brown_paper_tickets_settings_help p {
+        padding: 10px;
+        color: #fff;
+        background: #989836;
+        float: left;
+        clear: both;
+        display: none;
+        border-radius: 5px;
+        position: absolute;
+        margin-left: 25px;
+    }

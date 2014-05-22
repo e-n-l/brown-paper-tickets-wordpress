@@ -1,14 +1,16 @@
 <?php
 
-namespace BrownPaperTickets\APIv2;
+namespace BrownPaperTickets;
 
 require_once( plugin_dir_path( __FILE__ ).'/../lib/BptAPI/vendor/autoload.php');
+use BrownPaperTickets\APIv2\EventInfo;
+use BrownPaperTickets\APIv2\AccountInfo;
 /**
  * This handles all of the event info formatting using the data obtained
  * via the BPT APIv2 PHP class.
  */
 
-class BrownPaperTicketsAPI {
+class BPTFeed {
 
     protected $dev_id;
     protected $client_id;
@@ -73,14 +75,24 @@ class BrownPaperTicketsAPI {
      */
     public function date_has_past($date) {
 
-        if ( !$date['live'] && strtotime($date['dateStart'] ) < time() ) {
+        if ( strtotime($date['dateStart'] ) < time() ) {
+            return true;
+        }
+        return false;
+    }
+
+    public function date_is_live($date) {
+
+        if ( $date['live'] === false ) {
             return false;
         }
+
         return true;
     }
 
     public function date_is_sold_out($date) {
-        if ( !$this->date_had_past( $date ) && strtotime( $date['dateStart'] ) >= time() ) {
+
+        if ( $this->date_has_past( $date ) === true && strtotime( $date['dateStart'] ) >= time() ) {
             return false;
         }
 
@@ -91,8 +103,9 @@ class BrownPaperTicketsAPI {
      * Price Methods
      */
 
-    public function price_live($price) {
-        if (!$price['live']) {
+    public function price_is_live($price) {
+
+        if ( $price['live'] === false) {
             return false;
         }
 
@@ -121,13 +134,82 @@ class BrownPaperTicketsAPI {
         return strftime( "%l:%M%p", strtotime( $date ) ) ;
     }
 
+    public function remove_bad_dates($eventList) {
 
-    public function get_json_events( $dates = false, $prices = false ) {
+        foreach ( $eventList as $eventIndex => $event ) {
+
+            foreach ($event['dates'] as $dateIndex => $date) {
+                
+                if ( $this->date_has_past( $date ) || !$this->date_is_live( $date ) ) {
+
+                    unset( $event['dates'][$dateIndex] );
+                }
+
+            }
+
+            $event['dates'] = array_values( $event['dates'] );
+
+            $eventList[$eventIndex] = $event;
+        }
+
+        return $eventList;
+    }
+
+    public function remove_bad_prices( $eventList ) {
+        foreach ( $eventList as $eventIndex => $event ) {
+
+            foreach ( $event['dates'] as $dateIndex => $date ) {
+                
+                foreach ( $date['prices'] as $priceIndex => $price ) {
+
+                    if ( $this->price_is_live( $price ) === false ) {
+                        unset( $date['prices'][$priceIndex] );
+                    }
+
+                }
+                
+                $date['prices'] = array_values( $date['prices'] );
+
+                $event['dates'][$dateIndex] = $date;
+            }
+
+            $eventList[$eventIndex] = $event;
+        }
+
+        return $eventList;
+    }
+
+    public function get_json_events() {
+        /**
+         * Get Event List Setting Options
+         * 
+         */
+        $dates = get_option('show_dates');
+        $prices = get_option('show_prices');
+        $show_past_dates = get_option('show_past_dates');
+        $show_sold_out_dates = get_option('show_sold_out_dates');
+        $show_sold_out_prices = get_option('show_sold_out_prices');
 
         $events = new EventInfo($this->dev_id);
+
+        $eventList = $events->getEvents($this->client_id, null, $dates, $prices);
+
+        if ( $dates === 'true' && $show_past_dates === 'false' ) {
+            $eventList = $this->remove_bad_dates( $eventList );
+        }
+
+        if ( $prices === 'true ' && $show_sold_out_prices === 'false' ) {
+            $eventList = $this->remove_bad_prices( $eventList );   
+        }
         
+        return json_encode( $eventList );
 
-        return json_encode( $events->getEvents($this->client_id, null, $dates, $prices) );
+    }
 
+    public function get_json_account_info() {
+
+        $account = new AccountInfo($this->dev_id);
+
+        return json_encode( $account->getAccount($this->client_id ) );
     }
 }
