@@ -34,7 +34,7 @@ nav#brown_paper_tickets_settings {
 
 
 
-div#settings-wrapper {
+div#bpt-settings-wrapper {
     box-sizing: border-box;
     float: left;
     background: #fff;
@@ -42,6 +42,18 @@ div#settings-wrapper {
     border: 1px solid #E5E5E5;
     width: 100%;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+/**
+ * Settings Field Styling
+ */
+
+#bpt-settings-wrapper h3 {
+
+}
+
+#bpt-settings-wrapper th {
+    color: #777777;
 }
 /**
  * Help Pop Ups

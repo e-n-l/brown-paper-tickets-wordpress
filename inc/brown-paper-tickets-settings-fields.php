@@ -23,7 +23,7 @@ class BPTSettingsFields {
     public function get_developer_id_input() {
         ?>
         <div class="dev-id-wrapper">
-            <input name="dev_id" value="<?php echo get_option('dev_id');?>" type="text">
+            <input name="_bpt_dev_id" value="<?php echo get_option('_bpt_dev_id');?>" type="text">
             <div class="<?php echo BPTPlugin::get_menu_slug() ?>_help">
                 <span>?</span>
                 <p>
@@ -38,7 +38,7 @@ class BPTSettingsFields {
     public function get_client_id_input() {
         ?>
         <div class="client-id-wrapper">
-            <input name="client_id" value="<?php echo get_option('client_id');?>" type="text">
+            <input name="_bpt_client_id" value="<?php echo get_option('_bpt_client_id');?>" type="text">
             <div class="<?php echo BPTPlugin::get_menu_slug() ?>_help">
                 <span>?</span>
                 <p>
@@ -53,9 +53,9 @@ class BPTSettingsFields {
     public function get_show_dates_input() {
         ?>
         <div class="show-dates-wrapper">
-            <input id="show-dates-true" name="show_dates" <?php echo $this->is_selected('true', 'show_dates', 'checked');?> value="true" type="radio" />
+            <input id="show-dates-true" name="_bpt_show_dates" <?php echo $this->is_selected('true', '_bpt_show_dates', 'checked');?> value="true" type="radio" />
             <label for="show-dates-true">Yes</label>
-            <input id="show-dates-false" name="show_dates" <?php echo $this->is_selected('false', 'show_dates', 'checked'); ?> value="false" type="radio" />
+            <input id="show-dates-false" name="_bpt_show_dates" <?php echo $this->is_selected('false', '_bpt_show_dates', 'checked'); ?> value="false" type="radio" />
             <label for="show-dates-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug() ?>_help">
                 <span>?</span>
@@ -74,9 +74,9 @@ class BPTSettingsFields {
     
         ?>
         <div class="show-prices-wrapper">
-            <input id="show-prices-true" name="show_prices" <?php echo $this->is_selected('true', 'show_prices', 'checked');?> value="true" type="radio" />
+            <input id="show-prices-true" name="_bpt_show_prices" <?php echo $this->is_selected('true', '_bpt_show_prices', 'checked');?> value="true" type="radio" />
             <label for="show-prices-true">Yes</label>
-            <input id="show-prices-false" name="show_prices" <?php echo $this->is_selected('false', 'show_prices', 'checked'); ?> value="false" type="radio" />
+            <input id="show-prices-false" name="_bpt_show_prices" <?php echo $this->is_selected('false', '_bpt_show_prices', 'checked'); ?> value="false" type="radio" />
             <label for="show-prices-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
@@ -95,9 +95,9 @@ class BPTSettingsFields {
 
         ?>
         <div class="show-end-time-wrapper">
-            <input id="show-end-time-true" name="show_end_time" <?php echo $this->is_selected('true', 'show_end_time', 'checked');?> value="true" type="radio" />
+            <input id="show-end-time-true" name="_bpt_show_end_time" <?php echo $this->is_selected('true', '_bpt_show_end_time', 'checked');?> value="true" type="radio" />
             <label for="show-end-time-true">Yes</label>
-            <input id="show-end-time-false" name="show_end_time" <?php echo $this->is_selected('false', 'show_end_time', 'checked'); ?> value="false" type="radio" />
+            <input id="show-end-time-false" name="_bpt_show_end_time" <?php echo $this->is_selected('false', '_bpt_show_end_time', 'checked'); ?> value="false" type="radio" />
             <label for="show-end-time-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
@@ -111,13 +111,62 @@ class BPTSettingsFields {
         <?php       
     }
 
-    public function get_bpt_date_format_input() {
+    public function get_date_format_input() {
+            $date_formats = array(
+                'DD-MM-YYYY' => '28-01-2016',
+                'MM-DD-YYYY' => '28 January, 2016',
+                'MM-DD-YYYY' => '01-28-2016',
+                'MMMM Do, YYYY' => 'January 28th, 2016',
+                'MMMM Do, YYYY' => 'January 28th, 2016',
+                'ddd MMM Do, YYYY' => 'Thu Jan 28th, 2016',
+                'dddd MMM Do, YYYY' => 'Thursday January 28th, 2016',
+                'custom' => 'Custom Format'
+            );
         ?>
         <div class="date-format-wrapper">
-            <select id="date-format" name="date_format">
-                <option value="us" <?php echo $this->is_selected( 'international', 'date_format', 'selected' ); ?> >DD-MM-YYYY HH:MM (24 Hour)</option>
-                <option value="international" <?php echo $this->is_selected( 'us', 'date_format', 'selected' ); ?>>MM-DD-YYYY HH:MM (12 Hour)</option>
+            <select id="date-format" name="_bpt_date_format">
+        <?php 
+
+            foreach ( $date_formats as $format => $description ) {
+        ?>
+                <option value="<?php echo $format; ?>" <?php echo $this->is_selected( $format, '_bpt_date_format', 'selected' ); ?> ><?php echo $description ; ?></option>
+        <?php
+
+            }
+        ?>
             </select>
+            <input class="hidden" id="custom-date-format-input" name="_bpt_custom_date_format" type="text" value="<?php echo get_option('_bpt_custom_date_format'); ?>" />
+            <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
+                <span>?</span>
+                <p>
+                    This option determines the format you wish your dates to be displayed in.
+                </p>
+                
+            </div>
+        </div>
+        <?php
+    }
+    public function get_time_format_input() {
+            $time_formats = array(
+                'HH:mm' => '24:30',
+                'hh:mm A' => '12:30 PM',
+                'hh:mm a' => '12:30 pm',
+                'custom' => 'Custom Format'
+            );
+        ?>
+        <div class="time-format-wrapper">
+            <select id="time-format" name="_bpt_time_format">
+        <?php 
+
+            foreach ( $time_formats as $format => $description ) {
+        ?>
+                <option value="<?php echo $format; ?>" <?php echo $this->is_selected( $format, '_bpt_time_format', 'selected' ); ?> ><?php echo $description ; ?></option>
+        <?php
+
+            }
+        ?>
+            </select>
+            <input class="hidden" id="custom-time-format-input" name="_bpt_custom_time_format" type="text" value="<?php echo get_option('_bpt_custom_time_format'); ?>" />
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
                 <p>
@@ -133,16 +182,16 @@ class BPTSettingsFields {
         ?>
         <div class="shipping-methods-wrapper">
             <label for="print-at-home">Print at Home</label>
-            <input id="print-at-home" value="print_at_home" name="shipping_methods[]"  type="checkbox" <?php echo $this->is_selected( 'print_at_home', 'shipping_methods', 'checked' );?>/>
+            <input id="print-at-home" value="print_at_home" name="_bpt_shipping_methods[]"  type="checkbox" <?php echo $this->is_selected( 'print_at_home', '_bpt_shipping_methods', 'checked' );?>/>
             
             <label for="will-call">Will-Call</label>
-            <input id="will-call" value="will_call" name="shipping_methods[]"  type="checkbox" <?php echo $this->is_selected( 'will_call', 'shipping_methods', 'checked' );?>/>
+            <input id="will-call" value="will_call" name="_bpt_shipping_methods[]"  type="checkbox" <?php echo $this->is_selected( 'will_call', '_bpt_shipping_methods', 'checked' );?>/>
             
             <label for="physical">Physical</label>
-            <input id="physical" value="physical" name="shipping_methods[]"  type="checkbox" <?php echo $this->is_selected( 'physical', 'shipping_methods', 'checked' );?>/>
+            <input id="physical" value="physical" name="_bpt_shipping_methods[]"  type="checkbox" <?php echo $this->is_selected( 'physical', '_bpt_shipping_methods', 'checked' );?>/>
             
             <label for="mobile">Mobile</label>
-            <input id="mobile" value="mobile" name="shipping_methods[]"  type="checkbox" <?php echo $this->is_selected( 'mobile', 'shipping_methods', 'checked' );?>/>
+            <input id="mobile" value="mobile" name="_bpt_shipping_methods[]"  type="checkbox" <?php echo $this->is_selected( 'mobile', '_bpt_shipping_methods', 'checked' );?>/>
             
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
@@ -164,16 +213,263 @@ class BPTSettingsFields {
     }
 
     public function get_shipping_countries_input() {
+
+            $countries = array(
+                'Afghanistan',
+                'Aland Islands',
+                'Albania',
+                'Algeria',
+                'American Samoa',
+                'Andorra',
+                'Angola',
+                'Anguilla',
+                'Antarctica',
+                'Antigua And Barbuda',
+                'Argentina',
+                'Armenia',
+                'Aruba',
+                'Australia',
+                'Austria',
+                'Azerbaijan',
+                'Azores',
+                'Bahamas',
+                'Bahrain',
+                'Bangladesh',
+                'Barbados',
+                'Belarus',
+                'Belgium',
+                'Belize',
+                'Benin',
+                'Bermuda',
+                'Bhutan',
+                'Bolivia',
+                'Bosnia And Herzegovina',
+                'Botswana',
+                'Bouvet Island',
+                'Brazil',
+                'British Indian Ocean Territory',
+                'Brunei Darussalam',
+                'Bulgaria',
+                'Burkina Faso',
+                'Burundi',
+                'Cambodia',
+                'Cameroon',
+                'Canada',
+                'Cape Verde',
+                'Cayman Islands',
+                'Central African Republic',
+                'Chad',
+                'Chile',
+                'China',
+                'Christmas Island',
+                'Cocos (keeling) Islands',
+                'Colombia',
+                'Comoros',
+                'Congo',
+                'Congo, The Democratic Republic Of The',
+                'Cook Islands',
+                'Costa Rica',
+                'Cote Divoire',
+                'Croatia',
+                'Cyprus',
+                'Czech Republic',
+                'Denmark',
+                'Djibouti',
+                'Dominica',
+                'Dominican Republic',
+                'Ecuador',
+                'Egypt',
+                'El Salvador',
+                'Equatorial Guinea',
+                'Eritrea',
+                'Estonia',
+                'Ethiopia',
+                'Falkland Islands',
+                'Faroe Islands',
+                'Fiji',
+                'Finland',
+                'France',
+                'French Guiana',
+                'French Polynesia',
+                'French Southern Territories',
+                'Gabon',
+                'Gambia',
+                'Georgia',
+                'Germany',
+                'Ghana',
+                'Gibraltar',
+                'Greece',
+                'Greenland',
+                'Grenada',
+                'Guadeloupe',
+                'Guam',
+                'Guatemala',
+                'Guernsey',
+                'Guinea',
+                'Guinea-Bissau',
+                'Guyana',
+                'Haiti',
+                'Heard Island And Mcdonald Islands',
+                'Holy See',
+                'Honduras',
+                'Hong Kong',
+                'Hungary',
+                'Iceland',
+                'India',
+                'Indonesia',
+                'Iraq',
+                'Ireland',
+                'Isle Of Man',
+                'Israel',
+                'Italy',
+                'Jamaica',
+                'Japan',
+                'Jersey',
+                'Jordan',
+                'Kazakhstan',
+                'Kenya',
+                'Kiribati',
+                'Korea, Republic Of',
+                'Kosovo',
+                'Kyrgyzstan',
+                'Latvia',
+                'Lebanon',
+                'Lesotho',
+                'Liberia',
+                'Libyan Arab Jamahiriya',
+                'Liechtenstein',
+                'Lithuania',
+                'Luxembourg',
+                'Macao',
+                'Macedonia, The Former Yugoslav Republic Of',
+                'Madagascar',
+                'Madeira',
+                'Malawi',
+                'Malaysia',
+                'Maldives',
+                'Mali',
+                'Malta',
+                'Marshall Islands',
+                'Martinique',
+                'Mauritania',
+                'Mauritius',
+                'Mayotte',
+                'Mexico',
+                'Micronesia, Federated States Of',
+                'Moldova',
+                'Monaco',
+                'Mongolia',
+                'Montenegro',
+                'Montserrat',
+                'Morocco',
+                'Mozambique',
+                'Myanmar',
+                'Namibia',
+                'Nauru',
+                'Nepal',
+                'Netherlands',
+                'Netherlands Antilles',
+                'New Caledonia',
+                'New Zealand',
+                'Nicaragua',
+                'Niger',
+                'Nigeria',
+                'Niue',
+                'Norfolk Island',
+                'Northern Mariana Islands',
+                'Norway',
+                'Oman',
+                'Pakistan',
+                'Palau',
+                'Palestinian Territory, Occupied',
+                'Panama',
+                'Papua New Guinea',
+                'Paraguay',
+                'Peru',
+                'Philippines',
+                'Pitcairn',
+                'Poland',
+                'Portugal',
+                'Puerto Rico',
+                'Qatar',
+                'Réunion',
+                'Romania',
+                'Russian Federation',
+                'Rwanda',
+                'Saint Barthélemy',
+                'Saint Helena',
+                'Saint Kitts And Nevis',
+                'Saint Lucia',
+                'Saint Martin',
+                'Saint Pierre And Miquelon',
+                'Saint Vincent And The Grenadines',
+                'Samoa',
+                'San Marino',
+                'Sao Tome And Principe',
+                'Saudi Arabia',
+                'Senegal',
+                'Serbia',
+                'Seychelles',
+                'Sierra Leone',
+                'Singapore',
+                'Slovakia',
+                'Slovenia',
+                'Solomon Islands',
+                'Somalia',
+                'South Africa',
+                'South Georgia And The South Sandwich Islands',
+                'Spain',
+                'Sri Lanka',
+                'Suriname',
+                'Svalbard And Jan Mayen',
+                'Swaziland',
+                'Sweden',
+                'Switzerland',
+                'Taiwan',
+                'Tajikistan',
+                'Tanzania, United Republic Of',
+                'Thailand',
+                'Timor-Leste',
+                'Togo',
+                'Tokelau',
+                'Tonga',
+                'Trinidad And Tobago',
+                'Tunisia',
+                'Turkey',
+                'Turkmenistan',
+                'Turks And Caicos Islands',
+                'Tuvalu',
+                'Uganda',
+                'Ukraine',
+                'United Arab Emirates',
+                'United Kingdom',
+                'United States',
+                'United States Minor Outlying Islands',
+                'Uruguay',
+                'Uzbekistan',
+                'Vanuatu',
+                'Venezuela',
+                'Vietnam',
+                'Virgin Islands, British',
+                'Virgin Islands, US',
+                'Wallis And Futuna',
+                'Western Sahara',
+                'Yemen',
+                'Zambia',
+                'Zimbabwe'
+            );
         ?>
         <div class="shipping-countries-wrapper">
-            <label for="united-states">United States</label>
-            <input id="united-states" value="us" name="shipping_countries[]"  type="checkbox" <?php echo $this->is_selected( 'us', 'shipping_countries', 'checked' );?>/>
-            
-            <label for="canada">Canada</label>
-            <input id="canada" value="canada" name="shipping_countries[]"  type="checkbox" <?php echo $this->is_selected( 'canada', 'shipping_countries', 'checked' );?>/>
-            
-            <label for="uk">United Kingdom</label>
-            <input id="uk" value="uk" name="shipping_countries[]"  type="checkbox" <?php echo $this->is_selected( 'uk', 'shipping_countries', 'checked' );?>/>
+            <label for="united-states">Default Country</label>
+            <select name="_bpt_shipping_countries">
+
+                <?php 
+                    foreach ( $countries as $country ) {
+                        echo '<option value="' . $country . '"' . $this->is_selected( $country, '_bpt_shipping_countries', 'selected' ) . '>' . $country . '</option>'; 
+                    } 
+                ?>
+
+            </select>
             
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
@@ -188,11 +484,11 @@ class BPTSettingsFields {
     public function get_currency_input() {
         ?>
         <div class="currency-wrapper">
-            <select id="currency" name="currency">
-                <option value="usd" <?php echo $this->is_selected( 'usd', 'currency', 'selected' );?>>USD $</option>
-                <option value="cad" <?php echo $this->is_selected( 'cad', 'currency', 'selected' );?>>CAD $</option>
-                <option value="gbp" <?php echo $this->is_selected( 'gbp', 'currency', 'selected' );?>>GBP £</option>
-                <option value="eur" <?php echo $this->is_selected( 'eur', 'currency', 'selected' );?>>EUR €</option>
+            <select id="currency" name="_bpt_currency">
+                <option value="usd" <?php echo $this->is_selected( 'usd', '_bpt_currency', 'selected' );?>>USD $</option>
+                <option value="cad" <?php echo $this->is_selected( 'cad', '_bpt_currency', 'selected' );?>>CAD $</option>
+                <option value="gbp" <?php echo $this->is_selected( 'gbp', '_bpt_currency', 'selected' );?>>GBP £</option>
+                <option value="eur" <?php echo $this->is_selected( 'eur', '_bpt_currency', 'selected' );?>>EUR €</option>
             </select>
             
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
@@ -208,10 +504,10 @@ class BPTSettingsFields {
     public function get_price_sort_input() {
         ?>
         <div class="price-sort-wrapper">
-            <select id="price-sort" name="price_sort">
-                <option value="alpha_asc" <?php echo $this->is_selected( 'alpha_asc', 'price_sort', 'selected' );?>>Alphabetical</option>
-                <option value="value_asc" <?php echo $this->is_selected( 'value_asc', 'price_sort', 'selected' );?>>Price Value - Low to High</option>
-                <option value="value_desc" <?php echo $this->is_selected( 'value_desc', 'price_sort', 'selected' );?>>Price Value - High to Low</option>
+            <select id="price-sort" name="_bpt_price_sort">
+                <option value="alpha_asc" <?php echo $this->is_selected( 'alpha_asc', '_bpt_price_sort', 'selected' );?>>Alphabetical</option>
+                <option value="value_asc" <?php echo $this->is_selected( 'value_asc', '_bpt_price_sort', 'selected' );?>>Price Value - Low to High</option>
+                <option value="value_desc" <?php echo $this->is_selected( 'value_desc', '_bpt_price_sort', 'selected' );?>>Price Value - High to Low</option>
             </select>
             
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
@@ -228,9 +524,9 @@ class BPTSettingsFields {
 
         ?>
         <div class="show-full-description-wrapper">
-            <input id="show-full-description-true" name="show_full_description" <?php echo $this->is_selected('true', 'show_full_description', 'checked');?> value="true" type="radio" />
+            <input id="show-full-description-true" name="_bpt_show_full_description" <?php echo $this->is_selected('true', '_bpt_show_full_description', 'checked');?> value="true" type="radio" />
             <label for="show-full-description-true">Yes</label>
-            <input id="show-full-description-false" name="show_full_description" <?php echo $this->is_selected('false', 'show_full_description', 'checked'); ?> value="false" type="radio" />
+            <input id="show-full-description-false" name="_bpt_show_full_description" <?php echo $this->is_selected('false', '_bpt_show_full_description', 'checked'); ?> value="false" type="radio" />
             <label for="show-full-description-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
@@ -248,9 +544,9 @@ class BPTSettingsFields {
 
         ?>
         <div class="show-past-dates-wrapper">
-            <input id="show-past-dates-true" name="show_past_dates" <?php echo $this->is_selected('true', 'show_past_dates', 'checked');?> value="true" type="radio" />
+            <input id="show-past-dates-true" name="_bpt_show_past_dates" <?php echo $this->is_selected('true', '_bpt_show_past_dates', 'checked');?> value="true" type="radio" />
             <label for="show-past-dates-true">Yes</label>
-            <input id="show-past-dates-false" name="show_past_dates" <?php echo $this->is_selected('false', 'show_past_dates', 'checked'); ?> value="false" type="radio" />
+            <input id="show-past-dates-false" name="_bpt_show_past_dates" <?php echo $this->is_selected('false', '_bpt_show_past_dates', 'checked'); ?> value="false" type="radio" />
             <label for="show-past-dates-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
@@ -268,9 +564,9 @@ class BPTSettingsFields {
 
         ?>
         <div class="show-sold-out-dates-wrapper">
-            <input id="show-sold-out-dates-true" name="show_sold_out_dates" <?php echo $this->is_selected('true', 'show_sold_out_dates', 'checked');?> value="true" type="radio" />
+            <input id="show-sold-out-dates-true" name="_bpt_show_sold_out_dates" <?php echo $this->is_selected('true', '_bpt_show_sold_out_dates', 'checked');?> value="true" type="radio" />
             <label for="show-sold-out-dates-true">Yes</label>
-            <input id="show-sold-out-dates-false" name="show_sold_out_dates" <?php echo $this->is_selected('false', 'show_sold_out_dates', 'checked'); ?> value="false" type="radio" />
+            <input id="show-sold-out-dates-false" name="_bpt_show_sold_out_dates" <?php echo $this->is_selected('false', '_bpt_show_sold_out_dates', 'checked'); ?> value="false" type="radio" />
             <label for="show-sold-out-dates-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
@@ -288,9 +584,9 @@ class BPTSettingsFields {
 
         ?>
         <div class="show-sold-out-prices-wrapper">
-            <input id="show-sold-out-prices-true" name="show_sold_out_prices" <?php echo $this->is_selected('true', 'show_sold_out_prices', 'checked');?> value="true" type="radio" />
+            <input id="show-sold-out-prices-true" name="_bpt_show_sold_out_prices" <?php echo $this->is_selected('true', '_bpt_show_sold_out_prices', 'checked');?> value="true" type="radio" />
             <label for="show-sold-out-prices-true">Yes</label>
-            <input id="show-sold-out-prices-false" name="show_sold_out_prices" <?php echo $this->is_selected('false', 'show_sold_out_prices', 'checked'); ?> value="false" type="radio" />
+            <input id="show-sold-out-prices-false" name="_bpt_show_sold_out_prices" <?php echo $this->is_selected('false', '_bpt_show_sold_out_prices', 'checked'); ?> value="false" type="radio" />
             <label for="show-sold-out-prices-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>

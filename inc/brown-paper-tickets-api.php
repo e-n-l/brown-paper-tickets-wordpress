@@ -17,8 +17,8 @@ class BPTFeed {
 
     public function __construct() {
 
-        $this->dev_id = get_option('dev_id');
-        $this->client_id = get_option('client_id');
+        $this->dev_id = get_option('_bpt_dev_id');
+        $this->client_id = get_option('_bpt_client_id');
 
     }
 
@@ -27,6 +27,47 @@ class BPTFeed {
         $events = new EventInfo($this->dev_id);
 
         return $events->getEvents( $this->client_id, null, true, true );
+    }
+
+
+    /**
+     * JSON Functions
+     */
+
+    public function get_json_events() {
+        /**
+         * Get Event List Setting Options
+         * 
+         */
+        $_bpt_dates = get_option('_bpt_show_dates');
+        $_bpt_prices = get_option('_bpt_show_prices');
+        $_bpt_show_past_dates = get_option('_bpt_show_past_dates');
+        $_bpt_show_sold_out_dates = get_option('_bpt_show_sold_out_dates');
+        $_bpt_show_sold_out_prices = get_option('_bpt_show_sold_out_prices');
+
+        $_bpt_events = new EventInfo($this->dev_id);
+
+        $_bpt_eventList = $_bpt_events->getEvents($this->client_id, null, $_bpt_dates, $_bpt_prices);
+
+        $_bpt_eventList = $this->sort_prices( $_bpt_eventList );
+
+        if ( $_bpt_dates === 'true' && $_bpt_show_past_dates === 'false' ) {
+            $_bpt_eventList = $this->remove_bad_dates( $_bpt_eventList );
+        }
+
+        if ( $_bpt_prices === 'true ' && $_bpt_show_sold_out_prices === 'false' ) {
+            $_bpt_eventList = $this->remove_bad_prices( $_bpt_eventList );   
+        }
+        
+        return json_encode( $_bpt_eventList );
+
+    }
+
+    public function get_json_account_info() {
+
+        $_bpt_account = new AccountInfo($this->dev_id);
+
+        return json_encode( $account->getAccount($this->client_id ) );
     }
 
     /**
@@ -134,9 +175,9 @@ class BPTFeed {
         return strftime( "%l:%M%p", strtotime( $date ) ) ;
     }
 
-    public function remove_bad_dates($eventList) {
+    protected function remove_bad_dates($_bpt_eventList) {
 
-        foreach ( $eventList as $eventIndex => $event ) {
+        foreach ( $_bpt_eventList as $eventIndex => $event ) {
 
             foreach ($event['dates'] as $dateIndex => $date) {
                 
@@ -149,13 +190,13 @@ class BPTFeed {
 
             $event['dates'] = array_values( $event['dates'] );
 
-            $eventList[$eventIndex] = $event;
+            $_bpt_eventList[$eventIndex] = $event;
         }
 
-        return $eventList;
+        return $_bpt_eventList;
     }
 
-    public function remove_bad_prices( $eventList ) {
+    protected function remove_bad_prices( $_bpt_eventList ) {
         foreach ( $eventList as $eventIndex => $event ) {
 
             foreach ( $event['dates'] as $dateIndex => $date ) {
@@ -173,43 +214,67 @@ class BPTFeed {
                 $event['dates'][$dateIndex] = $date;
             }
 
-            $eventList[$eventIndex] = $event;
+            $_bpt_eventList[$eventIndex] = $event;
         }
 
-        return $eventList;
+        return $_bpt_eventList;
     }
 
-    public function get_json_events() {
-        /**
-         * Get Event List Setting Options
-         * 
-         */
-        $dates = get_option('show_dates');
-        $prices = get_option('show_prices');
-        $show_past_dates = get_option('show_past_dates');
-        $show_sold_out_dates = get_option('show_sold_out_dates');
-        $show_sold_out_prices = get_option('show_sold_out_prices');
+    protected function sort_prices( $_bpt_eventList ) {
+        $sort_method = get_option('_bpt_price_sort');
 
-        $events = new EventInfo($this->dev_id);
+        foreach ( $_bpt_eventList as $eventIndex => $event ) {
 
-        $eventList = $events->getEvents($this->client_id, null, $dates, $prices);
+            foreach ( $event['dates'] as $dateIndex => $date ) {
+                
+                if ($sort_method === 'alpha_asc') {
+                    $date['prices'] = $this->sortByKey($date['prices'], 'name', true);
+                }
+                
+                if ($sort_method === 'alpha_desc') {
+                    $date['prices'] = $this->sortByKey($date['prices'], 'name');
+                }
 
-        if ( $dates === 'true' && $show_past_dates === 'false' ) {
-            $eventList = $this->remove_bad_dates( $eventList );
+                if ($sort_method === 'value_desc') {
+                    $date['prices'] = $this->sortByKey($date['prices'], 'value', true);
+                }
+
+                if ($sort_method === 'value_asc') {
+                    $date['prices'] = $this->sortByKey($date['prices'], 'value');
+                }
+
+                $event['dates'][$dateIndex] = $date;
+            }
+
+            $_bpt_eventList[$eventIndex] = $event;
         }
 
-        if ( $prices === 'true ' && $show_sold_out_prices === 'false' ) {
-            $eventList = $this->remove_bad_prices( $eventList );   
+        return $_bpt_eventList;
+    }
+
+    protected function sortByKey($array, $key, $reverse = false) {
+
+        //Loop through and get the values of our specified key
+        foreach ( $array as $k => $v ) {
+            $b[] = strtolower( $v[$key] );
+        }
+
+        if ( $reverse === false ) {
+
+            asort( $b );
+
+        } else {
+
+            arsort( $b );
+
         }
         
-        return json_encode( $eventList );
+        foreach ( $b as $k => $v ) {
+            $c[] = $array[$k];
+        }
+
+        return $c;
 
     }
 
-    public function get_json_account_info() {
-
-        $account = new AccountInfo($this->dev_id);
-
-        return json_encode( $account->getAccount($this->client_id ) );
-    }
 }

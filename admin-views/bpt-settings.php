@@ -37,7 +37,7 @@ $menu_slug = BPTPlugin::get_menu_slug();
     </nav>
     <form method="post" action="options.php">
     <?php settings_fields( $menu_slug ); ?>
-    <div id="settings-wrapper">
+    <div id="bpt-settings-wrapper">
         <div id="account-setup">
             <div>
                 <?php do_settings_sections( $menu_slug . '_api'); ?>
@@ -63,6 +63,8 @@ $menu_slug = BPTPlugin::get_menu_slug();
                     <li>jQuery - Bundled with Wordpress</li>
                     <li>Underscore - Bundled with Wordpress</li>
                     <li>Wordpress - (You're using Wordpress)</li>
+                    <li>Ractive.js - JS Template Engine</li>
+                    <li>Moment.js- DateTime library</li>
                 </ul>
             </div>
         </div>
