@@ -1,11 +1,13 @@
 (function($) {
-    var eventList,
-        bptAPI;
+    'use strict';
 
-
+    var accountInfo,
+        bptAPI,
+        setupWizard,
+        setupWizardNav;
 
     bptAPI = {
-        loadEvents: function loadEvents(dev) {
+        getAccount: function getAccount(dev) {
 
             if (dev) {
                 eventList.set({
@@ -15,89 +17,242 @@
                 return;
             }
 
-            $('div.bpt-loading').fadeIn();
+            $('.bpt-loading').fadeIn();
 
             $.post(
-                bptEventFeed.ajaxurl,
+                bptSetupWizard.ajaxurl,
                 {
                     // wp ajax action
-                    action : 'bpt_feed_ajax',
+                    action : 'bpt_api_ajax',
                     // vars
-                    title : $('input[name=title]').val(),
+                    devID : $('input[name="_bpt_dev_id"]').val(),
+                    clientID : $('input[name="_bpt_client_id"]').val(),
                     // send the nonce along with the request
-                    bptFeedNonce : bptEventFeed.bptFeedNonce,
-                    bptData: 'events'
+                    bptSetupWizardNonce : bptSetupWizard.bptSetupWizardNonce,
+                    bptData: 'account'
+
                 }
             )
             .always(function() {
-                $('div.bpt-loading').hide()
+                $('.bpt-loading').hide()
             })
             .fail(function() {
 
             })
             .done(function(data) {
-                eventList.set({
-                    bptEvents: data
-                })
+
+                if (data.account.result || data.events.result) {
+                    
+                    if (data.account.result) {
+                        setupWizard.set({
+                            accountError: data.account
+                        });
+                    }
+
+                    if (data.events.result) {                    
+                        setupWizard.set({
+                            eventError: data.events
+                        });
+                    }
+
+                    if (!data.events.result) {
+
+                        setupWizard.set({
+                            events: data.events
+                        });
+
+                    } else {
+
+                        setupWizard.set({
+                            events: undefined
+                        });
+
+                    }
+
+                    if (!data.account.result) {
+                        setupWizard.set({
+                            account: data.account,
+                        });
+                    } else {
+                        setupWizard.set({
+                            account: undefined,
+                        });
+                    }
+
+                    return;
+                }
+
+                setupWizard.set({
+                    account: data.account,
+                    events: data.events,
+                    accountError: undefined,
+                    eventError: undefined
+                });
+
             })
             .always(function() {
                 
             });
             
+        },
+        saveSettings: function saveSettings() {
+            var settings = $('#bpt-setup-wizard-form').serialize();
+            $.post( 'options.php', settings)
+            .always(function() {
+
+            })
+            .fail(function() {
+                throw new Error('Saving... Failed!');
+            })
+            .done(function(data) {
+                console.log(data);
+            })
         }
     };
 
-    $(document).ready(function(){
+    setupWizardNav = function setupWizardNav(prevButton, nextButton, stepContainers) {
 
-        eventList = new Ractive({
-            el: '#bpt-event-list',
-            template: '#bpt-event-template',
+        this.init =  function init () {
+    
+            var parent = this;
+                
+
+            this.setStepContainers(stepContainers);
+
+            $(stepContainers).hide();
+
+            $(this.stepContainers[0]).fadeIn(500);
+
+            console.log(this.stepContainers);
+
+            $(nextButton).click(function(event) {
+
+            var currentStep = parent.currentStep;
+
+                event.preventDefault();
+
+                parent.nextStep(currentStep);
+
+            });
+
+            $(prevButton).click(function(event) {
+                event.preventDefault();
+                setupWizardNav.prevStep(currentStep);
+            });
+            
+        };
+        
+        this.currentStep = 0;
+
+        this.stepContainers = [];
+
+        this.setStepContainers = function setStepContainers(stepContainers) {
+
+            var steps = $(stepContainers).toArray();
+
+            this.stepContainers =  $(stepContainers).toArray();
+
+            console.log(this.stepContainers);
+        };
+
+        this.nextStep = function nextStep(currentStep) {
+            var parent = this;
+            $(this.stepContainers[currentStep]).fadeOut(500, function() {
+
+                $(parent.stepContainers[currentStep + 1]).fadeIn(500);
+
+            })
+
+            this.setCurrentStep(currentStep + 1);
+
+        };
+
+        this.prevStep = function prevStep(currentStep) {
+
+        };
+
+        this.goToStep = function goToStep(step) {
+
+        };
+
+        this.getCurrentStep = function getCurrentStep() {
+            return this.currentStep;
+        };
+
+        this.setCurrentStep = function setCurrentStep(step) {
+            this.currentStep = step;
+        }
+
+        this.init();
+    }
+
+    $(document).ready(function() {
+
+        setupWizard = new Ractive({
+            el: '#bpt-setup-wizard-response',
+            template: '#bpt-setup-wizard-template',
             data: {
-                formatDate: function formatDate(newFormat, date) {
-                    var singleDate = moment(date, 'YYYY-MM-DD');
-                    return singleDate.format(newFormat);
-                },
-                formatTime: function formatTime(newFormat, time) {
-                    var singleTime = moment(time, 'H:mm');
-                    return singleTime.format(newFormat);
-                },
                 unescapeHTML: function unescapeHTML(html) {
                     return _.unescape(html);
                 },
-                formatPrice: function formatPrice(price, currency) {
-                    var separator = '.',
-                        priceArr;
+                explainError: function explainError(errorCode, type) {
 
-                    if (currency === '€' ) {
-                        separator = ','
+                    if (type === 'account') {
+
+                        if ( errorCode === '100003' ) {
+                            return 'It looks like that Client ID is not authorized to access protected ' + 
+                            'information using the Developer ID you have entered.';
+                        }
+
+                        if (this.data.eventError.code === '100003') {
+                            return 'There is an issue with pulling in event information using that Developer ID.' +
+                                   'This usually means that the Developer ID is incorrect.';
+                        }
+
+
+                        if ( errorCode === '0' ) {
+                            return 'No events could be pulled up with that Client ID.';
+                        }
+
+                        return 'Unknown Error';
                     }
 
-                    if (price === 0) {
-                        return 'Free';
+                    if (type === 'events') {
+
+                        if ( errorCode === '100003' ) {
+                            return 'The Developer ID is not valid.'
+                        }
+
+                        if ( errorCode === '0' ) {
+                            return 'No events could be pulled up with that Client ID.'
+                        }
                     }
-
-                    priceArr = price.toString().split('.');
-
-                    if (!priceArr[1]) {
-                        price = priceArr[0] + separator + '00';
-                    } else {
-                        price = priceArr[0] + separator + priceArr[1]; 
-                    }
-
-                    return currency + '' + price;
+                },
+                getLiveEvents: function countEvents() {
+                    return this.data.events.length;
                 }
-
             }
         });
 
-        bptAPI.loadEvents(true);
-
-        eventList.on({
-            showFullDescription: function showFullDescription(event) {
-                event.original.preventDefault();
-                $(event.node).parent().parent().next('.bpt-event-full-description').toggle('hidden');
-            }
+        $('.bpt-setup-wizard-ajax-call').click(function(event) {
+            event.preventDefault();
+            bptAPI.getAccount();
         });
+
+        $('.bpt-setup-wizard-next-step').click(function(event) {
+            event.preventDefault();
+        });
+
+        $('.bpt-setup-wizard-previous-step').click(function(event) {
+            event.preventDefault();
+        });
+
+        $('#bpt-setup-wizard-save').click(function(event) {
+            event.preventDefault();
+            bptAPI.saveSettings();
+        });
+
+        var stepNav = new setupWizardNav('.bpt-setup-wizard-prev-step', '.bpt-setup-wizard-next-step', '.bpt-setup-wizard');
 
     });
 

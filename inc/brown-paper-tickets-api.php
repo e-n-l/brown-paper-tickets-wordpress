@@ -63,11 +63,31 @@ class BPTFeed {
 
     }
 
-    public function get_json_account_info() {
+    public function get_json_account() {
 
         $_bpt_account = new AccountInfo($this->dev_id);
 
+
         return json_encode( $account->getAccount($this->client_id ) );
+    }
+
+
+    /**
+     * Simple Get Account Call for testing that the settings are correct.
+     * $dev_id and $client_id must be passed to the function.
+     */
+
+    public function bpt_setup_wizard_test($dev_id, $client_id) {
+
+        $_bpt_account = new AccountInfo($dev_id);
+        $_bpt_event = new EventInfo($dev_id);
+
+        $response = array(
+            'account' => $_bpt_account->getAccount( $client_id),
+            'events' => $_bpt_event->getEvents( $client_id ) 
+        );
+
+        return json_encode( $response );
     }
 
     /**

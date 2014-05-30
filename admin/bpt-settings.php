@@ -21,7 +21,7 @@ $menu_slug = BPTPlugin::get_menu_slug();
             <h3>Hello There</h3>
             <p class="about-description">This is some message.</p>
             <div class="welcome-panel-column-container">
-                <h4>Total Events: <?php echo $events->get_event_count();?></h4>
+                <h4>Total Events:</h4>
                 <div class="welcome-panel-column">
                     <p></p>
                 </div>
@@ -32,6 +32,8 @@ $menu_slug = BPTPlugin::get_menu_slug();
         <ul>
             <li><a class="bpt-admin-tab" href="#account-setup">Account Setup</a></li>
             <li><a class="bpt-admin-tab" href="#event-settings">Event Settings</a></li>
+            <li><a class="bpt-admin-tab" href="#purchase-settings">Purchase Settings</a></li>
+            <li><a class="bpt-admin-tab" href="#help">Help</a></li>
             <li><a class="bpt-admin-tab" href="#credits">Credits</a></li>
         </ul>
     </nav>
@@ -49,11 +51,34 @@ $menu_slug = BPTPlugin::get_menu_slug();
                 <?php do_settings_sections( $menu_slug . '_event'); ?>
                 <input name="Submit" type="submit" class="button-primary" value="<?php esc_attr_e('Save Changes'); ?>" />
             </div>
-        </form>
+        </div>
+        <div id="purchase-settings">
+            <div>
+            <?php
+                    if ( !is_ssl() ) {
+            ?>
+                        <h3 class="error">Sorry, you must connect via SSL (HTTPS) in order to use this option.</h3>
+                        <p>
+                            Without SSL on your site, you would be enabling your ticket buyers to submit their Credit Card without any sort of security.
+                        </p>
+                        <p>
+                            You'll want to contact your web host or your web person in order to get SSL set up.
+                        </p>
+            <?php      
+                    } else {
+                        do_settings_sections( $menu_slug . '_purchase');
+            ?>
+                    <input name="Submit" type="submit" class="button-primary" value="<?php esc_attr_e('Save Changes'); ?>" />
+            <?php
+                    }
+            ?>
+            </div>
         </div>
         <div id="help">
             <h2>Help</h2>
-
+            <ul>
+                <li>Go To <a href="http://localhost/bptwp/wp-admin/admin.php?page=brown_paper_tickets_settings_setup_wizard">Setup Wizard</a></li>
+            </ul>
         </div>
         <div id="credits">
             <h3>Credits</h3>
@@ -75,4 +100,5 @@ $menu_slug = BPTPlugin::get_menu_slug();
         </div>
 
     </div>
+    </form>
 </div>

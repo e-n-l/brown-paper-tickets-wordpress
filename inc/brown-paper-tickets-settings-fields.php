@@ -20,16 +20,21 @@ class BPTSettingsFields {
      */
 
 
+    /**
+     * API Credential Fields
+     * @return [type] [description]
+     */
     public function get_developer_id_input() {
         ?>
         <div class="dev-id-wrapper">
-            <input name="_bpt_dev_id" value="<?php echo get_option('_bpt_dev_id');?>" type="text">
+            <input name="_bpt_dev_id" value="<?php esc_attr_e ( get_option('_bpt_dev_id') );?>" type="text">
             <div class="<?php echo BPTPlugin::get_menu_slug() ?>_help">
                 <span>?</span>
-                <p>
-                    To access your developer ID, go here.
-                </p>
-            
+                <div>
+                    <p>
+                        To access your developer ID, go here.
+                    </p>
+                </div>
             </div>
         </div>
         <?php
@@ -38,17 +43,22 @@ class BPTSettingsFields {
     public function get_client_id_input() {
         ?>
         <div class="client-id-wrapper">
-            <input name="_bpt_client_id" value="<?php echo get_option('_bpt_client_id');?>" type="text">
+            <input name="_bpt_client_id" value="<?php esc_attr_e ( get_option('_bpt_client_id') );?>" type="text">
             <div class="<?php echo BPTPlugin::get_menu_slug() ?>_help">
                 <span>?</span>
-                <p>
-                    This is your Brown Paper Tickets username.
-                </p>
-            
+                <div>
+                    <p>
+                        This is your Brown Paper Tickets username.
+                    </p>
+                </div>
             </div>
         </div>
         <?php
     }
+
+    /**
+     * Event List Fields
+     */
 
     public function get_show_dates_input() {
         ?>
@@ -59,11 +69,12 @@ class BPTSettingsFields {
             <label for="show-dates-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug() ?>_help">
                 <span>?</span>
-                <p>
-                    This option determines whether or not your event's prices will appear
-                    in your event listing. 
-                </p>
-            
+                <div>
+                    <p>
+                        This option determines whether or not your event's prices will appear
+                        in your event listing. 
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -80,11 +91,12 @@ class BPTSettingsFields {
             <label for="show-prices-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
-                <p>
-                    This option determines whether or not your event's prices will appear
-                    in your event listing. 
-                </p>
-                
+                <div>
+                    <p>
+                        This option determines whether or not your event's prices will appear
+                        in your event listing. 
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -101,10 +113,11 @@ class BPTSettingsFields {
             <label for="show-end-time-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
-                <p>
-                    This option determines or not to show your event's end time.
-                </p>
-                
+                <div>
+                    <p>
+                        This option determines or not to show your event's end time.
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -135,17 +148,25 @@ class BPTSettingsFields {
             }
         ?>
             </select>
-            <input class="hidden" id="custom-date-format-input" name="_bpt_custom_date_format" type="text" value="<?php echo get_option('_bpt_custom_date_format'); ?>" />
+            <input class="hidden" id="custom-date-format-input" name="_bpt_custom_date_format" type="text" value="<?php echo esc_attr_e( get_option('_bpt_custom_date_format') ); ?>" />
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
-                <p>
-                    This option determines the format you wish your dates to be displayed in.
-                </p>
-                
+                <div>
+                    <p>
+                        This option will determine the format that your event's dates will be in.
+                    </p>
+                    <p>
+                        Choose from a set of predefined options or set your own
+                    </p>
+                    <p>
+                        If you set a custom option, see <a href="http://momentjs.com/docs/#/displaying/format/" target="_blank">Moment.js documentation</a> for all of the potential parameters.
+                    </p>
+                </div>
             </div>
         </div>
         <?php
     }
+
     public function get_time_format_input() {
             $time_formats = array(
                 'HH:mm' => '24:30',
@@ -166,13 +187,17 @@ class BPTSettingsFields {
             }
         ?>
             </select>
-            <input class="hidden" id="custom-time-format-input" name="_bpt_custom_time_format" type="text" value="<?php echo get_option('_bpt_custom_time_format'); ?>" />
+            <input class="hidden" id="custom-time-format-input" name="_bpt_custom_time_format" type="text" value="<?php echo esc_attr_e ( get_option('_bpt_custom_time_format') ); ?>" />
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
-                <p>
-                    This option determines the format you wish your dates to be displayed in.
-                </p>
-                
+                <div>
+                    <p>
+                        This option determines the format you wish your dates to be displayed in.
+                    </p>
+                    <p>
+                        If you set a custom option, see <a href="http://momentjs.com/docs/#/displaying/format/" target="_blank">Moment.js documentation</a> for all of the potential parameters.
+                    </p>
+                </div>
             </div>
         </div>
         <?php
@@ -195,17 +220,23 @@ class BPTSettingsFields {
             
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
-                <p>
-                    <strong>This plugin has no method to determine which shipping options are available for your events.</strong>
-                    <strong>You must ensure that the options you select here are actually enabled on your event</strong>
-                    Select the shipping methods you wish to display for your events.
-                    <ul>
-                        <li>Print at Home - This method allows ticket buyers to print their tickets at home. No Fee</li>
-                        <li>Will Call - This method allows the ticket buyer to pick up their tickets at the box office prior to the show. No fee</li>
-                        <li>Physical - This method will allow physical tickets to be shipped to the ticket buyer, fulfilled by Brown Paper Tickets. Fee. </li>
-                        <li>Mobile - This method will send the user a text message with their ticket purchase allowing producers who use the Brown Paper Tickets Mobile Scanner App to scan tickets at the door.</li>
-                    </ul>
-                </p>
+                <div>
+                    <p>
+                        <h4>This plugin has no method to determine which shipping options are available for your events.</h3>
+                    </p>
+                    <p>
+                        <h4>You must ensure that the options you select here are actually enabled on your event</h3>
+                    </p>
+                    <p>
+                        Select the shipping methods you wish to display for your events.
+                        <ul>
+                            <li>Print at Home - This method allows ticket buyers to print their tickets at home. No Fee</li>
+                            <li>Will Call - This method allows the ticket buyer to pick up their tickets at the box office prior to the show. No fee</li>
+                            <li>Physical - This method will allow physical tickets to be shipped to the ticket buyer, fulfilled by Brown Paper Tickets. Fee. </li>
+                            <li>Mobile - This method will send the user a text message with their ticket purchase allowing producers who use the Brown Paper Tickets Mobile Scanner App to scan tickets at the door.</li>
+                        </ul>
+                    </p>
+                </div>
             </div>
 
         </div>
@@ -473,9 +504,11 @@ class BPTSettingsFields {
             
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
-                <p>
-                   The countries you wish to allow shipping to and from.
-                </p>
+                <div>
+                    <p>
+                       The countries you wish to allow shipping to and from.
+                    </p>
+                </div>
             </div>
         </div>
         <?php
@@ -493,9 +526,11 @@ class BPTSettingsFields {
             
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
-                <p>
-                   The your event's prices should be displayed in.
-                </p>
+                <div>
+                    <p>
+                       The your event's prices should be displayed in.
+                    </p>
+                </div>
             </div>
         </div>
         <?php
@@ -512,9 +547,11 @@ class BPTSettingsFields {
             
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
-                <p>
-                   The order by which you wish to display prices.
-                </p>
+                <div>
+                    <p>
+                       The order by which you wish to display prices.
+                    </p>
+                </div>
             </div>
         </div>
         <?php
@@ -530,10 +567,11 @@ class BPTSettingsFields {
             <label for="show-full-description-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
-                <p>
-                    This option determines or not to show the full description by default.
-                </p>
-                
+                <div>
+                    <p>
+                        This option determines or not to show the full description by default.
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -550,10 +588,11 @@ class BPTSettingsFields {
             <label for="show-past-dates-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
-                <p>
-                    If you would like to show past dates, select yes.
-                </p>
-                
+                <div>
+                    <p>
+                        If you would like to show past dates, select yes.
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -570,10 +609,11 @@ class BPTSettingsFields {
             <label for="show-sold-out-dates-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
-                <p>
-                    If you would like to show sold out dates, select yes.
-                </p>
-                
+                <div>
+                    <p>
+                        If you would like to show sold out dates, select yes.
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -590,16 +630,30 @@ class BPTSettingsFields {
             <label for="show-sold-out-prices-false">No</label>
             <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                 <span>?</span>
-                <p>
-                    If you would like to show sold out prices, select yes.
-                </p>
+                <div>
+                    <p>
+                        If you would like to show sold out prices, select yes.
+                    </p>
+                </div>
             </div>
         </div>
 
         <?php       
     }
 
-    public function is_selected( $value, $option, $type = null ) {
+    /**
+     * Purchase Fields
+     */
+    
+    public function get_allow_purchase_input() {
+
+    }
+
+    /**
+     * Utilites
+     */
+
+    private function is_selected( $value, $option, $type = null ) {
 
         $opt = get_option( $option );
 

@@ -15,24 +15,24 @@
  *
  * @var [type]
  */
-$_bpt_show_prices = get_option('_bpt_show_prices');
-$_bpt_show_dates = get_option('_bpt_show_dates');
-$_bpt_show_full_description = get_option('_bpt_show_full_description');
-$_bpt_shipping_countries = get_option('_bpt_shipping_countries');
-$_bpt_shipping_methods = get_option('_bpt_shipping_methods');
-$_bpt_currency = get_option('_bpt_currency');
-$_bpt_date_format = get_option('_bpt_date_format');
-$_bpt_time_format = get_option('_bpt_time_format');
-$_bpt_show_end_time = get_option('_bpt_show_end_time');
+$_bpt_show_prices = get_option( '_bpt_show_prices' );
+$_bpt_show_dates = get_option( '_bpt_show_dates' );
+$_bpt_show_full_description = get_option( '_bpt_show_full_description' );
+$_bpt_shipping_countries = get_option( '_bpt_shipping_countries' );
+$_bpt_shipping_methods = get_option( '_bpt_shipping_methods' );
+$_bpt_currency = get_option( '_bpt_currency' );
+$_bpt_date_format = esc_html( get_option( '_bpt_date_format' ) );
+$_bpt_time_format = esc_html( get_option( '_bpt_time_format' ) );
+$_bpt_show_end_time = get_option( '_bpt_show_end_time' );
 
-//$_bpt_event_list_template = get_option('_bpt_show_event_list_template');
+//$_bpt_event_list_template = get_option( '_bpt_show_event_list_template' );
 
 if ( $_bpt_date_format === 'custom' ) {
-    $_bpt_date_format = get_option('_bpt_custom_date_format');
+    $_bpt_date_format = esc_html( get_option( '_bpt_custom_date_format' ) );
 }
 
 if ( $_bpt_time_format === 'custom' ) {
-    $_bpt_time_format = get_option('_bpt_custom_time_format');
+    $_bpt_time_format = esc_html( get_option( '_bpt_custom_time_format' ) );
 }
 
 if ( $_bpt_currency === 'cad' ) {
@@ -345,7 +345,7 @@ $countries = array(
                 <select class="bpt-date-select" id="dates-{{ id }}" value="{{ .selectedDate }}">
             {{ #dates }}
                     <option class="event-date" value="{{ . }}" >
-                        {{ formatDate( '<?php echo $_bpt_date_format; ?>', dateStart ) }}
+                        {{ formatDate( '<?php echo $_bpt_date_format ; ?>', dateStart ) }}
                         {{ formatTime( '<?php echo $_bpt_time_format; ?>', timeStart ) }}
                         <?php echo ( $_bpt_show_end_time === 'true' ? 'to {{ formatTime( \'' . $_bpt_time_format . '\', timeEnd ) }}' : '' ); ?>
                     </option>
@@ -364,7 +364,7 @@ $countries = array(
                 {{ #prices }}
                 <tr>
                     <td>{{ name }}</td>
-                    <td>{{ formatPrice(value, '<?php echo $_bpt_currency; ?>') }}</td>
+                    <td>{{ formatPrice(value, '<?php echo $_bpt_currency; ?>' ) }}</td>
                     <td>
                         <select class="bpt-shipping-qty" name="price_{{ id }}">
 
@@ -410,12 +410,12 @@ $countries = array(
                             foreach ( $countries as $country ) {
 
                                 if ( $country === 'Azores' ) {
-                                    echo '<option value="243"' . ($country === get_option('_bpt_shipping_countries') ? 'selected' : '') . '>' . $country . '</option>';
+                                    echo '<option value="243"' . ($country === get_option( '_bpt_shipping_countries' ) ? 'selected' : '' ) . '>' . $country . '</option>';
 
                                     continue;
                                 }
 
-                                echo '<option value="' . $country_incr . '"' . ($country === get_option('_bpt_shipping_countries') ? 'selected' : '') . '>' . $country . '</option>'; 
+                                echo '<option value="' . $country_incr . '"' . ($country === get_option( '_bpt_shipping_countries' ) ? 'selected' : '' ) . '>' . $country . '</option>'; 
                                 $country_incr++;
                             }
                         ?>
@@ -433,12 +433,12 @@ $countries = array(
                         <img src="<?php echo plugins_url( 'assets/img/amex_icon.png', __DIR__ ); ?>" />
                     </span>
                 </div>
-                <div class="bpt-powered-by">
-                    <a href="http://www.brownpapertickets.com/event/{{ id }}" target="_blank"><span>Powered by </span><img src="<?php echo plugins_url( 'assets/img/bpt-footer-logo.png', __DIR__ ); ?>" /></a>
-                </div>
             </div>
         </form>
     <?php } ?>
+    <div class="bpt-powered-by">
+        <a href="http://www.brownpapertickets.com/event/{{ id }}" target="_blank"><span>Powered by </span><img src="<?php echo plugins_url( 'assets/img/bpt-footer-logo.png', __DIR__ ); ?>" /></a>
+    </div>
 </div>
 {{ / }}
 </script>

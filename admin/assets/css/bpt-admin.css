@@ -71,22 +71,22 @@ div.brown_paper_tickets_settings_help {
 
     }
 
-    div.brown_paper_tickets_settings_help span:hover + p {
+    div.brown_paper_tickets_settings_help span:hover + div {
         display: block;
         float: left;
     }
-    div.brown_paper_tickets_settings_help p:hover {
+    div.brown_paper_tickets_settings_help div:hover {
         display: block;
         float: left;
     }
 
-    div.brown_paper_tickets_settings_help p {
+    div.brown_paper_tickets_settings_help div {
+        display: none;
         padding: 10px;
         color: #fff;
         background: #989836;
         float: left;
         clear: both;
-        display: none;
         border-radius: 5px;
         position: absolute;
         margin-left: 25px;
