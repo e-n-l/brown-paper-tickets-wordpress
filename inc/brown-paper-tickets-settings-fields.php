@@ -11,6 +11,7 @@ namespace BrownPaperTickets;
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-plugin.php');
 use BrownPaperTickets\BPTPlugin;
 
+
 class BPTSettingsFields {
        /**
      * Settings Field Stuff
@@ -27,7 +28,7 @@ class BPTSettingsFields {
     public function get_developer_id_input() {
         ?>
         <div class="dev-id-wrapper">
-            <input name="_bpt_dev_id" value="<?php esc_attr_e ( get_option('_bpt_dev_id') );?>" type="text">
+            <input name="_bpt_dev_id" value="<?php esc_attr_e( get_option('_bpt_dev_id') );?>" type="text" placeholder="<?php esc_attr_e('Developer ID'); ?>">
             <div class="<?php echo BPTPlugin::get_menu_slug() ?>_help">
                 <span>?</span>
                 <div>
@@ -43,7 +44,7 @@ class BPTSettingsFields {
     public function get_client_id_input() {
         ?>
         <div class="client-id-wrapper">
-            <input name="_bpt_client_id" value="<?php esc_attr_e ( get_option('_bpt_client_id') );?>" type="text">
+            <input name="_bpt_client_id" value="<?php esc_attr_e( get_option('_bpt_client_id') );?>" type="text" placeholder="<?php esc_attr_e('Client ID'); ?>">
             <div class="<?php echo BPTPlugin::get_menu_slug() ?>_help">
                 <span>?</span>
                 <div>
@@ -641,6 +642,38 @@ class BPTSettingsFields {
         <?php       
     }
 
+
+    public function get_cache_time_input() {
+        $increment = 1;
+        ?>
+            <div class="cache-time-wrapper">
+                <label for="cache-time-increment">Time</label>
+                <select id="cache-time-increment" name="_bpt_cache_time['increment']" value="<?php echo get_option('_bpt_cache_time'); ?>">
+                    <option value="0" <?php echo $this->is_selected( '0', "_bpt_cache_time['increment']", 'selected' );?>>Never Expire</option>
+                <?php 
+                    while ( $increment < 50 ) {
+                        echo '<option value="{$icrement}"' . $this->is_selected( $increment, "_bpt_cache_time['increment']", 'selected' ) . '>' . $increment . '</option>';
+                        $increment++;
+                    }
+                ?>
+                </select>
+                <label for="cache-time-unit">
+                <select id="cache-time-unit" name="_bpt_cache_time['unit']">
+                    <option value="minutes" <?php echo $this->is_selected('hours', "_bpt_cache_time['hours']", 'selected'); ?>>Minutes</option>
+                    <option value="hours" <?php echo $this->is_selected('hours', "_bpt_cache_time['hours']", 'selected'); ?>>Hours</option>
+                    <option value="days" <?php echo $this->is_selected('hours', "_bpt_cache_time['hours']", 'selected'); ?>>Days</option>
+                </select>
+                <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
+                    <span>?</span>
+                    <div>
+                        <p>Select the amount of time you would like to cache your event data.</p>
+                        <p>Setting this option will decrease the amount of time it takes for the data to load</p>
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+        <?php
+    }
     /**
      * Purchase Fields
      */

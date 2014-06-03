@@ -1,3 +1,14 @@
+a:focus, a:active, 
+button::-moz-focus-inner,
+input[type="reset"]::-moz-focus-inner,
+input[type="button"]::-moz-focus-inner,
+input[type="submit"]::-moz-focus-inner,
+select::-moz-focus-inner,
+input[type="file"] > input[type="button"]::-moz-focus-inner {
+    border: 0;
+    outline : 0;
+}
+
 /**
  * Admin Navigation Tabs
  */
@@ -23,25 +34,26 @@ nav#brown_paper_tickets_settings {
         color: #999;
         margin-right: 5px;
         text-decoration: none;
+        border: 1px solid transparent;
     }
+
     a.selected-tab {
         background: #ffffff;
         color: #0074A2;
-        border: 1px solid #E5E5E5;
+        border: 1px solid #D1D2D4;
         border-bottom: 1px solid #fff;
         position: relative;
     }
 
 
-
 div#bpt-settings-wrapper {
-    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #D1D2D4;
+    border-bottom: 6px solid #D1D2D4;
+    padding: 25px;
+    width: 90%;
+    margin-bottom: 10px;
     float: left;
-    background: #fff;
-    padding: 10px;
-    border: 1px solid #E5E5E5;
-    width: 100%;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
 /**
@@ -54,6 +66,7 @@ div#bpt-settings-wrapper {
 
 #bpt-settings-wrapper th {
     color: #777777;
+    font-weight: normal;
 }
 /**
  * Help Pop Ups
@@ -91,3 +104,54 @@ div.brown_paper_tickets_settings_help {
         position: absolute;
         margin-left: 25px;
     }
+
+/**
+ * Plugin Welcome Panel
+ */
+
+.bpt-welcome-panel {
+    background: #ffffff;
+    border: 1px solid #D1D2D4;
+    border-bottom: 6px solid #D1D2D4;
+    padding: 25px;
+    width: 90%;
+    margin-bottom: 10px;
+    float: left;
+}
+    .bpt-welcome-panel-content {
+        float: left;
+        width: 100%;
+        
+    }
+
+    .bpt-welcome-panel-content h1 {
+        margin-top: 0;
+    }
+
+    .bpt-welcome-panel .bpt-welcome-info-plugin-info {
+        display: block;
+        float: right;
+        font-size: .8em;
+        color: #ccc;
+        clear: both;
+    }
+
+    .bpt-welcome-panel-close {
+        padding: 0;
+        font-size: .8em;
+        float: right;
+        display: block;
+    }
+
+    .bpt-submit-issue {
+        color: red;
+        text-decoration: none;
+    }
+
+/**
+ * Usage Tab
+ */
+
+.bpt-inline {
+    display: inline;
+}

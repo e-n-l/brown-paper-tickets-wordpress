@@ -18,7 +18,7 @@
         <h1>Thanks for installing the Brown Paper Tickets Wordpress Plugin.</h1>
         <p>In order to make use of this plugin, you'll need to set up a few options.</p>
         <div class="bpt-setup-wizard-button-container">
-            <button class="bpt-setup-wizard-prev-step button-primary button-large" disabled >&laquo; Previous</button>
+            <button class="bpt-setup-wizard-prev-step button-secondary button-large" disabled >&laquo; Previous</button>
             <button class="bpt-setup-wizard-next-step button-primary button-large">Next &raquo;</button>
         </div>
     </div>
@@ -43,7 +43,7 @@
             <li>Enter your Developer ID EXACTLY as it appears into the box above</li>
         </ol>
         <div class="bpt-setup-wizard-button-container">
-            <button class="bpt-setup-wizard-prev-step button-primary button-large">&laquo; Previous</button>
+            <button class="bpt-setup-wizard-prev-step button-secondary button-large">&laquo; Previous</button>
             <button class="bpt-setup-wizard-next-step button-primary button-large">Next &raquo;</button>
         </div>
     </div>
@@ -68,7 +68,7 @@
             an <a href="mailto:support@brownpapertickets.com">email</a>.
         </p>
         <div class="bpt-setup-wizard-button-container">
-            <button class="bpt-setup-wizard-prev-step button-primary button-large">&laquo; Previous</button>
+            <button class="bpt-setup-wizard-prev-step button-secondary button-large">&laquo; Previous</button>
             <button class="bpt-setup-wizard-next-step button-primary button-large">Next &raquo;</button>
         </div>
     </div>
@@ -84,18 +84,20 @@
         </p>
 
         <div>
-            <button class="bpt-setup-wizard-ajax-call">Test Account</button><img class="bpt-loading hidden" src="<?php echo plugins_url( '/assets/img/loading.gif', dirname( __FILE__ ) ); ?>">
+            <button class="bpt-setup-wizard-ajax-call button-secondary">Test Account</button><img class="bpt-loading hidden" src="<?php echo plugins_url( '/assets/img/loading.gif', dirname( __FILE__ ) ); ?>">
             <div id="bpt-setup-wizard-response"></div>
         </div>
     </div>
     <div class="bpt-setup-wizard bpt-step-4">
         <h1>Setup is complete.</h1>
-        <h2>Save the settings</h2>
-        <input name="Submit" type="submit" class="button-primary" value="<?php esc_attr_e('Save Changes'); ?>" />
-        <p>There are many Settings you will want to take a look at.</p>
-        <div class="bpt-setup-wizard-bpt-setup-wizard-button-container">
-            <button class="bpt-setup-wizard-prev-step button-primary button-large">&laquo; Previous</button>
-            <button class="bpt-setup-wizard-next-step button-primary button-large" disabled>Next &raquo;</button>
+        <p>Basic setup is complete. However, there are other options you'll want to take a look at. Feel free to close this window.</p>
+        <a href="#" class="bpt-setup-wizard-toggle-settings"><h4>Show Advanced Settings</h4></a>
+        <div class="bpt-setup-wizard-advanced-settings hidden">
+        <?php do_settings_sections( $menu_slug . '_event'); ?>
+            <div class="bpt-setup-wizard-bpt-setup-wizard-button-container">
+                <button class="bpt-setup-wizard-prev-step button-secondary button-large">&laquo; Previous</button>
+                <button class="button-primary button-large bpt-setup-wizard-save">Save</button>
+            </div>
         </div>
     </div>
     <div class="bpt-setup-wizard-debug">
@@ -123,32 +125,36 @@
         </div>
     {{ /accountError }}
 
-
+    {{ #unknownError }}
+        <div>
+        <h2>Sorry, an unknown error has occured.</h2>
+        <pre>
+            {{ responseText }}
+        </pre>
+        </div>
+        <div class="bpt-setup-wizard-button-container">
+            <button class="bpt-setup-wizard-prev-step button-secondary button-large">Previous</button>
+            <button class="bpt-setup-wizard-next-step button-primary button-large bpt-setup-wizard-save" disabled>Save and Continue</button>
+        </div>
+    {{ /unknownError}}
     {{ #account }}
         <div>
             <h2>Hello {{ firstName }}.</h2>
-            <h4 class="first-name"></h4>
-            <h4 class="last-name"></h4>
-            <span class="total-events"></span>
         </div>
     {{ /account }}
 
     <div class="{{ .events.length > 0 ? '' : 'hidden' }}">
-        <h3>You currently have {{ .events.length }} active events on Brown Paper Tickets</h3>
-        <table>
-            <tr>
-                <th>Event Title</th>
-            </tr>
+        <h3>You currently have these {{ .liveEvents( .events ) }} events active on Brown Paper Tickets</h3>
+        <ul class="bpt-setup-wizard-event-list">
         {{ #events }}
-            <tr>
-                <td>{{ title }}</td>
-                <td>{{ live }}</td>
-            </tr>
+            <li>{{ title }}</li>
         {{ /events}}
-        </table>
+        </ul>
+
+        <p>If this is correct, please click Save and Continue.</p>
         <div class="bpt-setup-wizard-button-container">
-            <button class="bpt-setup-wizard-prev-step button-primary button-large">Previous</button>
-            <button id="bpt-setup-wizard-save" class="bpt-setup-wizard-next-step button-primary button-large" disabled="{{ .eventError || .accountError ? 'disabled' : '' }}">Next</button>
+            <button class="bpt-setup-wizard-prev-step button-secondary button-large">Previous</button>
+            <button class="bpt-setup-wizard-next-step button-primary button-large bpt-setup-wizard-save" disabled="{{ .eventError || .accountError ? 'disabled' : '' }}">Save and Continue</button>
         </div>
     </div>
 </script>

@@ -1,6 +1,13 @@
 (function($) {
     'use strict';
-    var navigation = {
+
+    var navigation,
+        customDateFormat,
+        customTimeFormat,
+        bptWelcomePanel,
+        bptAPI;
+
+    navigation = {
         loadTab: function loadTab() {
             var currentTab = this.getAnchor;
             this.switchTabs(currentTab);
@@ -58,7 +65,7 @@
         }
     };
 
-    var customDateFormat = function() {
+    customDateFormat = function() {
 
         var selectedDateFormat = $('select#date-format option').filter(':selected');
 
@@ -69,7 +76,7 @@
         }
     };
 
-    var customTimeFormat = function() {
+    customTimeFormat = function() {
 
         var selectedTimeFormat = $('select#time-format option').filter(':selected');
 
@@ -80,8 +87,39 @@
         }
     };
 
+    bptAPI = {
+        getAccount: function getAccount() {
+            $.ajax(
+                bptWP.ajaxurl,
+                {
+                    type: 'POST',
+                    data: {
+                        // wp ajax action
+                        action : 'bpt_api_ajax',
+                        // vars
+                        // send the nonce along with the request
+                        bptNonce : bptWP.bptNonce,
+                        bptData: 'account',
+                    },
+                    accepts: 'json',
+                    dataType: 'json'
+
+                }
+            ).done(function(data) {
+                bptWelcomePanel.set({
+                    account: data
+                });
+            }).fail(function(data) {
+
+            });
+        }
+    }
+
+
 
     $(document).ready(function() {
+
+
 
         navigation.switchTabs(navigation.getAnchor());
 
@@ -102,5 +140,20 @@
         $('select#time-format').change(function() {
             customTimeFormat();
         });
+
+        $('.bpt-welcome-panel-close').click(function(event) {
+            event.preventDefault();
+
+            $('.bpt-welcome-panel').toggle();
+        });
+
+        bptWelcomePanel = new Ractive({
+            el: '.bpt-welcome-panel-content',
+            template: '#bpt-welcome-panel-template',
+            data: {}
+        });
+
+        bptAPI.getAccount();
+
     });
 })(jQuery);

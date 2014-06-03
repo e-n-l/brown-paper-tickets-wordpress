@@ -8,6 +8,12 @@ div.bpt-setup-wizard {
     width: 50%;
     margin-bottom: 10px;
 }
+
+div.bpt-setup-wizard pre {
+    height: 200px;
+    overflow-x: scroll;
+    overflow-y: scroll;
+}
     .dev-id-wrapper {
 
     }
@@ -30,4 +36,22 @@ div.bpt-setup-wizard {
     
     .bpt-setup-wizard .bpt-setup-wizard-next-step {
         float: right;
+    }
+
+    .bpt-setup-wizard .bpt-setup-wizard-ajax-call {
+        font-weight: bold;
+        margin: 0 auto;
+    }
+
+    .bpt-setup-wizard-event-list li {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .bpt-setup-wizard-save {
+        float: right;
+    }
+
+    #bpt-setup-wizard-response {
+        margin-top: 25px;
     }

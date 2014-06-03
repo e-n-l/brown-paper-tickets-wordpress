@@ -22,7 +22,8 @@ class BPTPlugin {
     protected $client_id;
     protected $settings_fields;
     protected static $menu_slug;
-
+    protected static $plugin_slug;
+    protected static $plugin_version;
     protected static $instance = null;
 
     public function __construct() {
@@ -30,15 +31,20 @@ class BPTPlugin {
         $this->dev_id = get_option( '_bpt_dev_id' );
         $this->client_id = get_option( '_bpt_client_id' );
         $this->settings_fields = new BPTSettingsFields;
+
         self::$menu_slug = PLUGIN_SLUG.'_settings';
 
+        self::$plugin_slug = PLUGIN_SLUG;
 
+        self::$plugin_version = VERSION;
+
+        $this->load_shared();
+        $this->load_public();
+        
         if ( is_admin() ) {
             $this->load_admin();
         }
 
-        $this->load_shared();
-        $this->load_public();
     }
 
     public static function get_instance() {
@@ -50,11 +56,11 @@ class BPTPlugin {
     }
 
     public static function get_plugin_slug() {
-        return self::PLUGIN_SLUG;
+        return self::$plugin_slug;
     }
 
     public static function get_plugin_version() {
-        return self::PLUGIN_VERSION;
+        return self::$plugin_version;
     }
 
     public static function get_menu_slug() {
@@ -62,17 +68,37 @@ class BPTPlugin {
     }
 
     public static function activate() {
-        /**
-         * This will eventually call the setup wizard page.
-         */
+        if ( ! current_user_can( 'activate_plugins' ) ) {
+            return;
+        }
 
-            add_option('_bpt_show_wizard', 'true');
-            self::set_default_event_option_values();
-            
+        add_option('_bpt_show_wizard', 'true');
+
+        self::set_default_event_option_values();
     }
 
     public static function deactivate() {
+        if ( ! current_user_can( 'activate_plugins' ) ) {
+            return;
+        }
 
+        self::remove_event_options();
+    }
+
+    public static function uninstall() {
+        if ( ! current_user_can( 'activate_plugins' ) ) {
+            return;
+        }
+
+        check_admin_referer( 'bulk-plugins' );
+
+        // Important: Check if the file is the one
+        // that was registered during the uninstall hook.
+        if ( __FILE__ != WP_UNINSTALL_PLUGIN ) {
+            return;
+        }
+
+        self::remove_event_options();
     }
 
     public function load_admin() {
@@ -84,70 +110,73 @@ class BPTPlugin {
     public function load_public() {
         add_shortcode( 'list-event', array( $this, 'list_event_shortcode' ) );
         add_shortcode( 'list-events', array( $this, 'list_events_shortcode' ) );
+        add_shortcode( 'list-events-links', array( $this, 'list_events_shortcode' ) );
         
-        add_action( 'admin_enqueue_scripts', array( $this, 'load_ajax_scripts' ) );
+        add_action( 'wp_enqueue_scripts', array( $this, 'load_public_scripts' ) );
     }
 
     public function load_shared() {
-
         add_action( 'wp_ajax_bpt_api_ajax', array( $this, 'bpt_api_ajax' ) );
-        add_action( 'wp_enqueue_scripts', array( $this, 'load_ajax_scripts' ) );
     }
 
     public function load_admin_scripts($hook) {
 
-        wp_enqueue_style( 'bpt_admin_css', plugins_url( '/admin/assets/css/bpt-admin.css', dirname( __FILE__ ) ), false, VERSION );
-        
-        wp_enqueue_script( 'bpt_admin_js', plugins_url( '/admin/assets/js/bpt-admin.js', dirname( __FILE__ ) ), array( 'jquery' ) ); 
+        if ( $hook === 'toplevel_page_brown_paper_tickets_settings' ) {
+
+            $this->load_ajax_required();
+
+            wp_enqueue_style( 'bpt_admin_css', plugins_url( '/admin/assets/css/bpt-admin.css', dirname( __FILE__ ) ), false, VERSION );
+
+            wp_enqueue_script( 'bpt_admin_js', plugins_url( '/admin/assets/js/bpt-admin.js', dirname( __FILE__ ) ), array( 'jquery' ) ); 
+            wp_localize_script( 'bpt_admin_js', 'bptWP', array(
+                'ajaxurl' => admin_url( 'admin-ajax.php' ),
+                'bptNonce' => wp_create_nonce( 'bpt-nonce' ))
+            );
+        }
         
         if ( $hook === 'admin_page_brown_paper_tickets_settings_setup_wizard' ) {
 
-            $this->load_setup_wizard_scripts();
-        }
-    }
-
-    public function load_setup_wizard_scripts() {
+            $this->load_ajax_required();
+            
+            wp_enqueue_style( 'bpt_admin_css', plugins_url( '/admin/assets/css/bpt-admin.css', dirname( __FILE__ ) ), false, VERSION );
 
             wp_enqueue_style( 'bpt_setup_wizard_css', plugins_url( '/admin/assets/css/bpt-setup-wizard.css', dirname( __FILE__ ) ), false, VERSION );
             
             wp_enqueue_script( 'bpt_setup_wizard_js', plugins_url( '/admin/assets/js/bpt-setup-wizard.js', dirname( __FILE__ ) ), array( 'jquery' ) ); 
             
-            wp_localize_script( 'bpt_setup_wizard_js', 'bptSetupWizard', array(
+            wp_localize_script( 'bpt_setup_wizard_js', 'bptSetupWizardAjax', array(
                 'ajaxurl' => admin_url( 'admin-ajax.php' ),
                 'bptSetupWizardNonce' => wp_create_nonce( 'bpt-setup-wizard-nonce' ))
             );
+        }
     }
 
-    public function load_ajax_scripts() {
-        global $post;
+    public function load_ajax_required() {
 
         // Include Ractive Templates
         wp_enqueue_script( 'ractive_js', plugins_url( '/assets/js/ractive.js', dirname(__FILE__) ), array() );
         wp_enqueue_script( 'ractive_transitions_fade_js', plugins_url( '/assets/js/ractive-transitions-slide.js', dirname(__FILE__) ), array() );
         wp_enqueue_script( 'moment_with_langs_min', plugins_url( '/assets/js/moment-with-langs.min.js', dirname(__FILE__) ), array() );
 
+    }
+
+    public function load_public_scripts() {
+        global $post;
+
         if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-events') ) {
 
-            // Include Moment for date parsing.
+            $this->load_ajax_required();
 
-            // load the event feed javascript
             wp_enqueue_script( 'event_feed_js', plugins_url( '/assets/js/event-feed.js', dirname(__FILE__) ), array( 'jquery', 'underscore' ) ); 
-            wp_localize_script( 'event_feed_js', 'bptEventFeed', array(
+            wp_localize_script( 'event_feed_js', 'bptEventFeedAjax', array(
                 'ajaxurl' => admin_url( 'admin-ajax.php' ),
-                'bptFeedNonce' => wp_create_nonce( 'bpt-event-feed-nonce' ))
+                'bptEventFeedNonce' => wp_create_nonce( 'bpt-event-feed-nonce' ))
             );
-
 
             wp_enqueue_style( 'bpt_event_list_css', plugins_url( '/assets/css/bpt-event-list-shortcode.css', dirname( __FILE__ ) ), false, VERSION );
         }
-
-
-        // wp_enqueue_script( 'account_feed_js', plugins_url( '/assets/js/account-feed.js', dirname(__FILE__) ), array( 'jquery') );
-        // wp_localize_script( 'event_feed_js', 'bptAccountFeed', array(
-        //     'ajaxurl' => admin_url( 'admin-ajax.php' ),
-        //     'bptFeedNonce' => wp_create_nonce( 'account-feed-nonce' ) )
-        // );
     }
+
     public function create_bpt_settings() {
 
         add_menu_page(
@@ -195,6 +224,12 @@ class BPTPlugin {
         $section_title = 'General Settings';
 
         register_setting( self::$menu_slug, $setting_prefix . 'show_wizard' );
+        register_setting( self::$menu_slug, $setting_prefix . 'cache_time' );
+
+        add_settings_section( $section_title, $section_title, null, self::$menu_slug . $section_suffix );
+
+        add_settings_field( $setting_prefix . 'cache_time', 'Cache Time', array( $this->settings_fields, 'get_cache_time_input' ), self::$menu_slug . $section_suffix, $section_title );
+        
      }
 
     public function register_bpt_event_list_settings() {
@@ -228,9 +263,9 @@ class BPTPlugin {
         register_setting( self::$menu_slug, $setting_prefix . 'show_sold_out_prices' );
 
 
-        add_settings_section( $section_title, $section_title, array( $this, 'render_bpt_options_page' ), self::$menu_slug . $section_suffix );
-        add_settings_section( $date_section_title, $date_section_title, array( $this, 'render_bpt_options_page' ), self::$menu_slug . $section_suffix );
-        add_settings_section( $price_section_title, $price_section_title, array( $this, 'render_bpt_options_page' ), self::$menu_slug . $section_suffix );
+        add_settings_section( $section_title, $section_title, null, self::$menu_slug . $section_suffix );
+        add_settings_section( $date_section_title, $date_section_title, null, self::$menu_slug . $section_suffix );
+        add_settings_section( $price_section_title, $price_section_title, null, self::$menu_slug . $section_suffix );
 
 
         // Add the settings fields.
@@ -257,7 +292,7 @@ class BPTPlugin {
     /**
      * Set the Default Values
      */
-    public static function set_default_event_option_values() {
+    private static function set_default_event_option_values() {
 
         $setting_prefix = '_bpt_';
         $section_suffix = '_event';
@@ -284,6 +319,35 @@ class BPTPlugin {
         add_option( self::$menu_slug . $setting_prefix . 'price_sort', 'value_asc' );
         add_option( self::$menu_slug . $setting_prefix . 'show_sold_out_prices', 'false' );
     }
+
+    private static function remove_event_options() {
+
+        $setting_prefix = '_bpt_';
+        $section_suffix = '_event';
+        $section_title = 'Event Display Settings';
+        $date_section_title = 'Date Display Settings';
+        $price_section_title = 'Price Display Settings';
+
+        delete_option( self::$menu_slug . 'show_full_description' );
+
+        // Date Settings
+        delete_option( self::$menu_slug . 'show_dates' );
+        delete_option( self::$menu_slug . 'date_format' );
+        delete_option( self::$menu_slug . 'time_format' );
+
+        delete_option( self::$menu_slug . 'show_sold_out_dates' );
+        delete_option( self::$menu_slug . 'show_past_dates' );
+        delete_option( self::$menu_slug . 'show_end_time' );
+
+        // Price Settings
+        delete_option( self::$menu_slug . 'show_prices' );
+        delete_option( self::$menu_slug . 'shipping_methods' );
+        delete_option( self::$menu_slug . 'shipping_countries' );
+        delete_option( self::$menu_slug . 'currency' );
+        delete_option( self::$menu_slug . 'price_sort' );
+        delete_option( self::$menu_slug . 'show_sold_out_prices' );
+    }
+
 
     /**
      * Register the API Credential Settings Fields
@@ -348,10 +412,31 @@ class BPTPlugin {
     public function bpt_api_ajax() {
         header('Content-type: application/json');
 
+        if ( $_POST['bptData'] === 'account' ) {
+            $nonce = $_POST['bptNonce'];
+
+            if ( ! wp_verify_nonce( $nonce, 'bpt-nonce' ) ) {
+                exit(
+                    json_encode(
+                        array(
+                            'error' => 'Could not obtain account info.'
+                        )
+                    )
+                );
+            }
+
+
+
+            $account = new BPTFeed;
+
+            $response = $account->get_json_account();
+
+            exit( $response );
+        }
 
         if ( $_POST['bptData'] === 'events' ) {
 
-            $nonce = $_POST['bptFeedNonce'];
+            $nonce = $_POST['bptEventFeedNonce'];
 
             if ( ! wp_verify_nonce( $nonce, 'bpt-event-feed-nonce' ) ) {
                 exit(
@@ -371,7 +456,7 @@ class BPTPlugin {
 
         }
 
-        if ( $_POST['bptData'] === 'account' ) {
+        if ( $_POST['bptData'] === 'accountTest' ) {
 
             $nonce = $_POST['bptSetupWizardNonce'];
 

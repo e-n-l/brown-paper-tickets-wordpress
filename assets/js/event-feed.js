@@ -2,8 +2,6 @@
     var eventList,
         bptAPI;
 
-
-
     bptAPI = {
         loadEvents: function loadEvents(dev) {
 
@@ -16,29 +14,33 @@
             }
 
             $('div.bpt-loading').fadeIn();
-
-            $.post(
-                bptEventFeed.ajaxurl,
+            $.ajax(
+                bptEventFeedAjax.ajaxurl,
                 {
-                    // wp ajax action
-                    action : 'bpt_feed_ajax',
-                    // vars
-                    title : $('input[name=title]').val(),
-                    // send the nonce along with the request
-                    bptFeedNonce : bptEventFeed.bptFeedNonce,
-                    bptData: 'events'
+                    type: 'POST',
+                    data: {
+                        // wp ajax action
+                        action : 'bpt_api_ajax',
+                        // send the nonce along with the request
+                        bptEventFeedNonce : bptEventFeedAjax.bptEventFeedNonce,
+                        bptData: 'events',
+                    },
+                    accepts: 'json',
+                    dataType: 'json'
                 }
             )
             .always(function() {
                 $('div.bpt-loading').hide()
             })
             .fail(function() {
-
+                eventList.set({
+                    error: 'Unknown Error'
+                });
             })
             .done(function(data) {
                 eventList.set({
                     bptEvents: data
-                })
+                });
             })
             .always(function() {
                 
@@ -90,7 +92,7 @@
             }
         });
 
-        bptAPI.loadEvents(true);
+        bptAPI.loadEvents();
 
         eventList.on({
             showFullDescription: function showFullDescription(event) {

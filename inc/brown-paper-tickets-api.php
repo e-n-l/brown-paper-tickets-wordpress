@@ -67,8 +67,7 @@ class BPTFeed {
 
         $_bpt_account = new AccountInfo($this->dev_id);
 
-
-        return json_encode( $account->getAccount($this->client_id ) );
+        return json_encode( $_bpt_account->getAccount($this->client_id ) );
     }
 
 

@@ -35,6 +35,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 register_activation_hook( __FILE__, array( 'BrownPaperTickets\BPTPlugin', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'BrownPaperTickets\BPTPlugin', 'deactivate' ) );
+register_uninstall_hook( __FILE__, array( 'BrownPaperTickets\BPTPlugin', 'uninstall' ) );
 
 add_action( 'plugins_loaded', array( 'BrownPaperTickets\BPTPlugin', 'get_instance' ) );
 
