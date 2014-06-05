@@ -126,7 +126,6 @@ class BPTFeed {
     
     public function get_event_count() {
         $events = new EventInfo($this->dev_id);
-
         return count( $events->getEvents( $this->client_id ) );
     }
     /**

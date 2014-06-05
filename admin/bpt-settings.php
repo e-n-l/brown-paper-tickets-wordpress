@@ -78,6 +78,7 @@ $plugin_version = BPTPlugin::get_plugin_version();
         <div id="general-settings">
             <div>
                 <?php do_settings_sections( $menu_slug . '_general' ); ?>
+                <input name="Submit" type="submit" class="button-primary" value="<?php esc_attr_e('Save Changes'); ?>" />
             </div>
         </div>
         <div id="event-settings">
@@ -140,4 +141,14 @@ $plugin_version = BPTPlugin::get_plugin_version();
     {{ #account }}
     <h1>Hi, {{ firstName }}</h1>
     {{ /account}}
+    <div class="bpt-status-box">
+
+    </div>
+    {{ #request }}
+        {{ #message }}
+            <div class="bpt-message-box">
+                <p class="{{ result === false ? 'bpt-error-message' : 'bpt-success-message' }} ">{{ message }} </p>
+            </div>
+        {{ /message}}
+    {{ /request }}
 </script>

@@ -292,6 +292,14 @@ class BPTPlugin {
     /**
      * Set the Default Values
      */
+    
+    private static function set_default_general_option_values() {
+        $setting_prefix = '_bpt_';
+        $section_suffix = '_general';
+
+        add_option( self::$menu_slug . $setting_prefix . '_bpt_cache_time' );
+    }
+
     private static function set_default_event_option_values() {
 
         $setting_prefix = '_bpt_';
@@ -320,6 +328,13 @@ class BPTPlugin {
         add_option( self::$menu_slug . $setting_prefix . 'show_sold_out_prices', 'false' );
     }
 
+    private static function remove_general_options() {
+        $setting_prefix = '_bpt_';
+        $section_suffix = '_general';
+
+        delete_option( self::$menu_slug . $setting_prefix . '_bpt_cache_time' );
+    }
+
     private static function remove_event_options() {
 
         $setting_prefix = '_bpt_';
@@ -328,24 +343,24 @@ class BPTPlugin {
         $date_section_title = 'Date Display Settings';
         $price_section_title = 'Price Display Settings';
 
-        delete_option( self::$menu_slug . 'show_full_description' );
+        delete_option( self::$menu_slug . $setting_prefix . 'show_full_description' );
 
         // Date Settings
-        delete_option( self::$menu_slug . 'show_dates' );
-        delete_option( self::$menu_slug . 'date_format' );
-        delete_option( self::$menu_slug . 'time_format' );
+        delete_option( self::$menu_slug . $setting_prefix . 'show_dates' );
+        delete_option( self::$menu_slug . $setting_prefix . 'date_format' );
+        delete_option( self::$menu_slug . $setting_prefix . 'time_format' );
 
-        delete_option( self::$menu_slug . 'show_sold_out_dates' );
-        delete_option( self::$menu_slug . 'show_past_dates' );
-        delete_option( self::$menu_slug . 'show_end_time' );
+        delete_option( self::$menu_slug . $setting_prefix . 'show_sold_out_dates' );
+        delete_option( self::$menu_slug . $setting_prefix . 'show_past_dates' );
+        delete_option( self::$menu_slug . $setting_prefix . 'show_end_time' );
 
         // Price Settings
-        delete_option( self::$menu_slug . 'show_prices' );
-        delete_option( self::$menu_slug . 'shipping_methods' );
-        delete_option( self::$menu_slug . 'shipping_countries' );
-        delete_option( self::$menu_slug . 'currency' );
-        delete_option( self::$menu_slug . 'price_sort' );
-        delete_option( self::$menu_slug . 'show_sold_out_prices' );
+        delete_option( self::$menu_slug . $setting_prefix . 'show_prices' );
+        delete_option( self::$menu_slug . $setting_prefix . 'shipping_methods' );
+        delete_option( self::$menu_slug . $setting_prefix . 'shipping_countries' );
+        delete_option( self::$menu_slug . $setting_prefix . 'currency' );
+        delete_option( self::$menu_slug . $setting_prefix . 'price_sort' );
+        delete_option( self::$menu_slug . $setting_prefix . 'show_sold_out_prices' );
     }
 
 
@@ -410,6 +425,38 @@ class BPTPlugin {
      * AJAX Stuff
      */
     public function bpt_api_ajax() {
+
+        $cache_time = get_option('_bpt_cache_time');
+
+        $time_unit = $cache_time['unit'];
+
+        $time_increment = $cache_time['increment'];
+
+        $cache_time = 0;
+
+        $cache_data = true;
+
+        if ($time_increment === 'minutes') {
+            $cache_time = $time_unit * MINUTE_IN_SECONDS;
+        }
+
+        if ($time_increment === 'hours') {
+            $cache_time = $time_unit * HOUR_IN_SECONDS;
+        }        
+
+        if ($time_increment === 'days') {
+
+            $cache_time = $time_unit * DAY_IN_SECONDS;
+        }
+
+        if ( $time_unit === 0 ) {
+            $cache_time = 0;
+        }
+
+        if ( $time_increment === 'false' ) {
+            $cache_data = false;
+        }
+
         header('Content-type: application/json');
 
         if ( $_POST['bptData'] === 'account' ) {
@@ -434,6 +481,47 @@ class BPTPlugin {
             exit( $response );
         }
 
+        if ( $_POST['bptData'] === 'refreshEvents' ) {
+
+            $nonce = $_POST['bptNonce'];
+
+            if ( ! wp_verify_nonce( $nonce, 'bpt-nonce' ) ) {
+                exit(
+                    json_encode(
+                        array(
+                            'error' => 'Could not obtain events.'
+                        )
+                    )
+                );
+            }
+
+            $events = new BPTFeed;
+
+            $transientDelete = delete_transient( '_bpt_json_events' );
+
+            $transientSet = set_transient( '_bpt_json_events', $events->get_json_events(), $cache_time );
+
+            if ( $transientDelete && $transientSet ) {
+                $response = json_encode(
+                    array(
+                        'message' => 'Event cache has been updated.',
+                        'result' => $transientSet
+                    )
+                );
+
+            } else {
+                $response = json_encode(
+                    array(
+                        'message' => 'Event Cache could not be updated',
+                        'result' => false
+                    )
+                );
+            }
+            
+            exit( $response );
+        }
+
+
         if ( $_POST['bptData'] === 'events' ) {
 
             $nonce = $_POST['bptEventFeedNonce'];
@@ -447,13 +535,25 @@ class BPTPlugin {
                     )
                 );
             }
-
             $events = new BPTFeed;
 
-            $response = $events->get_json_events();
+            if ( get_transient( '_bpt_json_events' ) === false && $cache_data === true ) {
+                set_transient( '_bpt_json_events', $events->get_json_events(), $cache_time );
+                
+                $response = get_transient( '_bpt_json_events' );
+                exit( $response );
 
-            exit($response);
+            }
 
+            if ( $cache_data === true ) {
+
+                $response = get_transient( '_bpt_json_events' );
+                exit( $response );
+            }
+
+            if ( $cache_data === false ) {
+                exit( $events->get_json_events() );
+            }
         }
 
         if ( $_POST['bptData'] === 'accountTest' ) {
@@ -495,9 +595,18 @@ class BPTPlugin {
                 );
             }
 
-            $account = new BPTFeed;
 
-            $response = $account->bpt_setup_wizard_test($dev_id, $client_id);
+            if ( !get_transient( 'bpt_user_account_info' ) ) {
+
+                $response = $account->bpt_setup_wizard_test($dev_id, $client_id);
+                
+                $account = new BPTFeed;
+
+                set_transient( '_bpt_user_account_info', $response, 0 );
+                
+            } else {
+                $response = get_transient( 'bpt_user_account_info' );
+            }
 
             exit($response);
 

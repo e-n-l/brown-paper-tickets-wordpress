@@ -645,24 +645,28 @@ class BPTSettingsFields {
 
     public function get_cache_time_input() {
         $increment = 1;
+        $cache_time = get_option( '_bpt_cache_time' );
         ?>
             <div class="cache-time-wrapper">
                 <label for="cache-time-increment">Time</label>
-                <select id="cache-time-increment" name="_bpt_cache_time['increment']" value="<?php echo get_option('_bpt_cache_time'); ?>">
-                    <option value="0" <?php echo $this->is_selected( '0', "_bpt_cache_time['increment']", 'selected' );?>>Never Expire</option>
+                <select id="cache-time-increment" name="_bpt_cache_time[increment]">
+                    <option value="false" <?php echo selected( $cache_time['increment'], '0' );?>>Do Not Cache</option>
+                    <option value="0" <?php echo selected( $cache_time['increment'], '0' );?>>Cache Indefinitely</option>
                 <?php 
                     while ( $increment < 50 ) {
-                        echo '<option value="{$icrement}"' . $this->is_selected( $increment, "_bpt_cache_time['increment']", 'selected' ) . '>' . $increment . '</option>';
+                        echo '<option value="' . $increment . '"' . selected( $cache_time['increment'], $increment ) . '>' . $increment . '</option>';
                         $increment++;
                     }
                 ?>
                 </select>
-                <label for="cache-time-unit">
-                <select id="cache-time-unit" name="_bpt_cache_time['unit']">
-                    <option value="minutes" <?php echo $this->is_selected('hours', "_bpt_cache_time['hours']", 'selected'); ?>>Minutes</option>
-                    <option value="hours" <?php echo $this->is_selected('hours', "_bpt_cache_time['hours']", 'selected'); ?>>Hours</option>
-                    <option value="days" <?php echo $this->is_selected('hours', "_bpt_cache_time['hours']", 'selected'); ?>>Days</option>
+                <label for="cache-time-unit"></label>
+                <select id="cache-time-unit" name="_bpt_cache_time[unit]">
+                    <option value="minutes" <?php selected( $cache_time['unit'], 'minutes' ); ?>>Minutes</option>
+                    <option value="hours" <?php selected( $cache_time['unit'], 'hours' ); ?>>Hours</option>
+                    <option value="days" <?php selected( $cache_time['unit'], 'days' ); ?>>Days</option>
                 </select>
+
+
                 <div class="<?php echo BPTPlugin::get_menu_slug(); ?>_help">
                     <span>?</span>
                     <div>
@@ -670,6 +674,11 @@ class BPTSettingsFields {
                         <p>Setting this option will decrease the amount of time it takes for the data to load</p>
                         <p></p>
                     </div>
+                </div>
+                <div>
+                    <p>By clicking the "Refresh Events" button, you will trigger the plugin to reload your event data.</p>
+                    <button class="button-secondary" id="bpt-refresh-events">Refresh Events</button>
+                    <img class="bpt-loading hidden" src="<?php echo plugins_url( '/assets/img/loading.gif', dirname( __FILE__ ) ); ?>">
                 </div>
             </div>
         <?php

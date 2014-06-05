@@ -112,6 +112,42 @@
             }).fail(function(data) {
 
             });
+        },
+        refreshEvents: function refreshEvents() {
+            $.ajax(
+                bptWP.ajaxurl,
+                {
+                    type: 'POST',
+                    data: {
+                        // wp ajax action
+                        action : 'bpt_api_ajax',
+                        // vars
+                        // send the nonce along with the request
+                        bptNonce : bptWP.bptNonce,
+                        bptData: 'refreshEvents',
+                    },
+                    accepts: 'json',
+                    dataType: 'json'
+
+                }
+            )
+            .always(function() {
+                $('.bpt-loading').hide();
+                
+            }).done(function(data) {
+
+                $('.bpt-loading').hide();
+                $('#bpt-refresh-events').show();
+                
+                bptWelcomePanel.set({
+                    request: {
+                        result: data.result,
+                        message: data.message
+                    }
+                });
+            }).fail(function(data) {
+
+            });
         }
     }
 
@@ -147,11 +183,29 @@
             $('.bpt-welcome-panel').toggle();
         });
 
+        $('#bpt-refresh-events').click(function(event) {
+            event.preventDefault();
+            $('.bpt-loading').show();
+            bptAPI.refreshEvents();
+        });
+
         bptWelcomePanel = new Ractive({
             el: '.bpt-welcome-panel-content',
             template: '#bpt-welcome-panel-template',
             data: {}
         });
+
+        bptWelcomePanel.observe('request.messsage', function() {
+            setTimeout( function() {
+                bptWelcomePanel.set({
+                    request: {
+                        message: undefined
+                    }
+                });
+            }, 5000);
+        })
+
+        bptWelcomePanel.animate()
 
         bptAPI.getAccount();
 
