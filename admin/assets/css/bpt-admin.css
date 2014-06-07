@@ -13,19 +13,15 @@ input[type="file"] > input[type="button"]::-moz-focus-inner {
  */
 
 .bpt-error-message {
-    padding: 10px;
-    width: max-content;
-    width: -moz-max-content;
-    background: red;
-    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    color: #be1e2d;
 }
 
 .bpt-success-message {
-    padding: 10px;
-    width: max-content;
-    width: -moz-max-content;
-    background: green;
-    color: #fff;
+    font-weight: bold;
+    color: #8cc63e;
+    text-align: center;
 }
 
 /**
@@ -86,6 +82,22 @@ div#bpt-settings-wrapper {
 #bpt-settings-wrapper th {
     color: #777777;
     font-weight: normal;
+}
+
+#bpt-settings-wrapper p {
+    line-height: 1.2em;
+    margin: 10px 0;
+}
+
+.bpt-advanced-options {
+    border: 1px solid #D1D2D4;
+    width: max-content;
+    width: -moz-max-content;
+    margin: 20px 0;
+    padding: 15px;
+    background: #eee;
+    border-radius: 5px;
+    text-align: center;
 }
 /**
  * Help Pop Ups
@@ -173,4 +185,14 @@ div.brown_paper_tickets_settings_help {
 
 .bpt-inline {
     display: inline;
+}
+
+/**
+ * General Settings Tab
+ */
+
+
+
+button#bpt-refresh-events {
+
 }

@@ -2,7 +2,7 @@
     'use strict';
 
     var bptAPI,
-        bptWizardNav,
+        BptWizardNav,
         bptSetupWizard;
 
     bptAPI = {
@@ -112,10 +112,10 @@
             })
             .done(function(data) {
                 console.log(data);
-                $('.bpt-setup-wizard-save').text('Saved')
+                $('.bpt-setup-wizard-save').text('Saved');
 
                 setTimeout(function() {
-                    $('.bpt-setup-wizard-save').text('Save Settings')
+                    $('.bpt-setup-wizard-save').text('Save Settings');
                 }, 3000);
 
             });
@@ -134,9 +134,9 @@
      * @param  string stepContainers The selector used for each step. 
      * @return void
      */
-    bptWizardNav = function bptWizardNav(prevButton, nextButton, stepContainers) {
+    BptWizardNav = function BptWizardNav(prevButton, nextButton, stepContainers) {
 
-        this.init =  function init () {
+        this.init = function init () {
     
             var parent = this;
 
@@ -165,7 +165,6 @@
                 parent.prevStep(currentStep);
             });
 
-            return this;
             
         };
         
@@ -174,9 +173,6 @@
         this.stepContainers = [];
 
         this.setStepContainers = function setStepContainers(stepContainers) {
-
-            var steps = $(stepContainers).toArray();
-
             this.stepContainers =  $(stepContainers).toArray();
         };
 
@@ -303,7 +299,7 @@
             $('.bpt-setup-wizard-advanced-settings').toggle();
         });
 
-        var stepNav = new bptWizardNav('.bpt-setup-wizard-prev-step', '.bpt-setup-wizard-next-step', '.bpt-setup-wizard');
+        var stepNav = new BptWizardNav('.bpt-setup-wizard-prev-step', '.bpt-setup-wizard-next-step', '.bpt-setup-wizard');
 
     });
 

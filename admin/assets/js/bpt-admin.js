@@ -96,7 +96,7 @@
                     data: {
                         // wp ajax action
                         action : 'bpt_api_ajax',
-                        // vars
+                        // varsx
                         // send the nonce along with the request
                         bptNonce : bptWP.bptNonce,
                         bptData: 'account',
@@ -110,7 +110,9 @@
                     account: data
                 });
             }).fail(function(data) {
-
+                bptWelcomePanel.set({
+                    error: data
+                })
             });
         },
         refreshEvents: function refreshEvents() {
@@ -138,15 +140,24 @@
 
                 $('.bpt-loading').hide();
                 $('#bpt-refresh-events').show();
-                
-                bptWelcomePanel.set({
-                    request: {
-                        result: data.result,
-                        message: data.message
-                    }
-                });
-            }).fail(function(data) {
 
+                $('.bpt-advanced-options .bpt-success-message')
+                .text(data.message)
+                .fadeIn(500)
+                .delay(2000)
+                .fadeOut(500);
+                // bptWelcomePanel.set({
+                //     request: {
+                //         result: data.result,
+                //         message: data.message
+                //     }
+                // });
+            }).fail(function(data) {
+                $('.bpt-advanced-options .bpt-error-message')
+                .text(data.message)
+                .fadeIn(500)
+                .delay(2000)
+                .fadeOut(500);
             });
         }
     }
@@ -194,18 +205,6 @@
             template: '#bpt-welcome-panel-template',
             data: {}
         });
-
-        bptWelcomePanel.observe('request.messsage', function() {
-            setTimeout( function() {
-                bptWelcomePanel.set({
-                    request: {
-                        message: undefined
-                    }
-                });
-            }, 5000);
-        })
-
-        bptWelcomePanel.animate()
 
         bptAPI.getAccount();
 

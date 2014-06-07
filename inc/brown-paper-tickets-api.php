@@ -2,7 +2,7 @@
 
 namespace BrownPaperTickets;
 
-require_once( plugin_dir_path( __FILE__ ).'/../lib/BptAPI/vendor/autoload.php');
+require_once( plugin_dir_path( __FILE__ ).'/../lib/BptAPI/vendor/autoload.php' );
 use BrownPaperTickets\APIv2\EventInfo;
 use BrownPaperTickets\APIv2\AccountInfo;
 /**
@@ -12,287 +12,263 @@ use BrownPaperTickets\APIv2\AccountInfo;
 
 class BPTFeed {
 
-    protected $dev_id;
-    protected $client_id;
+	protected $dev_id;
+	protected $client_id;
 
-    public function __construct() {
+	public function __construct() {
 
-        $this->dev_id = get_option('_bpt_dev_id');
-        $this->client_id = get_option('_bpt_client_id');
+		$this->dev_id    = get_option( '_bpt_dev_id' );
+		$this->client_id = get_option( '_bpt_client_id' );
 
-    }
+	}
 
-    public function get_all_events_for_account() {
+	/**
+	 * JSON Functions
+	 */
 
-        $events = new EventInfo($this->dev_id);
 
-        return $events->getEvents( $this->client_id, null, true, true );
-    }
+	/**
+	 * Returns a json string of a specific producers events.
+	 * @param  string  $client_id The Client ID of the producer you wish
+	 * to get the events of.
+	 * @param  boolean $dates Get prices? Default is false.
+	 * @param  boolean $prices Get Prices? Default is false.
+	 * @return json              The JSON string of the event Data.
+	 */
+	public function get_json_producer_events( $client_id, $dates = false, $prices = false ) {
 
+		$events = new EventInfo( $this->dev_id );
 
-    /**
-     * JSON Functions
-     */
+		return json_encode( $events->getEvents( $client_id, null, $dates, $prices ) );
+	}
 
-    public function get_json_events() {
-        /**
-         * Get Event List Setting Options
-         * 
-         */
-        $_bpt_dates = get_option('_bpt_show_dates');
-        $_bpt_prices = get_option('_bpt_show_prices');
-        $_bpt_show_past_dates = get_option('_bpt_show_past_dates');
-        $_bpt_show_sold_out_dates = get_option('_bpt_show_sold_out_dates');
-        $_bpt_show_sold_out_prices = get_option('_bpt_show_sold_out_prices');
 
-        $_bpt_events = new EventInfo($this->dev_id);
+	public function get_json_events() {
+		/**
+		 * Get Event List Setting Options
+		 * 
+		 */
+		$_bpt_dates                = get_option( '_bpt_show_dates' );
+		$_bpt_prices               = get_option( '_bpt_show_prices' );
+		$_bpt_show_past_dates      = get_option( '_bpt_show_past_dates' );
+		$_bpt_show_sold_out_dates  = get_option( '_bpt_show_sold_out_dates' );
+		$_bpt_show_sold_out_prices = get_option( '_bpt_show_sold_out_prices' );
 
-        $_bpt_eventList = $_bpt_events->getEvents($this->client_id, null, $_bpt_dates, $_bpt_prices);
+		$_bpt_events = new EventInfo( $this->dev_id );
 
-        $_bpt_eventList = $this->sort_prices( $_bpt_eventList );
+		$_bpt_eventList = $_bpt_events->getEvents( $this->client_id, null, $_bpt_dates, $_bpt_prices );
 
-        if ( $_bpt_dates === 'true' && $_bpt_show_past_dates === 'false' ) {
-            $_bpt_eventList = $this->remove_bad_dates( $_bpt_eventList );
-        }
+		$_bpt_eventList = $this->sort_prices( $_bpt_eventList );
 
-        if ( $_bpt_prices === 'true ' && $_bpt_show_sold_out_prices === 'false' ) {
-            $_bpt_eventList = $this->remove_bad_prices( $_bpt_eventList );   
-        }
-        
-        return json_encode( $_bpt_eventList );
+		if ( $_bpt_dates === 'true' && $_bpt_show_past_dates === 'false' ) {
+			$_bpt_eventList = $this->remove_bad_dates( $_bpt_eventList );
+		}
 
-    }
+		if ( $_bpt_prices === 'true ' && $_bpt_show_sold_out_prices === 'false' ) {
+			$_bpt_eventList = $this->remove_bad_prices( $_bpt_eventList );   
+		}
+		
+		return json_encode( $_bpt_eventList );
+
+	}
 
-    public function get_json_account() {
+	public function get_json_account() {
 
-        $_bpt_account = new AccountInfo($this->dev_id);
+		$_bpt_account = new AccountInfo( $this->dev_id );
 
-        return json_encode( $_bpt_account->getAccount($this->client_id ) );
-    }
+		return json_encode( $_bpt_account->getAccount( $this->client_id ) );
+	}
 
 
-    /**
-     * Simple Get Account Call for testing that the settings are correct.
-     * $dev_id and $client_id must be passed to the function.
-     */
+	/**
+	 * Simple Get Account Call for testing that the settings are correct.
+	 * $dev_id and $client_id must be passed to the function.
+	 */
 
-    public function bpt_setup_wizard_test($dev_id, $client_id) {
+	public function bpt_setup_wizard_test( $dev_id, $client_id ) {
 
-        $_bpt_account = new AccountInfo($dev_id);
-        $_bpt_event = new EventInfo($dev_id);
+		$_bpt_account = new AccountInfo( $dev_id );
+		$_bpt_event   = new EventInfo( $dev_id );
 
-        $response = array(
-            'account' => $_bpt_account->getAccount( $client_id),
-            'events' => $_bpt_event->getEvents( $client_id ) 
-        );
+		$response = array(
+			'account' => $_bpt_account->getAccount( $client_id ),
+			'events'  => $_bpt_event->getEvents( $client_id ),
+		);
 
-        return json_encode( $response );
-    }
+		return json_encode( $response );
+	}
 
-    /**
-     * View Rendering Functions
-     */
+	/**
+	 * Event Methods
+	 */
+	
+	public function get_event_count() {
+		$events = new EventInfo( $this->dev_id );
+		return count( $events->getEvents( $this->client_id ) );
+	}
+	/**
+	 * Date Methods
+	 * 
+	 */
+	public function date_has_past( $date ) {
 
-    public function get_event_html() {
+		if ( strtotime( $date['dateStart'] ) < time() ) {
+			return true;
+		}
+		return false;
+	}
 
-        $events = $this->get_all_events_for_account();
+	public function date_is_live( $date ) {
 
-        if ( isset( $events['result'] ) and $events['result'] == 'fail' ) {
-            return $this->generate_error_html($events);
-        }
+		if ( $date['live'] === false ) {
+			return false;
+		}
 
-        return $this->generate_event_html($events);
-    }
+		return true;
+	}
+
+	public function date_is_sold_out( $date ) {
+
+		if ( $this->date_has_past( $date ) === true && strtotime( $date['dateStart'] ) >= time() ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Price Methods
+	 */
+
+	public function price_is_live( $price ) {
+
+		if ( $price['live'] === false ) {
+			return false;
+		}
+
+		return true;
+	}
 
-    public function generate_event_html($events) {
-        require_once( plugin_dir_path( __FILE__ ).'/../public/event-partial.php' );
-    }
+	/**
+	 * Conversion Methods
+	 */
+	/**
+	 * Convert Date. Converst the Date to a human readable date.
+	 * 
+	 * @param  string $date The String that needs to be formatted.
+	 * @return string       The formatted date string.
+	 */
+	public function convert_date( $date ) {
+		return strftime( '%B %e, %Y', strtotime( $date ) );
+	}
 
-    public function generate_date_html($dates, $event_id) {
-        require_once( plugin_dir_path( __FILE__ ).'/../public/date-partial.php' );
-    }
+	/**
+	 * Convert Time. Converst the Time to a human readable date.
+	 * @param  string $time The string to be formated.
+	 * @return string       The formatted string.
+	 */
+	public function convert_time( $date ) {
+		return strftime( '%l:%M%p', strtotime( $date ) );
+	}
 
-    public function generate_price_html($prices) {
-        require_once( plugin_dir_path( __FILE__ ).'/../public/price-partial.php' );
-    }
-
-    public function generate_error_html($error) {
-        require_once( plugin_dir_path( __FILE__ ).'/../public/error-partial.php' );
-    }
-
-    /**
-     * Event Methods
-     */
-    
-    public function get_event_count() {
-        $events = new EventInfo($this->dev_id);
-        return count( $events->getEvents( $this->client_id ) );
-    }
-    /**
-     * Date Methods
-     * 
-     */
-    public function date_has_past($date) {
-
-        if ( strtotime($date['dateStart'] ) < time() ) {
-            return true;
-        }
-        return false;
-    }
-
-    public function date_is_live($date) {
-
-        if ( $date['live'] === false ) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function date_is_sold_out($date) {
-
-        if ( $this->date_has_past( $date ) === true && strtotime( $date['dateStart'] ) >= time() ) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Price Methods
-     */
-
-    public function price_is_live($price) {
-
-        if ( $price['live'] === false) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Conversion Methods
-     */
-    /**
-     * Convert Date. Converst the Date to a human readable date.
-     * 
-     * @param  string $date The String that needs to be formatted.
-     * @return string       The formatted date string.
-     */
-    public function convert_date($date) {
-        return strftime("%B %e, %Y", strtotime( $date ) );
-    }
+	protected function remove_bad_dates( $_bpt_eventList ) {
 
-    /**
-     * Convert Time. Converst the Time to a human readable date.
-     * @param  string $time The string to be formated.
-     * @return string       The formatted string.
-     */
-    public function convert_time( $date ) {
-        return strftime( "%l:%M%p", strtotime( $date ) ) ;
-    }
+		foreach ( $_bpt_eventList as $eventIndex => $event ) {
 
-    protected function remove_bad_dates($_bpt_eventList) {
+			foreach ( $event['dates'] as $dateIndex => $date ) {
+				
+				if ( $this->date_has_past( $date ) || ! $this->date_is_live( $date ) ) {
 
-        foreach ( $_bpt_eventList as $eventIndex => $event ) {
+					unset( $event['dates'][$dateIndex] );
+				}
+			}
 
-            foreach ($event['dates'] as $dateIndex => $date) {
-                
-                if ( $this->date_has_past( $date ) || !$this->date_is_live( $date ) ) {
+			$event['dates'] = array_values( $event['dates'] );
 
-                    unset( $event['dates'][$dateIndex] );
-                }
+			$_bpt_eventList[$eventIndex] = $event;
+		}
 
-            }
+		return $_bpt_eventList;
+	}
 
-            $event['dates'] = array_values( $event['dates'] );
+	protected function remove_bad_prices( $_bpt_eventList ) {
+		foreach ( $eventList as $eventIndex => $event ) {
 
-            $_bpt_eventList[$eventIndex] = $event;
-        }
+			foreach ( $event['dates'] as $dateIndex => $date ) {
+				
+				foreach ( $date['prices'] as $priceIndex => $price ) {
 
-        return $_bpt_eventList;
-    }
+					if ( $this->price_is_live( $price ) === false ) {
+						unset( $date['prices'][$priceIndex] );
+					}
+				}
+				
+				$date['prices'] = array_values( $date['prices'] );
 
-    protected function remove_bad_prices( $_bpt_eventList ) {
-        foreach ( $eventList as $eventIndex => $event ) {
+				$event['dates'][$dateIndex] = $date;
+			}
 
-            foreach ( $event['dates'] as $dateIndex => $date ) {
-                
-                foreach ( $date['prices'] as $priceIndex => $price ) {
+			$_bpt_eventList[$eventIndex] = $event;
+		}
 
-                    if ( $this->price_is_live( $price ) === false ) {
-                        unset( $date['prices'][$priceIndex] );
-                    }
+		return $_bpt_eventList;
+	}
 
-                }
-                
-                $date['prices'] = array_values( $date['prices'] );
+	protected function sort_prices( $_bpt_eventList ) {
+		$sort_method = get_option( '_bpt_price_sort' );
 
-                $event['dates'][$dateIndex] = $date;
-            }
+		foreach ( $_bpt_eventList as $eventIndex => $event ) {
 
-            $_bpt_eventList[$eventIndex] = $event;
-        }
+			foreach ( $event['dates'] as $dateIndex => $date ) {
+				
+				if ( $sort_method === 'alpha_asc' ) {
+					$date['prices'] = $this->sort_by_key( $date['prices'], 'name', true );
+				}
+				
+				if ( $sort_method === 'alpha_desc' ) {
+					$date['prices'] = $this->sort_by_key( $date['prices'], 'name' );
+				}
 
-        return $_bpt_eventList;
-    }
+				if ( $sort_method === 'value_desc' ) {
+					$date['prices'] = $this->sort_by_key( $date['prices'], 'value', true );
+				}
 
-    protected function sort_prices( $_bpt_eventList ) {
-        $sort_method = get_option('_bpt_price_sort');
+				if ( $sort_method === 'value_asc' )  {
+					$date['prices'] = $this->sort_by_key( $date['prices'], 'value' );
+				}
 
-        foreach ( $_bpt_eventList as $eventIndex => $event ) {
+				$event['dates'][$dateIndex] = $date;
+			}
 
-            foreach ( $event['dates'] as $dateIndex => $date ) {
-                
-                if ($sort_method === 'alpha_asc') {
-                    $date['prices'] = $this->sortByKey($date['prices'], 'name', true);
-                }
-                
-                if ($sort_method === 'alpha_desc') {
-                    $date['prices'] = $this->sortByKey($date['prices'], 'name');
-                }
+			$_bpt_eventList[$eventIndex] = $event;
+		}
 
-                if ($sort_method === 'value_desc') {
-                    $date['prices'] = $this->sortByKey($date['prices'], 'value', true);
-                }
+		return $_bpt_eventList;
+	}
 
-                if ($sort_method === 'value_asc') {
-                    $date['prices'] = $this->sortByKey($date['prices'], 'value');
-                }
+	protected function sort_by_key( $array, $key, $reverse = false ) {
 
-                $event['dates'][$dateIndex] = $date;
-            }
+		//Loop through and get the values of our specified key
+		foreach ( $array as $k => $v ) {
+			$b[] = strtolower( $v[$key] );
+		}
 
-            $_bpt_eventList[$eventIndex] = $event;
-        }
+		if ( $reverse === false ) {
 
-        return $_bpt_eventList;
-    }
+			asort( $b );
 
-    protected function sortByKey($array, $key, $reverse = false) {
+		} else {
 
-        //Loop through and get the values of our specified key
-        foreach ( $array as $k => $v ) {
-            $b[] = strtolower( $v[$key] );
-        }
+			arsort( $b );
 
-        if ( $reverse === false ) {
+		}
+		
+		foreach ( $b as $k => $v ) {
+			$c[] = $array[$k];
+		}
 
-            asort( $b );
+		return $c;
 
-        } else {
-
-            arsort( $b );
-
-        }
-        
-        foreach ( $b as $k => $v ) {
-            $c[] = $array[$k];
-        }
-
-        return $c;
-
-    }
+	}
 
 }
