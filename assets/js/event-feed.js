@@ -14,10 +14,9 @@
                     type: 'POST',
                     data: {
                         // wp ajax action
-                        action : 'bpt_api_ajax',
+                        action : 'bpt_get_events',
                         // send the nonce along with the request
-                        bptEventFeedNonce : bptEventFeedAjax.bptEventFeedNonce,
-                        bptData: 'events',
+                        bptNonce : bptEventFeedAjax.bptNonce,
                     },
                     accepts: 'json',
                     dataType: 'json'

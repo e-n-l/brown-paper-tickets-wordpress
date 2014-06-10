@@ -86,7 +86,7 @@
 		</p>
 
 		<div>
-			<button class="bpt-setup-wizard-ajax-call button-secondary">Test Account</button><img class="bpt-loading hidden" src="<?php echo esc_url( plugins_url( '/assets/img/loading.gif', dirname( __FILE__ ) ) ); ?>">
+			<button class="bpt-setup-wizard-test-account button-secondary">Test Account</button><img class="bpt-loading hidden" src="<?php echo esc_url( plugins_url( '/assets/img/loading.gif', dirname( __FILE__ ) ) ); ?>">
 			<div id="bpt-setup-wizard-response"></div>
 		</div>
 	</div>

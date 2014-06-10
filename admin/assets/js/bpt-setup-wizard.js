@@ -24,13 +24,12 @@
                     type: 'POST',
                     data: {
                         // wp ajax action
-                        action : 'bpt_api_ajax',
+                        action : 'bpt_account_test',
                         // vars
                         devID : $('input[name="_bpt_dev_id"]').val(),
                         clientID : $('input[name="_bpt_client_id"]').val(),
                         // send the nonce along with the request
-                        bptSetupWizardNonce : bptSetupWizardAjax.bptSetupWizardNonce,
-                        bptData: 'accountTest',
+                        bptNonce: bptSetupWizardAjax.bptSetupWizardNonce,
                     },
                     accepts: 'json',
                     dataType: 'json'
@@ -46,6 +45,14 @@
                 });
             })
             .done(function(data) {
+
+                if ( data.error === 'No Developer ID.') {
+                    bptSetupWizard.set({
+                        accountError: data.error
+                    });
+
+                    return;
+                }
 
                 if (data.account.result || data.events.result) {
                     
@@ -276,7 +283,7 @@
             }
         });
 
-        $('.bpt-setup-wizard-ajax-call').click(function(event) {
+        $('.bpt-setup-wizard-test-account').click(function(event) {
             event.preventDefault();
             bptAPI.getAccount();
         });

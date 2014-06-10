@@ -95,7 +95,7 @@
                     type: 'POST',
                     data: {
                         // wp ajax action
-                        action : 'bpt_api_ajax',
+                        action : 'bpt_get_account',
                         // varsx
                         // send the nonce along with the request
                         bptNonce : bptWP.bptNonce,
@@ -112,21 +112,20 @@
             }).fail(function(data) {
                 bptWelcomePanel.set({
                     error: data
-                })
+                });
             });
         },
-        refreshEvents: function refreshEvents() {
+        deleteCache: function deleteCache() {
             $.ajax(
                 bptWP.ajaxurl,
                 {
                     type: 'POST',
                     data: {
                         // wp ajax action
-                        action : 'bpt_api_ajax',
+                        action : 'bpt_delete_cache',
                         // vars
                         // send the nonce along with the request
                         bptNonce : bptWP.bptNonce,
-                        bptData: 'refreshEvents',
                     },
                     accepts: 'json',
                     dataType: 'json'
@@ -160,7 +159,7 @@
                 .fadeOut(500);
             });
         }
-    }
+    };
 
 
 
@@ -194,10 +193,10 @@
             $('.bpt-welcome-panel').toggle();
         });
 
-        $('#bpt-refresh-events').click(function(event) {
+        $('#bpt-delete-cache').click(function(event) {
             event.preventDefault();
             $('.bpt-loading').show();
-            bptAPI.refreshEvents();
+            bptAPI.deleteCache();
         });
 
         bptWelcomePanel = new Ractive({

@@ -3,6 +3,7 @@
 namespace BrownPaperTickets;
 
 use BrownPaperTickets\BPTFeed;
+use BrownPaperTickets\BPTPlugin;
 
 class BPTCalendarWidget extends \WP_Widget {
 
@@ -55,8 +56,11 @@ class BPTCalendarWidget extends \WP_Widget {
 		$title        = apply_filters( 'widget_title', self::get_title( $instance ) );
 		$display_type = self::get_display_type( $instance );
 		$client_id    = self::get_client_id( $instance );
+		$widget_id    = $args['widget_id'];
 
 		if ( is_active_widget( false, false, $this->id_base, true ) ) {
+
+			BPTPlugin::load_ajax_required();
 
 			wp_enqueue_script( 'bpt_clndr_min_js', plugins_url( '/assets/js/clndr.min.js', dirname( __FILE__ ) ), array( 'underscore' ) ); 
 			wp_enqueue_script( 'bpt_calendar_widget_js', plugins_url( '/assets/js/bpt-calendar-widget.js', dirname( __FILE__ ) ), array( 'jquery' ) );
@@ -64,10 +68,9 @@ class BPTCalendarWidget extends \WP_Widget {
 			wp_localize_script(
 				'bpt_calendar_widget_js', 'bptCalendarWidgetAjax', array(
 					'ajaxurl'     => admin_url( 'admin-ajax.php' ),
-					'bptNonce'    => wp_create_nonce( 'bpt-nonce' ),
-					'displayType' => $display_type,
+					'bptNonce'    => wp_create_nonce( 'bpt-calendar-widget-nonce' ),
 					'clientID'    => $client_id,
-					'widgetID'    => $args['widget_id'],
+					'widgetID'    => $widget_id,
 				)
 			);
 		}
@@ -79,12 +82,11 @@ class BPTCalendarWidget extends \WP_Widget {
 		}
 
 		?>
-			<div class="bpt-calendar-widget">
-
+			<div class="bpt-calendar-widget" data-bpt-widget-id="<?php esc_attr_e( $widget_id ); ?>">
+				
 			</div>
 		<?php
 
-		echo esc_html(  __( 'Hello, World!', 'text_domain' ) );
 		echo wp_kses_post( $args['after_widget'] );
 	}
 

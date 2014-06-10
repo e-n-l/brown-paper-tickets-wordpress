@@ -9,12 +9,12 @@ const VERSION = '0.1';
 
 const PLUGIN_SLUG = 'brown_paper_tickets';
 
-require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-api.php' );
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-settings-fields.php' );
+require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-ajax.php' );
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-widgets.php' );
 
-use BrownPaperTickets\BPTFeed;
 use BrownPaperTickets\BPTSettingsFields;
+use BrownPaperTickets\BPTAjaxActions;
 use BrownPaperTickets\BPTWidgets;
 
 class BPTPlugin {
@@ -117,7 +117,11 @@ class BPTPlugin {
 	}
 
 	public function load_shared() {
-		add_action( 'wp_ajax_bpt_api_ajax', array( $this, 'bpt_api_ajax' ) );
+		add_action( 'wp_ajax_bpt_get_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_events' ) );
+		add_action( 'wp_ajax_bpt_get_account', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_account' ) );
+		add_action( 'wp_ajax_bpt_get_calendar_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_calendar_events' ) );
+		add_action( 'wp_ajax_bpt_delete_cache', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_delete_cache' ) );
+		add_action( 'wp_ajax_bpt_account_test', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_account_test' ) );
 
 		add_action(
 			'widgets_init', function() {
@@ -137,7 +141,7 @@ class BPTPlugin {
 
 		if ( $hook === 'toplevel_page_brown_paper_tickets_settings' ) {
 
-			$this->load_ajax_required();
+			self::load_ajax_required();
 
 			wp_enqueue_style( 'bpt_admin_css', plugins_url( '/admin/assets/css/bpt-admin.css', dirname( __FILE__ ) ), false, VERSION );
 
@@ -145,14 +149,14 @@ class BPTPlugin {
 			wp_localize_script(
 				'bpt_admin_js', 'bptWP', array(
 					'ajaxurl' => admin_url( 'admin-ajax.php' ),
-					'bptNonce' => wp_create_nonce( 'bpt-nonce' ),
+					'bptNonce' => wp_create_nonce( 'bpt-admin-nonce' ),
 				)
 			);
 		}
 		
 		if ( $hook === 'admin_page_brown_paper_tickets_settings_setup_wizard' ) {
 
-			$this->load_ajax_required();
+			self::load_ajax_required();
 			
 			wp_enqueue_style( 'bpt_admin_css', plugins_url( '/admin/assets/css/bpt-admin.css', dirname( __FILE__ ) ), false, VERSION );
 
@@ -170,7 +174,7 @@ class BPTPlugin {
 		}
 	}
 
-	public function load_ajax_required() {
+	public static function load_ajax_required() {
 
 		// Include Ractive Templates
 		wp_enqueue_script( 'ractive_js', plugins_url( '/assets/js/ractive.js', dirname( __FILE__ ) ), array() );
@@ -184,7 +188,7 @@ class BPTPlugin {
 
 		if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-events' ) ) {
 
-			$this->load_ajax_required();
+			self::load_ajax_required();
 
 			wp_enqueue_script( 'event_feed_js', plugins_url( '/assets/js/event-feed.js', dirname( __FILE__ ) ), array( 'jquery', 'underscore' ) ); 
 			wp_localize_script(
@@ -192,12 +196,13 @@ class BPTPlugin {
 				'bptEventFeedAjax',
 				array(
 					'ajaxurl' => admin_url( 'admin-ajax.php' ),
-					'bptEventFeedNonce' => wp_create_nonce( 'bpt-event-feed-nonce' ),
+					'bptNonce' => wp_create_nonce( 'bpt-event-list-nonce' ),
 				)
 			);
 
 			wp_enqueue_style( 'bpt_event_list_css', plugins_url( '/assets/css/bpt-event-list-shortcode.css', dirname( __FILE__ ) ), false, VERSION );
 		}
+
 	}
 
 	public function create_bpt_settings() {
@@ -248,6 +253,10 @@ class BPTPlugin {
 
 		register_setting( self::$menu_slug, $setting_prefix . 'show_wizard' );
 		register_setting( self::$menu_slug, $setting_prefix . 'cache_time' );
+		register_setting( self::$menu_slug, $setting_prefix . 'cache_unit' );
+
+		// Register the cached_data array. This is to keep track of the data we have cached.
+		register_setting( self::$menu_slug, $setting_prefix . 'cached_data' );
 
 		add_settings_section( $section_title, $section_title, null, self::$menu_slug . $section_suffix );
 
@@ -442,283 +451,6 @@ class BPTPlugin {
 
 	public function render_bpt_setup_wizard_page() {
 		require_once( plugin_dir_path( __FILE__ ) . '../admin/bpt-setup-wizard.php' );
-	}
-
-	/**
-	 * AJAX Stuff
-	 */
-	public function bpt_api_ajax() {
-
-		$cache_time = get_option( '_bpt_cache_time' );
-
-		$time_unit = $cache_time['unit'];
-
-		$time_increment = $cache_time['increment'];
-
-		$cache_time = 0;
-
-		$cache_data = true;
-
-		if ( $time_increment === 'minutes' ) {
-			$cache_time = $time_unit * MINUTE_IN_SECONDS;
-		}
-
-		if ( $time_increment === 'hours' ) {
-			$cache_time = $time_unit * HOUR_IN_SECONDS;
-		}        
-
-		if ( $time_increment === 'days' ) {
-
-			$cache_time = $time_unit * DAY_IN_SECONDS;
-		}
-
-		if ( $time_unit === 0 ) {
-			$cache_time = 0;
-		}
-
-		if ( $time_increment === 'false' ) {
-			$cache_data = false;
-		}
-
-		header( 'Content-type: application/json' );
-
-		if ( $_POST['bptData'] === 'account' ) {
-			$nonce = $_POST['bptNonce'];
-
-			if ( ! wp_verify_nonce( $nonce, 'bpt-nonce' ) ) {
-				exit(
-					json_encode(
-						array(
-							'error' => 'Could not obtain account info.',
-						)
-					)
-				);
-			}
-
-
-
-			$account = new BPTFeed;
-
-			$response = $account->get_json_account();
-
-			exit( $response );
-		}
-
-		/**
-		 * Force event reload
-		 */
-
-		if ( $_POST['bptData'] === 'refreshEvents' ) {
-
-			$nonce = $_POST['bptNonce'];
-
-			if ( ! wp_verify_nonce( $nonce, 'bpt-nonce' ) ) {
-				exit(
-					json_encode(
-						array(
-							'error' => 'Could not obtain events.',
-						)
-					)
-				);
-			}
-
-			$events = new BPTFeed;
-
-			$transientDelete = delete_transient( '_bpt_json_events' );
-
-			$transientSet = set_transient( '_bpt_json_events', $events->get_json_events(), $cache_time );
-
-			if ( $transientDelete && $transientSet ) {
-				$response = json_encode(
-					array(
-						'message' => 'Event cache has been updated.',
-						'result' => $transientSet,
-					)
-				);
-
-			} else {
-				$response = json_encode(
-					array(
-						'message' => 'Event Cache could not be updated',
-						'result' => false,
-					)
-				);
-			}
-			
-			exit( $response );
-		}
-
-
-		/**
-		 * Get the Events
-		 */
-		if ( $_POST['bptData'] === 'events' ) {
-
-			$nonce = $_POST['bptEventFeedNonce'];
-
-			if ( ! wp_verify_nonce( $nonce, 'bpt-event-feed-nonce' ) ) {
-				exit(
-					json_encode(
-						array(
-							'error' => 'Could not obtain events.',
-						)
-					)
-				);
-			}
-			$events = new BPTFeed;
-
-			if ( get_transient( '_bpt_json_events' ) === false && $cache_data === true ) {
-				set_transient( '_bpt_json_events', $events->get_json_events(), $cache_time );
-				
-				$response = get_transient( '_bpt_json_events' );
-				exit( $response );
-
-			}
-
-			if ( $cache_data === true ) {
-
-				$response = get_transient( '_bpt_json_events' );
-				exit( $response );
-			}
-
-			if ( $cache_data === false ) {
-				exit( $events->get_json_events() );
-			}
-		}
-
-		/**
-		 * Account Test Setup
-		 */
-
-		if ( $_POST['bptData'] === 'accountTest' ) {
-
-			$nonce = $_POST['bptSetupWizardNonce'];
-
-			if ( ! wp_verify_nonce( $nonce, 'bpt-setup-wizard-nonce' ) ) {
-				exit(
-					json_encode(
-						array(
-							'error' => 'Error.',
-						)
-					)
-				);
-			}
-
-			$dev_id = $_POST['devID'];
-
-			if ( $dev_id === null ) {
-				exit(
-					json_encode(
-						array(
-							'error' => 'No Developer ID.',
-						)
-					)
-				);
-			}
-
-
-			$client_id = $_POST['clientID'];
-
-			if ( $client_id === null ) {
-				exit(
-					json_encode(
-						array(
-							'error' => 'No Client ID.',
-						)
-					)
-				);
-			}
-
-
-			if ( ! get_transient( 'bpt_user_account_info' ) ) {
-
-				$account = new BPTFeed;
-				
-				$response = $account->bpt_setup_wizard_test( $dev_id, $client_id );
-
-				set_transient( '_bpt_user_account_info', $response, 0 );
-				
-			} else {
-
-				$response = get_transient( 'bpt_user_account_info' );
-			
-			}
-
-			exit($response);
-
-		}
-
-		/**
-		 * Get Specific Producer's events.
-		 */
-		
-		if ( $_POST['bptAction'] === 'get_producer_events' ) {
-
-			$nonce           = $_POST['bptNonce'];
-			$client_id       = $_POST['clientID'];
-			$widget_instance = $_POST['bptWidgetID'];
-			$getPrices       = false;
-
-			if ( ! wp_verify_nonce( $nonce, 'bpt-setup-wizard-nonce' ) ) {
-				exit( json_encode( array( 'error' => 'Error.' ) ) );
-			}
-
-			if ( ! $client_id ) {
-				exit( json_encode( array( 'error' => 'No Client ID' ) ) );
-			}
-
-
-			if ( ! $widget_instance ) {
-				exit( json_encode( array( 'error' => 'No Widget Instance' ) ) );
-			}
-
-			if ( get_transient( '_bpt_json_events_' . $widget_instance ) === false && $cache_data === true ) {
-				set_transient( '_bpt_json_events_' . $widget_instance, $events->get_json_events(), $cache_time );
-				
-				$response = get_transient( '_bpt_json_events_' . $widget_instance );
-				exit( $response );
-
-			}
-
-			$events = new BPTFeed;
-
-			exit( $events->get_json_producer_events( $client_id, $getPrices ) );
-		}
-
-		/**
-		 * Get Events.
-		 */
-		
-		if ( $_POST['bptAction'] === 'get_events' ) {
-
-			$nonce           = $_POST['bptNonce'];
-			$widget_instance = $_POST['bptWidgetID'];
-
-			if ( ! wp_verify_nonce( $nonce, 'bpt-setup-wizard-nonce' ) ) {
-				exit( json_encode( array( 'error' => 'Error.' ) ) );
-			}
-
-			if ( ! $client_id ) {
-				exit( json_encode( array( 'error' => 'No Client ID' ) ) );
-			}
-
-			if ( ! $widget_instance ) {
-				exit( json_encode( array( 'error' => 'No Widget Instance' ) ) );
-			}
-
-			if ( get_transient( '_bpt_json_events_' . $widget_instance ) === false && $cache_data === true ) {
-				set_transient( '_bpt_json_events_' . $widget_instance, $events->get_json_events(), $cache_time );
-				
-				$response = get_transient( '_bpt_json_events_' . $widget_instance );
-				exit( $response );
-
-			}
-
-			$events = new BPTFeed;
-
-			exit( $events->get_json_producer_events( $client_id, $getPrices ) );
-		}
-
 	}
 
 }

@@ -35,11 +35,28 @@ class BPTFeed {
 	 * @param  boolean $prices Get Prices? Default is false.
 	 * @return json              The JSON string of the event Data.
 	 */
-	public function get_json_producer_events( $client_id, $dates = false, $prices = false ) {
+	public function get_json_calendar_events( $client_id, $dates = true, $prices = false ) {
 
 		$events = new EventInfo( $this->dev_id );
 
-		return json_encode( $events->getEvents( $client_id, null, $dates, $prices ) );
+		$events = $events->getEvents( $client_id, null, $dates, $prices );
+
+		$clndr_format = [];
+
+		foreach ( $events as $event ) {
+
+			foreach ( $event['dates'] as $date ) {
+				$clndr_format[] = array(
+					'date' => $date['dateStart'],
+					'endDate' => $date['dateEnd'],
+					'timeStart' => $date['timeStart'],
+					'timeEnd' => $date['timeEnd'],
+					'title' => $event['title'],
+				);
+			}
+		}
+
+		return json_encode( $clndr_format );
 	}
 
 
