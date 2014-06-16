@@ -5,19 +5,26 @@
 
     bptAPI = {
         loadEvents: function loadEvents() {
+            var bptData = {
+                action: 'bpt_get_events',
+                bptNonce: bptEventFeedAjax.bptNonce
+            };
 
+            if ( bptEventFeedAjax.clientID ) {
+                bptData.clientID = bptEventFeedAjax.clientID;
+            }
+
+            if ( bptEventFeedAjax.eventID ) {
+                bptData.eventID = bptEventFeedAjax.eventID
+            }
 
             $('div.bpt-loading').fadeIn();
+
             $.ajax(
                 bptEventFeedAjax.ajaxurl,
                 {
                     type: 'POST',
-                    data: {
-                        // wp ajax action
-                        action : 'bpt_get_events',
-                        // send the nonce along with the request
-                        bptNonce : bptEventFeedAjax.bptNonce,
-                    },
+                    data: bptData,
                     accepts: 'json',
                     dataType: 'json'
                 }
@@ -26,14 +33,30 @@
                 $('div.bpt-loading').hide();
             })
             .fail(function() {
+
                 eventList.set({
-                    error: 'Unknown Error'
+                    bptError: 'Unknown Error'
                 });
+
             })
             .done(function(data) {
-                eventList.set({
-                    bptEvents: data
-                });
+                if (data.error) {
+
+                    console.log(data);
+
+                    eventList.set({
+                        bptError: data
+                    });
+
+                }
+
+                if ( !data.error ) {
+
+                    eventList.set({
+                        bptEvents: data
+                    });
+
+                }
             })
             .always(function() {
                 
@@ -90,7 +113,7 @@
         eventList.on({
             showFullDescription: function showFullDescription(event) {
                 event.original.preventDefault();
-                $(event.node).parent().parent().next('.bpt-event-full-description').toggle('hidden');
+                $(event.node).parent().next('.bpt-event-full-description').toggle('hidden');
             }
         });
 

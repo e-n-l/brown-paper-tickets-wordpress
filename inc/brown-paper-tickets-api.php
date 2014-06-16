@@ -35,7 +35,11 @@ class BPTFeed {
 	 * @param  boolean $prices Get Prices? Default is false.
 	 * @return json              The JSON string of the event Data.
 	 */
-	public function get_json_calendar_events( $client_id, $dates = true, $prices = false ) {
+	public function get_json_calendar_events( $client_id = null, $dates = true, $prices = false ) {
+		
+		if ( isset( $_POST['clientID'] ) &&  $_POST['clientID'] !== '' ) {
+			$client_id = $_POST['clientID'];
+		}
 
 		$events = new EventInfo( $this->dev_id );
 
@@ -45,22 +49,46 @@ class BPTFeed {
 
 		foreach ( $events as $event ) {
 
-			foreach ( $event['dates'] as $date ) {
-				$clndr_format[] = array(
-					'date' => $date['dateStart'],
-					'endDate' => $date['dateEnd'],
-					'timeStart' => $date['timeStart'],
-					'timeEnd' => $date['timeEnd'],
-					'title' => $event['title'],
-				);
+			if ( $event['live'] ) {
+				foreach ( $event['dates'] as $date ) {
+
+					if ( $date['live'] ) {
+
+						$clndr_format[] = array(
+							'eventID' => $event['id'],
+							'dateID' => $date['id'],
+							'date' => $date['dateStart'],
+							'endDate' => $date['dateEnd'],
+							'timeStart' => $date['timeStart'],
+							'timeEnd' => $date['timeEnd'],
+							'title' => $event['title'],
+							'city' => $event['city'],
+							'state' => $event['state'],
+							'zip' => $event['zip'],
+							'shortDescription' => $event['shortDescription'],
+						);
+				
+					
+					}
+				}
 			}
 		}
 
 		return json_encode( $clndr_format );
 	}
 
+	/** Takes the client_id and event_id and returns events **/
 
-	public function get_json_events() {
+	public function get_json_events( $client_id = null, $event_id = null ) {
+
+		if ( ! $client_id ) {
+			$client_id = $this->client_id;
+		}
+
+		if ( ! $event_id ) {
+			$event_id = null;
+		}
+
 		/**
 		 * Get Event List Setting Options
 		 * 
@@ -73,7 +101,13 @@ class BPTFeed {
 
 		$_bpt_events = new EventInfo( $this->dev_id );
 
-		$_bpt_eventList = $_bpt_events->getEvents( $this->client_id, null, $_bpt_dates, $_bpt_prices );
+		$_bpt_eventList = $_bpt_events->getEvents( $client_id, $event_id, $_bpt_dates, $_bpt_prices );
+
+		if ( isset( $_bpt_eventList['error'] ) ) {
+			return json_encode( $_bpt_eventList );
+		}
+
+		$_bpt_eventList = $this->remove_bad_events( $_bpt_eventList );
 
 		$_bpt_eventList = $this->sort_prices( $_bpt_eventList );
 
@@ -111,6 +145,8 @@ class BPTFeed {
 			'account' => $_bpt_account->getAccount( $client_id ),
 			'events'  => $_bpt_event->getEvents( $client_id ),
 		);
+
+		$response['events'] = $this->remove_bad_events( $response['events'] );
 
 		return json_encode( $response );
 	}
@@ -186,6 +222,20 @@ class BPTFeed {
 	 */
 	public function convert_time( $date ) {
 		return strftime( '%l:%M%p', strtotime( $date ) );
+	}
+
+	protected function remove_bad_events( $_bpt_eventList ) {
+		foreach ( $_bpt_eventList as $eventIndex => $event ) {
+
+			if ( ! $event['live'] ) {
+
+				unset( $_bpt_eventList[$eventIndex] );
+			}
+
+			$_bpt_eventList = array_values( $_bpt_eventList );
+		}
+
+		return $_bpt_eventList;
 	}
 
 	protected function remove_bad_dates( $_bpt_eventList ) {

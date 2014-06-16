@@ -13,19 +13,30 @@ class BPTAjaxActions {
 	 */
 	public static function bpt_get_events() {
 
-		$nonce = $_POST['bptNonce'];
+		$nonce     = $_POST['bptNonce'];
+		$client_id = null;
+		$event_id  = null;
+
+		if ( isset( $_POST['clientID'] ) ) {
+			$client_id = $_POST['clientID'];
+		}
+
+		if ( isset( $_POST['eventID'] ) ) {
+			$event_id = $_POST['eventID'];
+		}
 
 		self::check_nonce( $nonce, 'bpt-event-list-nonce' );
 
 		$events = new BPTFeed;
 
 		if ( ! self::cache_data() ) {
-			exit( $events->get_json_events() );
+				
+			exit( $events->get_json_events( $client_id, $event_id ) );
 		}
 
 		if ( ! get_transient( '_bpt_event_list_events' ) && self::cache_data() ) {
 
-			set_transient( '_bpt_event_list_events', $events->get_json_events(), self::cache_time() );
+			set_transient( '_bpt_event_list_events', $events->get_json_events( $client_id, $event_id ), self::cache_time() );
 
 			self::update_cached_data( '_bpt_event_list_events', self::cache_time() );
 
@@ -144,13 +155,13 @@ class BPTAjaxActions {
 
 		$cached_data = get_option( '_bpt_cached_data' );
 
-		$events = array();
+		$deleted_data = array();
 
 		// exit( json_encode( $cached_data ) );
 
 		header( 'Content-type: application/json' );
 
-		if ( $cached_data === '' ) {
+		if ( $cached_data === '' || ! $cached_data ) {
 			$result = array(
 				'status' => 'success',
 				'message' => 'No cached data to delete.',
@@ -172,7 +183,7 @@ class BPTAjaxActions {
 
 		foreach ( $cached_data as $cache_title => $cache_time ) {
 			
-			$events[$cache_title] = delete_transient( $cache_title );
+			$deleted_data[$cache_title] = delete_transient( $cache_title );
 		}
 
 		delete_option( '_bpt_cached_data' );

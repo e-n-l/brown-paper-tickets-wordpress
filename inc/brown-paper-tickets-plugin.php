@@ -82,8 +82,6 @@ class BPTPlugin {
 		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return;
 		}
-
-		self::remove_event_options();
 	}
 
 	public static function uninstall() {
@@ -106,22 +104,34 @@ class BPTPlugin {
 		add_action( 'admin_init',array( $this, 'bpt_show_wizard' ) );
 		add_action( 'admin_menu', array( $this, 'create_bpt_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_scripts' ) );
+
+		add_action( 'wp_ajax_bpt_get_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_events' ) );
+		add_action( 'wp_ajax_bpt_get_account', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_account' ) );
+		add_action( 'wp_ajax_bpt_get_calendar_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_calendar_events' ) );
+
+		add_action( 'wp_ajax_bpt_delete_cache', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_delete_cache' ) );
+		add_action( 'wp_ajax_bpt_account_test', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_account_test' ) );
 	}
 
 	public function load_public() {
 		add_shortcode( 'list-event', array( $this, 'list_event_shortcode' ) );
-		add_shortcode( 'list-events', array( $this, 'list_events_shortcode' ) );
-		add_shortcode( 'list-events-links', array( $this, 'list_events_shortcode' ) );
+		add_shortcode( 'list_event', array( $this, 'list_event_shortcode' ) );
+
+		add_shortcode( 'list-events', array( $this, 'list_event_shortcode' ) );
+		add_shortcode( 'list_events', array( $this, 'list_event_shortcode' ) );
+
+		add_shortcode( 'event-calendar', array( $this, 'event_calendar_shortcode' ) );
+
+		add_action( 'wp_ajax_nopriv_bpt_get_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_events' ) );
+		add_action( 'wp_ajax_nopriv_bpt_get_account', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_account' ) );
+		add_action( 'wp_ajax_nopriv_bpt_get_calendar_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_calendar_events' ) );
+
+
 		
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_public_scripts' ) );
 	}
 
 	public function load_shared() {
-		add_action( 'wp_ajax_bpt_get_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_events' ) );
-		add_action( 'wp_ajax_bpt_get_account', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_account' ) );
-		add_action( 'wp_ajax_bpt_get_calendar_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_calendar_events' ) );
-		add_action( 'wp_ajax_bpt_delete_cache', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_delete_cache' ) );
-		add_action( 'wp_ajax_bpt_account_test', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_account_test' ) );
 
 		add_action(
 			'widgets_init', function() {
@@ -145,7 +155,8 @@ class BPTPlugin {
 
 			wp_enqueue_style( 'bpt_admin_css', plugins_url( '/admin/assets/css/bpt-admin.css', dirname( __FILE__ ) ), false, VERSION );
 
-			wp_enqueue_script( 'bpt_admin_js', plugins_url( '/admin/assets/js/bpt-admin.js', dirname( __FILE__ ) ), array( 'jquery' ) ); 
+			wp_enqueue_script( 'bpt_admin_js', plugins_url( '/admin/assets/js/bpt-admin.js', dirname( __FILE__ ) ), array( 'jquery' ), false, true );
+
 			wp_localize_script(
 				'bpt_admin_js', 'bptWP', array(
 					'ajaxurl' => admin_url( 'admin-ajax.php' ),
@@ -162,7 +173,7 @@ class BPTPlugin {
 
 			wp_enqueue_style( 'bpt_setup_wizard_css', plugins_url( '/admin/assets/css/bpt-setup-wizard.css', dirname( __FILE__ ) ), false, VERSION );
 			
-			wp_enqueue_script( 'bpt_setup_wizard_js', plugins_url( '/admin/assets/js/bpt-setup-wizard.js', dirname( __FILE__ ) ), array( 'jquery' ) ); 
+			wp_enqueue_script( 'bpt_setup_wizard_js', plugins_url( '/admin/assets/js/bpt-setup-wizard.js', dirname( __FILE__ ) ), array( 'jquery' ), true ); 
 			
 			wp_localize_script(
 				'bpt_setup_wizard_js', 'bptSetupWizardAjax',
@@ -177,31 +188,14 @@ class BPTPlugin {
 	public static function load_ajax_required() {
 
 		// Include Ractive Templates
-		wp_enqueue_script( 'ractive_js', plugins_url( '/assets/js/ractive.js', dirname( __FILE__ ) ), array() );
-		wp_enqueue_script( 'ractive_transitions_fade_js', plugins_url( '/assets/js/ractive-transitions-slide.js', dirname( __FILE__ ) ), array() );
-		wp_enqueue_script( 'moment_with_langs_min', plugins_url( '/assets/js/moment-with-langs.min.js', dirname( __FILE__ ) ), array() );
+		wp_enqueue_script( 'ractive_js', plugins_url( '/assets/js/ractive.js', dirname( __FILE__ ) ), array(), false, true );
+		wp_enqueue_script( 'ractive_transitions_slide_js', plugins_url( '/assets/js/ractive-transitions-slide.js', dirname( __FILE__ ) ), array(), false, true );
+		wp_enqueue_script( 'moment_with_langs_min', plugins_url( '/assets/js/moment-with-langs.min.js', dirname( __FILE__ ) ), array(), false, true );
 
 	}
 
 	public function load_public_scripts() {
-		global $post;
 
-		if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-events' ) ) {
-
-			self::load_ajax_required();
-
-			wp_enqueue_script( 'event_feed_js', plugins_url( '/assets/js/event-feed.js', dirname( __FILE__ ) ), array( 'jquery', 'underscore' ) ); 
-			wp_localize_script(
-				'event_feed_js',
-				'bptEventFeedAjax',
-				array(
-					'ajaxurl' => admin_url( 'admin-ajax.php' ),
-					'bptNonce' => wp_create_nonce( 'bpt-event-list-nonce' ),
-				)
-			);
-
-			wp_enqueue_style( 'bpt_event_list_css', plugins_url( '/assets/css/bpt-event-list-shortcode.css', dirname( __FILE__ ) ), false, VERSION );
-		}
 
 	}
 
@@ -272,6 +266,7 @@ class BPTPlugin {
 		$price_section_title = 'Price Display Settings';
 
 		// Event Settings
+		register_setting( self::$menu_slug, $setting_prefix . 'show_location_after_description' );
 		register_setting( self::$menu_slug, $setting_prefix . 'show_full_description' );
 
 		// Date Settings
@@ -303,6 +298,7 @@ class BPTPlugin {
 		// Add the settings fields.
 		// Event Fields
 		add_settings_field( $setting_prefix . 'show_full_description', 'Display Full Description by Default', array( $this->settings_fields, 'get_show_full_description_input' ), self::$menu_slug . $section_suffix, $section_title );
+		add_settings_field( $setting_prefix . 'how_location_after_description', 'Display Location After Description', array( $this->settings_fields, 'get_show_location_after_description_input' ), self::$menu_slug . $section_suffix, $section_title );
 		
 		// Date Fields
 		add_settings_field( $setting_prefix . 'show_dates', 'Display Dates', array( $this->settings_fields, 'get_show_dates_input' ), self::$menu_slug . $section_suffix, $date_section_title );
@@ -341,6 +337,7 @@ class BPTPlugin {
 		$price_section_title = 'Price Display Settings';
 
 		add_option( self::$menu_slug . $setting_prefix . 'show_full_description', 'false' );
+		add_option( self::$menu_slug . $setting_prefix . 'show_location_after_description', 'false' );
 
 		// Date Settings
 		add_option( self::$menu_slug . $setting_prefix . 'show_dates', 'true' );
@@ -376,6 +373,7 @@ class BPTPlugin {
 		$price_section_title = 'Price Display Settings';
 
 		delete_option( self::$menu_slug . $setting_prefix . 'show_full_description' );
+		delete_option( self::$menu_slug . $setting_prefix . 'show_location_after_description' );
 
 		// Date Settings
 		delete_option( self::$menu_slug . $setting_prefix . 'show_dates' );
@@ -437,12 +435,77 @@ class BPTPlugin {
 
 	public function list_event_shortcode( $atts ) {
 
+		global $post;
+
+		$event_list_attributes = shortcode_atts(
+			array(
+				'event_id' => null,
+				'client_id' => null,
+			),
+			$atts
+		);
+
+		$localized_variables = array(
+			'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			'bptNonce' => wp_create_nonce( 'bpt-event-list-nonce' ),
+		);
+
+		if ( $event_list_attributes['event_id'] ) {
+			$localized_variables['eventID'] = $event_list_attributes['event_id'];
+		}
+
+		if ( $event_list_attributes['client_id'] ) {
+			$localized_variables['clientID'] = $event_list_attributes['client_id'];
+		}
+
+		if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-events' ) || is_home() ) {
+
+			wp_enqueue_style( 'bpt_event_list_css', plugins_url( '/assets/css/bpt-event-list-shortcode.css', dirname( __FILE__ ) ), array(), VERSION );
+
+			self::load_ajax_required();
+
+			wp_enqueue_script( 'event_feed_js', plugins_url( '/assets/js/event-feed.js', dirname( __FILE__ ) ), array( 'jquery', 'underscore' ), VERSION, true );
+			
+			wp_localize_script(
+				'event_feed_js',
+				'bptEventFeedAjax',
+				$localized_variables
+			);
+
+		}
+
 		require_once( plugin_dir_path( __FILE__ ) . '../public/event-list-shortcode.php' );
 	}
 
-	public function list_events_shortcode( $atts ) {
+	public function event_calendar_shortcode( $atts ) {
 
-		return require_once( plugin_dir_path( __FILE__ ) . '../public/event-list-shortcode.php' );
+		$calendar_attributes = shortcode_atts(
+			array(
+				'client_id' => null,
+				'title' => null,
+			),
+			$atts
+		);
+
+		$calendar_instance = [];
+
+		if ( $calendar_attributes['client_id'] ) {
+			
+			$client_id = $calendar_attributes['client_id'];
+			$title = $calendar_attributes['title'];
+
+			$calendar_instance = array(
+				'client_id' => $client_id,
+				'display_type' => 'producers_events',
+				'title' => '',
+			);
+		}
+
+		$calendar_args = array(
+			'widget_id' => 'shortcode',
+		);
+
+		the_widget( 'BrownPaperTickets\BPTCalendarWidget', $calendar_instance, $calendar_args );
 	}
 
 	public function render_bpt_options_page() {

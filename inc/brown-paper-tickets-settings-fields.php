@@ -579,6 +579,27 @@ class BPTSettingsFields {
 		<?php       
 	}
 
+	public function get_show_location_after_description_input() {
+
+		?>
+		<div class="show-location-after-description-wrapper">
+			<input id="show-location-after-description-true" name="_bpt_show_location_after_description" <?php esc_attr_e( $this->is_selected( 'true', '_bpt_show_location_after_description', 'checked' ) );?> value="true" type="radio" />
+			<label for="show-location-after-description-true">Yes</label>
+			<input id="show-location-after-description-false" name="_bpt_show_location_after_description" <?php esc_attr_e( $this->is_selected( 'false', '_bpt_show_location_after_description', 'checked' ) ); ?> value="false" type="radio" />
+			<label for="show-location-after-description-false">No</label>
+			<div class="<?php esc_attr_e( BPTPlugin::get_menu_slug() ); ?>_help">
+				<span>?</span>
+				<div>
+					<p>
+						This option determines whether or not to show location after the description, rather than before it.
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<?php       
+	}
+
 	public function get_show_past_dates_input() {
 
 		?>

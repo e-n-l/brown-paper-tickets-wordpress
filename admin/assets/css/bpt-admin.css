@@ -85,8 +85,6 @@ div#bpt-settings-wrapper {
 }
 
 #bpt-settings-wrapper p {
-    line-height: 1.2em;
-    margin: 10px 0;
 }
 
 .bpt-advanced-options {
@@ -185,6 +183,8 @@ div.brown_paper_tickets_settings_help {
 
 .bpt-inline {
     display: inline;
+    background-color: #eee;
+    padding: 2px;
 }
 
 /**

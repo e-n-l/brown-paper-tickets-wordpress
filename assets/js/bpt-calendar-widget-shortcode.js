@@ -14,7 +14,7 @@
 
         this.calendarTemplate = $('#bpt-calendar-widget-calendar-template').html();
 
-        this.bptCalendarWidget = $('.bpt-calendar-widget').clndr({
+        this.bptCalendarWidgetShortcode = $('.bpt-calendar-widget-shortcode').clndr({
             template: self.calendarTemplate,
             targets: {
                 nextButton: 'bpt-calendar-widget-controls-next-button',
@@ -38,7 +38,7 @@
         });
 
         this.bptCalendarWidgetEventView = new Ractive({
-            el: '#bpt-calendar-widget-event-view',
+            el: '#bpt-calendar-widget-shortcode-event-view',
             template: '#bpt-calendar-widget-event-view-template',
             data: {
                 currentEvents: self.currentEvents,
@@ -61,10 +61,10 @@
     BptAPI.prototype.getEvents = function getEvents() {
         var self = this;
 
-        if ( bptCalendarWidgetAjax.clientID ) {
+        if ( bptCalendarWidgetShortcodeAjax.clientID ) {
 
             $.ajax(
-            bptCalendarWidgetAjax.ajaxurl,
+            bptCalendarWidgetShortcodeAjax.ajaxurl,
             {
                 type: 'POST',
                 data: {
@@ -72,27 +72,27 @@
                     action : 'bpt_get_calendar_events',
                     // varsx
                     // send the nonce along with the request
-                    clientID: bptCalendarWidgetAjax.clientID,
-                    bptNonce : bptCalendarWidgetAjax.bptNonce,
-                    widgetID: bptCalendarWidgetAjax.widgetID,
+                    clientID: bptCalendarWidgetShortcodeAjax.clientID,
+                    bptNonce : bptCalendarWidgetShortcodeAjax.bptNonce,
+                    widgetID: bptCalendarWidgetShortcodeAjax.widgetID,
                 },
                 accepts: 'json',
                 dataType: 'json'
 
             }).done(function(data) {
 
-                self.bptCalendarWidget.setEvents(data);
+                self.bptCalendarWidgetShortcode.setEvents(data);
                 
             }).fail(function(data) {
 
-                self.bptCalendarWidget.setEvents(data);
+                self.bptCalendarWidgetShortcode.setEvents(data);
 
             });
 
         } else {
 
             $.ajax(
-            bptCalendarWidgetAjax.ajaxurl,
+            bptCalendarWidgetShortcodeAjax.ajaxurl,
                 {
                     type: 'POST',
                     data: {
@@ -100,8 +100,8 @@
                         action : 'bpt_get_calendar_events',
                         // varsx
                         // send the nonce along with the request
-                        bptNonce : bptCalendarWidgetAjax.bptNonce,
-                        widgetID: bptCalendarWidgetAjax.widgetID,
+                        bptNonce : bptCalendarWidgetShortcodeAjax.bptNonce,
+                        widgetID: bptCalendarWidgetShortcodeAjax.widgetID,
                     },
                     accepts: 'json',
                     dataType: 'json'
@@ -109,11 +109,11 @@
                 }
             ).done(function(data) {
 
-                self.bptCalendarWidget.setEvents(data);
+                self.bptCalendarWidgetShortcode.setEvents(data);
                 
             }).fail(function(data) {
 
-                self.bptCalendarWidget.setEvents(data);
+                self.bptCalendarWidgetShortcode.setEvents(data);
 
             });
         }
