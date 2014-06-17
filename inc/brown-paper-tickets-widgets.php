@@ -64,13 +64,13 @@ class BPTCalendarWidget extends \WP_Widget {
 
 			BPTPlugin::load_ajax_required();
 
-			wp_enqueue_style( 'bpt_calendar_widget_css', plugins_url( '/assets/css/bpt-calendar-widget.css', dirname( __FILE__ ) ), false, VERSION );
-			wp_enqueue_script( 'ractive_transitions_fade_js', plugins_url( '/assets/js/ractive-transitions-fade.js', dirname( __FILE__ ) ), array(), false, true );
-			wp_enqueue_script( 'bpt_clndr_min_js', plugins_url( '/assets/js/clndr.min.js', dirname( __FILE__ ) ), array( 'underscore' ), false, true ); 
+			wp_enqueue_style( 'bpt_calendar_widget_css', plugins_url( 'public/assets/css/bpt-calendar-widget.css', dirname( __FILE__ ) ), false, VERSION );
+			wp_enqueue_script( 'ractive_transitions_fade_js', plugins_url( 'public/assets/js/ractive-transitions-fade.js', dirname( __FILE__ ) ), array(), false, true );
+			wp_enqueue_script( 'bpt_clndr_min_js', plugins_url( 'public/assets/js/clndr.min.js', dirname( __FILE__ ) ), array( 'underscore' ), false, true ); 
 			
 
 			if ( $display_type === 'producers_events' ) {
-				wp_enqueue_script( 'bpt_calendar_widget_shortcode_js', plugins_url( '/assets/js/bpt-calendar-widget-shortcode.js', dirname( __FILE__ ) ), array( 'jquery' ), false, true );
+				wp_enqueue_script( 'bpt_calendar_widget_shortcode_js', plugins_url( 'public/assets/js/bpt-calendar-widget-shortcode.js', dirname( __FILE__ ) ), array( 'jquery' ), false, true );
 				wp_localize_script(
 					'bpt_calendar_widget_shortcode_js', 'bptCalendarWidgetShortcodeAjax', array(
 						'ajaxurl'     => admin_url( 'admin-ajax.php' ),
@@ -82,7 +82,7 @@ class BPTCalendarWidget extends \WP_Widget {
 
 			} else {
 
-				wp_enqueue_script( 'bpt_calendar_widget_js', plugins_url( '/assets/js/bpt-calendar-widget.js', dirname( __FILE__ ) ), array( 'jquery' ), false, true );
+				wp_enqueue_script( 'bpt_calendar_widget_js', plugins_url( 'public/assets/js/bpt-calendar-widget.js', dirname( __FILE__ ) ), array( 'jquery' ), false, true );
 				wp_localize_script(
 					'bpt_calendar_widget_js', 'bptCalendarWidgetAjax', array(
 						'ajaxurl'     => admin_url( 'admin-ajax.php' ),
