@@ -302,7 +302,7 @@ $countries = array(
 <div class="bpt-loading-<?php esc_attr_e( $post->ID );?> hidden">
 	Loading Events
 	<br />
-	<img src="<?php echo esc_url( plugins_url( '/assets/img/loading.gif', dirname( __FILE__ ) ) ); ?>">
+	<img src="<?php echo esc_url( plugins_url( 'public/assets/img/loading.gif', dirname( __FILE__ ) ) ); ?>">
 </div>
 
 <div id="bpt-event-list-<?php esc_attr_e( $post->ID );?>">
