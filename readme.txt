@@ -8,7 +8,7 @@ Stable tag: 0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The Brown Paper Tickets Plugin is a simple way to display events in a Wordpress post/page.
+The Brown Paper Tickets Plugin is a simple way to display your Brown Paper Tickets events in a Wordpress post/page.
 
 == Description ==
 
