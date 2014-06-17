@@ -121,6 +121,7 @@ class BPTPlugin {
 		add_shortcode( 'list_events', array( $this, 'list_event_shortcode' ) );
 
 		add_shortcode( 'event-calendar', array( $this, 'event_calendar_shortcode' ) );
+		add_shortcode( 'event_calendar', array( $this, 'event_calendar_shortcode' ) );
 
 		add_action( 'wp_ajax_nopriv_bpt_get_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_events' ) );
 		add_action( 'wp_ajax_nopriv_bpt_get_account', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_account' ) );
@@ -188,9 +189,9 @@ class BPTPlugin {
 	public static function load_ajax_required() {
 
 		// Include Ractive Templates
-		wp_enqueue_script( 'ractive_js', plugins_url( '/assets/js/ractive.js', dirname( __FILE__ ) ), array(), false, true );
-		wp_enqueue_script( 'ractive_transitions_slide_js', plugins_url( '/assets/js/ractive-transitions-slide.js', dirname( __FILE__ ) ), array(), false, true );
-		wp_enqueue_script( 'moment_with_langs_min', plugins_url( '/assets/js/moment-with-langs.min.js', dirname( __FILE__ ) ), array(), false, true );
+		wp_enqueue_script( 'ractive_js', plugins_url( '/public/assets/js/ractive.js', dirname( __FILE__ ) ), array(), false, true );
+		wp_enqueue_script( 'ractive_transitions_slide_js', plugins_url( '/public/assets/js/ractive-transitions-slide.js', dirname( __FILE__ ) ), array(), false, true );
+		wp_enqueue_script( 'moment_with_langs_min', plugins_url( '/public/assets/js/moment-with-langs.min.js', dirname( __FILE__ ) ), array(), false, true );
 
 	}
 
@@ -441,6 +442,8 @@ class BPTPlugin {
 			array(
 				'event_id' => null,
 				'client_id' => null,
+				'event-id' => null,
+				'client-id' => null,
 			),
 			$atts
 		);
@@ -448,10 +451,19 @@ class BPTPlugin {
 		$localized_variables = array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'bptNonce' => wp_create_nonce( 'bpt-event-list-nonce' ),
+			'postID' => $post->ID,
 		);
 
 		if ( $event_list_attributes['event_id'] ) {
 			$localized_variables['eventID'] = $event_list_attributes['event_id'];
+		}
+
+		if ( $event_list_attributes['event-id'] ) {
+			$localized_variables['eventID'] = $event_list_attributes['event-id'];
+		}
+
+		if ( $event_list_attributes['client-id'] ) {
+			$localized_variables['clientID'] = $event_list_attributes['client-id'];
 		}
 
 		if ( $event_list_attributes['client_id'] ) {
@@ -460,21 +472,21 @@ class BPTPlugin {
 
 		if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-events' ) || is_home() ) {
 
-			wp_enqueue_style( 'bpt_event_list_css', plugins_url( '/assets/css/bpt-event-list-shortcode.css', dirname( __FILE__ ) ), array(), VERSION );
+			wp_enqueue_style( 'bpt_event_list_css', plugins_url( '/public/assets/css/bpt-event-list-shortcode.css', dirname( __FILE__ ) ), array(), VERSION );
 
 			self::load_ajax_required();
 
-			wp_enqueue_script( 'event_feed_js', plugins_url( '/assets/js/event-feed.js', dirname( __FILE__ ) ), array( 'jquery', 'underscore' ), VERSION, true );
-			
+			wp_enqueue_script( 'event_feed_js_' . $post->ID, plugins_url( '/public/assets/js/event-feed-test.js.php?post_id=' . $post->ID, dirname( __FILE__ ) ), array( 'jquery', 'underscore' ), null, true );
+
 			wp_localize_script(
-				'event_feed_js',
-				'bptEventFeedAjax',
+				'event_feed_js_' . $post->ID,
+				'bptEventFeedAjaxPost' . $post->ID,
 				$localized_variables
 			);
 
 		}
 
-		require_once( plugin_dir_path( __FILE__ ) . '../public/event-list-shortcode.php' );
+		require( plugin_dir_path( __FILE__ ) . '../public/event-list-shortcode.php' );
 	}
 
 	public function event_calendar_shortcode( $atts ) {

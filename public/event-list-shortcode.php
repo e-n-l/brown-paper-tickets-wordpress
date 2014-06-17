@@ -299,12 +299,13 @@ $countries = array(
 
 ?>
 
-<div class="bpt-loading hidden">
+<div class="bpt-loading-<?php esc_attr_e( $post->ID );?> hidden">
 	Loading Events
 	<br />
 	<img src="<?php echo esc_url( plugins_url( '/assets/img/loading.gif', dirname( __FILE__ ) ) ); ?>">
 </div>
-<div id="bpt-event-list">
+
+<div id="bpt-event-list-<?php esc_attr_e( $post->ID );?>">
 
 
 </div>
@@ -469,7 +470,7 @@ if ( $_bpt_show_dates === 'true' ) { ?>
 		</form>
 	<?php } ?>
 	<div class="bpt-powered-by">
-		<a href="http://www.brownpapertickets.com/event/{{ id }}" target="_blank"><span>Powered by </span><img src="<?php echo esc_url( plugins_url( 'assets/img/bpt-footer-logo.png', __DIR__ ) ); ?>" /></a>
+		<a href="http://www.brownpapertickets.com/event/{{ id }}" target="_blank"><span>View Event on </span><img src="<?php echo esc_url( plugins_url( 'assets/img/bpt-footer-logo.png', __DIR__ ) ); ?>" /></a>
 	<div>
 </div>
 {{ /bptEvents }}

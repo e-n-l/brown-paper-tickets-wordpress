@@ -92,9 +92,11 @@
 	</div>
 	<div class="bpt-setup-wizard bpt-step-4">
 		<h1>Setup is complete.</h1>
-		<p>Basic setup is complete. However, there are other options you'll want to take a look at. Feel free to close this window.</p>
-		<a href="#" class="bpt-setup-wizard-toggle-settings"><h4>Show Advanced Settings</h4></a>
-		<div class="bpt-setup-wizard-advanced-settings hidden">
+
+		<h2>However, you'll want to take a look at some of these other settings.</h2>
+		<h3>You can always edit these options later by going to the "BPT Settings" section at the bottom left of the Wordpress Admin screen.</h3>
+		<hr />
+		<div class="bpt-setup-wizard-advanced-settings">
 		<?php do_settings_sections( $menu_slug . '_event' ); ?>
 			<div class="bpt-setup-wizard-bpt-setup-wizard-button-container">
 				<button class="bpt-setup-wizard-prev-step button-secondary button-large">&laquo; Previous</button>

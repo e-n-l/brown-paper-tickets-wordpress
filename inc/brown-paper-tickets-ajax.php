@@ -14,8 +14,13 @@ class BPTAjaxActions {
 	public static function bpt_get_events() {
 
 		$nonce     = $_POST['bptNonce'];
+		$post_id   = null;
 		$client_id = null;
 		$event_id  = null;
+
+		if ( isset( $_POST['postID'] ) ) {
+			$post_id = $_POST['postID'];
+		}
 
 		if ( isset( $_POST['clientID'] ) ) {
 			$client_id = $_POST['clientID'];
@@ -34,15 +39,15 @@ class BPTAjaxActions {
 			exit( $events->get_json_events( $client_id, $event_id ) );
 		}
 
-		if ( ! get_transient( '_bpt_event_list_events' ) && self::cache_data() ) {
+		if ( ! get_transient( '_bpt_event_list_events' . $post_id ) && self::cache_data() ) {
 
-			set_transient( '_bpt_event_list_events', $events->get_json_events( $client_id, $event_id ), self::cache_time() );
+			set_transient( '_bpt_event_list_events' . $post_id , $events->get_json_events( $client_id, $event_id ), self::cache_time() );
 
-			self::update_cached_data( '_bpt_event_list_events', self::cache_time() );
+			self::update_cached_data( '_bpt_event_list_events' . $post_id , self::cache_time() );
 
 		}
 
-		exit( get_transient( '_bpt_event_list_events' ) );
+		exit( get_transient( '_bpt_event_list_events' . $post_id  ) );
 	}
 
 	/**

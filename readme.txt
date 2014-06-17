@@ -1,16 +1,16 @@
-# Brown Paper Tickets
-* Contributors: Chandler Blum
-* Donate Link: N/A
-* Tags: bpt, brown paper tickets
-* Requires at least: 3.0.1
-* Tested up to: 3.9.1
-* Stable tag: 0.1
-* License: GPLv2 or later
-* License URI: http://www.gnu.org/licenses/gpl-2.0.html
+=== Brown Paper Tickets ===
+Contributors: Chandler Blum
+Donate Link: N/A
+Tags: bpt, brown paper tickets
+Requires at least: 3.0.1
+Tested up to: 3.9.1
+Stable tag: 0.1
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 The Brown Paper Tickets Plugin is a simple way to display events in a Wordpress post/page.
 
-## Description
+== Description ==
 
 The Brown Paper Tickets plugin is a simple way to display events in a Wordpress post/page. You can display a single event, a list of all events or all of your events in a calendar.
 
@@ -24,7 +24,7 @@ It's source code can be found on [Github](https://github.com/chantron/brown-pape
 
 **Please use the [Issues](https://github.com/chantron/brown-paper-tickets-wordpress/issues/new) page to submit bugs, feature requests, etc.**
 
-## Installation
+== Installation == 
 
 To install the plugin, download the zip, extract it and upload the extracted folder to your plugins directory on your webserver.
 
@@ -34,78 +34,80 @@ To obtain your developer ID, you must first have developer tools added to your B
 
 Your client ID is typically whatever you use to log into Brown Paper Tickets.
 
-## Plugin Usage
+== Plugin Usage ==
 
 To use the plugin place the shortcode ``` [list_event] ``` in the post
 or page that you want the listing to appear.
 
-## All Events
+= All Events =
 
 [list_events]
 
-### Single Event Listing
+= Single Event Listing =
 Use the ```[list_events event_id="XXXXXX"]``` shortcode to display a single event (XXXXXX is the event ID).
 
 **The default shipping options set by the plugin are Will-Call and Print at Home. If your events are using something different, go to the "BPT Settings" page in the Wordpress Admin to set them.**
 
-### Calendar Format
+= Calendar Format =
 
-Display a calendar listing all of your events: ```[event_calendar]```
+Display a calendar listing all of your events:
+
+    [event_calendar]
 
 You can optionally pass in a ```client_id``` attribute to display another producers events in a calendar.
 
-## About the Calendar
+== About the Calendar ==
 
 This plugin makes use of the following Free/Open Source Software:
 
-* [CLNDR.js](http://kylestetz.github.io/CLNDR/)
+- [CLNDR.js](http://kylestetz.github.io/CLNDR/)
 
-* [Ractive.js](http://www.ractivejs.org/)
+- [Ractive.js](http://www.ractivejs.org/)
 
-* [Moment.js](http://momentjs.com/)
+- [Moment.js](http://momentjs.com/)
 
-## Frequently Asked Questions
+== Frequently Asked Questions ==
 
-### I've updated some of my event's on Brown Paper Tickets but the changes are not showing up in the plugin. Why is that?
+= I've updated some of my event's on Brown Paper Tickets but the changes are not showing up in the plugin. Why is that? =
 
 You most likely have enabled the plugin the cache the data the plugin pulls in from Brown Paper Tickets. 
 
 There are a few ways to solve this:
-    * You could wait for the cache to expire.
-    * You could delete the cache and force the plugin to refresh the data.
-        * To Do that, simply go to the "General Settings" tab above and click "Delete Cache".
+    - You could wait for the cache to expire.
+    - You could delete the cache and force the plugin to refresh the data.
+        - To Do that, simply go to the "General Settings" tab above and click "Delete Cache".
 
-### I am 100% certain that my developer ID and client ID are correct. What is going on?
+= I am 100% certain that my developer ID and client ID are correct. What is going on? =
 
 It's possible that your client ID is not attached to your developer tools.
 
 To add your account:
 
-* Go to <a target="_blank" href="https://www.brownpapertickets.com/developer/accounts.html">Authorized Accounts</a>.
+- Go to <a target="_blank" href="https://www.brownpapertickets.com/developer/accounts.html">Authorized Accounts</a>.
 
-* If your account is listed under "Current Account", click "Edit" and then "Delete Account".
+- If your account is listed under "Current Account", click "Edit" and then "Delete Account".
 
-* On the next screen, under "Add a Client" enter in your username and password, select the permissions you need and hit "Add Client Account".
+- On the next screen, under "Add a Client" enter in your username and password, select the permissions you need and hit "Add Client Account".
 
-* Your account should now be authorized.
+- Your account should now be authorized.
 
-### My password protected prices are being displayed by the plugin, how do I prevent that?
+= My password protected prices are being displayed by the plugin, how do I prevent that? =
 
 Unfortunately, you cannot at this time.
 
 The ability to prevent specific prices from being displayed is a top priority for the next release
 
-### How can I customize the look and feel of the event list or the calendar?
+= How can I customize the look and feel of the event list or the calendar? =
 
 At the moment, not easily. You could edit the event-list's style sheet directly (located plugin directory under ```brown-paper-tickets/assets/css/event-list-short-code.css```).
 
 The ability to easily add your custom style sheet is a top priority for the next release.
 
-## Upgrade Notice 
+== Upgrade Notice ==
 
 No upgrade notes.
 
-## Changelog
+== Changelog ==
 
-### 0.1
-* Initial Release
+= 0.1 = 
+- Initial Release

@@ -61,18 +61,23 @@ $plugin_version = BPTPlugin::get_plugin_version();
 				</tr>
 				<tr>
 					<td>List all of your events:</td>
-					<td><pre class="bpt-inline">[list-events]</pre></td>
+					<td><pre class="bpt-inline">[list_events]</pre></td>
 					<td>This will display all of your events in a ticket widget format.</td>
 				</tr>
 				<tr>
 					<td>List a single event:</td>
-					<td><pre class="bpt-inline">[list-event event_id="EVENT_ID"]</pre></td>
+					<td><pre class="bpt-inline">[list_event event_id="EVENT_ID"]</pre></td>
 					<td>This will display a single event. EVENT_ID is the ID of the event you wish to display.</td>
 				</tr>
 				<tr>
 					<td>List another producer's events:</td>
-					<td><pre class="bpt-inline">[list-event client_id="CLIENT_ID"]</pre></td>
+					<td><pre class="bpt-inline">[list_event client_id="CLIENT_ID"]</pre></td>
 					<td>This will display the events of the producer listed.</td>
+				</tr>
+				<tr>
+					<td>Display Calendar in Page/Post:</td>
+					<td><pre class="bpt-inline">[event_calendar client_id="CLIENT_ID"]</pre></td>
+					<td>This will display the events of the producer listed. The Client ID is optional.</td>
 				</tr>
 <!-- 				<tr>
 					<td><pre class="bpt-inline">[list-events-links]</pre></td>
@@ -136,6 +141,21 @@ if ( ! is_ssl() ) {
 				<h2>F.A.Q.</h2>
 				<ul>
 					<li>
+						<h3>I've updated some of my event's on Brown Paper Tickets but the changes are not showing up in the plugin. Why is that?</h3>
+						<p>
+							You most likely have enabled the plugin the cache the data the plugin pulls in from Brown Paper Tickets. 
+						</p>
+						<p>
+							There are a few ways to solve this:
+							<ol>
+								<li>You could wait for the cache to expire.</li>
+								<li>You could delete the cache and force the plugin to refresh the data.
+								<p>To Do that, simply go to the "General Settings" tab above and click "Delete Cache".</p>
+								</li>
+							</ol>
+						</p>
+					</li>
+					<li>
 						<h3>I am 100% certain that my developer ID and client ID are correct. What is going on?</h3>
 						<p>It's possible that your client ID is not attached to your developer tools.</p>
 
@@ -177,11 +197,11 @@ if ( ! is_ssl() ) {
 			<p>This plugin makes use of Free Software</p>
 			<div>
 				<ul>
-					<li>jQuery - Bundled with Wordpress</li>
-					<li>Underscore - Bundled with Wordpress</li>
-					<li>Wordpress - (You're using Wordpress)</li>
-					<li>Ractive.js - JS Template Engine</li>
-					<li>Moment.js- DateTime library</li>
+					<li><a href="http://www.jquery.com" target="blank">jQuery</a></li>
+					<li><a href="http://underscorejs.org/" target="_blank">Underscore</a></li>
+					<li><a href="http://kylestetz.github.io/CLNDR/" target="_blank">CLNDR.js</a></li>
+					<li><a href="http://www.ractivejs.org/" target="_blank">Ractive.js</a></li>
+					<li><a href="http://momentjs.com/" target="_blank">Moment.js</a></li>
 				</ul>
 			</div>
 		</div>
