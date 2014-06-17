@@ -13,7 +13,7 @@ $plugin_slug    = BPTPlugin::get_plugin_slug();
 $plugin_version = BPTPlugin::get_plugin_version();
 ?>
 <h1>
-	<img src="<?php echo esc_url( plugins_url( '/assets/img/bpt.png', dirname( __FILE__ ) ) )?>">
+	<img src="<?php echo esc_url( plugins_url( 'public//assets/img/bpt.png', dirname( __FILE__ ) ) )?>">
 </h1>
 
 <div class="wrap">

@@ -14,7 +14,7 @@
 <?php settings_fields( $menu_slug ); ?>
 <div class="bpt-setup-wizard-wrapper">
 <h1>
-	<img src="<?php echo esc_url( plugins_url( '/assets/img/bpt.png', dirname( __FILE__ ) ) ); ?>">
+	<img src="<?php echo esc_url( plugins_url( 'public/assets/img/bpt.png', dirname( __FILE__ ) ) ); ?>">
 </h1>
 	<div class="bpt-setup-wizard bpt-intro">
 		<h1>Thanks for installing the Brown Paper Tickets Wordpress Plugin.</h1>

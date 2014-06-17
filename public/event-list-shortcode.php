@@ -460,17 +460,17 @@ if ( $_bpt_show_dates === 'true' ) { ?>
 				<div class="bpt-add-to-cart">
 					<button class="bpt-submit" type="submit">Add to Cart</button>
 					<span class="bpt-cc-logos">
-						<img src="<?php echo esc_url( plugins_url( 'assets/img/visa_icon.png', __DIR__ ) ); ?>" />
-						<img src="<?php echo esc_url( plugins_url( 'assets/img/mc_icon.png', __DIR__ ) ); ?>" />
-						<img src="<?php echo esc_url( plugins_url( 'assets/img/discover_icon.png', __DIR__ ) ); ?>" />
-						<img src="<?php echo esc_url( plugins_url( 'assets/img/amex_icon.png', __DIR__ ) ); ?>" />
+						<img src="<?php echo esc_url( plugins_url( 'public/assets/img/visa_icon.png', __DIR__ ) ); ?>" />
+						<img src="<?php echo esc_url( plugins_url( 'public/assets/img/mc_icon.png', __DIR__ ) ); ?>" />
+						<img src="<?php echo esc_url( plugins_url( 'public/assets/img/discover_icon.png', __DIR__ ) ); ?>" />
+						<img src="<?php echo esc_url( plugins_url( 'public/assets/img/amex_icon.png', __DIR__ ) ); ?>" />
 					</span>
 				</div>
 			</div>
 		</form>
 	<?php } ?>
 	<div class="bpt-powered-by">
-		<a href="http://www.brownpapertickets.com/event/{{ id }}" target="_blank"><span>View Event on </span><img src="<?php echo esc_url( plugins_url( 'assets/img/bpt-footer-logo.png', __DIR__ ) ); ?>" /></a>
+		<a href="http://www.brownpapertickets.com/event/{{ id }}" target="_blank"><span>View Event on </span><img src="<?php echo esc_url( plugins_url( 'public/assets/img/bpt-footer-logo.png', __DIR__ ) ); ?>" /></a>
 	<div>
 </div>
 {{ /bptEvents }}
