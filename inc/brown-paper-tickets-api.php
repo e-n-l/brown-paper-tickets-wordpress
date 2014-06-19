@@ -89,6 +89,7 @@ class BPTFeed {
 			$event_id = null;
 		}
 
+
 		/**
 		 * Get Event List Setting Options
 		 * 
@@ -101,7 +102,27 @@ class BPTFeed {
 
 		$_bpt_events = new EventInfo( $this->dev_id );
 
-		$_bpt_eventList = $_bpt_events->getEvents( $client_id, $event_id, $_bpt_dates, $_bpt_prices );
+		if ( $event_id ) {
+
+			$client_id = null;
+			$event_id  = explode( ' ', $event_id );
+			$events    = array();
+
+			foreach ( $event_id as $id ) {
+				$events[] = $_bpt_events->getEvents( $client_id, $id, $_bpt_dates, $_bpt_prices );
+			}
+
+			foreach ( $events as $event ) {
+				$_bpt_eventList[] = $event[0];
+			}
+
+			exit( json_encode( $_bpt_eventList ) );
+		}
+
+		if ( ! $event_id ) {
+			$_bpt_eventList = $_bpt_events->getEvents( $client_id, $event_id, $_bpt_dates, $_bpt_prices );
+		}
+
 
 		if ( isset( $_bpt_eventList['error'] ) ) {
 			return json_encode( $_bpt_eventList );

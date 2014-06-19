@@ -58,6 +58,7 @@
     
     .bpt-default-theme.bpt-event table {
         float: left;
+        width: 100%;
         max-width: 100%;
     }
 

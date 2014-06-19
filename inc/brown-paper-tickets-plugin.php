@@ -437,40 +437,46 @@ class BPTPlugin {
 	public function list_event_shortcode( $atts ) {
 
 		global $post;
+		
+		if ( is_home() ||
+				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-events' ) || 
+				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list_events' ) ||
+				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-event' ) ||
+				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list_event' )
+			) {
 
-		$event_list_attributes = shortcode_atts(
-			array(
-				'event_id' => null,
-				'client_id' => null,
-				'event-id' => null,
-				'client-id' => null,
-			),
-			$atts
-		);
+			$event_list_attributes = shortcode_atts(
+				array(
+					'event_id' => null,
+					'client_id' => null,
+					'event-id' => null,
+					'client-id' => null,
+				),
+				$atts
+			);
 
-		$localized_variables = array(
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			'bptNonce' => wp_create_nonce( 'bpt-event-list-nonce' ),
-			'postID' => $post->ID,
-		);
+			$localized_variables = array(
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'bptNonce' => wp_create_nonce( 'bpt-event-list-nonce' ),
+				'postID' => $post->ID,
+			);
 
-		if ( $event_list_attributes['event_id'] ) {
-			$localized_variables['eventID'] = $event_list_attributes['event_id'];
-		}
+			if ( $event_list_attributes['event_id'] ) {
+				$localized_variables['eventID'] = $event_list_attributes['event_id'];
+			}
 
-		if ( $event_list_attributes['event-id'] ) {
-			$localized_variables['eventID'] = $event_list_attributes['event-id'];
-		}
+			if ( $event_list_attributes['event-id'] ) {
+				$localized_variables['eventID'] = $event_list_attributes['event-id'];
+			}
 
-		if ( $event_list_attributes['client-id'] ) {
-			$localized_variables['clientID'] = $event_list_attributes['client-id'];
-		}
+			if ( $event_list_attributes['client-id'] ) {
+				$localized_variables['clientID'] = $event_list_attributes['client-id'];
+			}
 
-		if ( $event_list_attributes['client_id'] ) {
-			$localized_variables['clientID'] = $event_list_attributes['client_id'];
-		}
+			if ( $event_list_attributes['client_id'] ) {
+				$localized_variables['clientID'] = $event_list_attributes['client_id'];
+			}
 
-		if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-events' ) || is_home() ) {
 
 			wp_enqueue_style( 'bpt_event_list_css', plugins_url( '/public/assets/css/bpt-event-list-shortcode.css', dirname( __FILE__ ) ), array(), VERSION );
 
@@ -499,12 +505,12 @@ class BPTPlugin {
 			$atts
 		);
 
-		$calendar_instance = [];
+		$calendar_instance = array();
 
 		if ( $calendar_attributes['client_id'] ) {
 			
 			$client_id = $calendar_attributes['client_id'];
-			$title = $calendar_attributes['title'];
+			$title     = $calendar_attributes['title'];
 
 			$calendar_instance = array(
 				'client_id' => $client_id,

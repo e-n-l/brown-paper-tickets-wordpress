@@ -17,6 +17,7 @@ class BPTAjaxActions {
 		$post_id   = null;
 		$client_id = null;
 		$event_id  = null;
+		$widget_id = null;
 
 		if ( isset( $_POST['postID'] ) ) {
 			$post_id = $_POST['postID'];
@@ -28,6 +29,10 @@ class BPTAjaxActions {
 
 		if ( isset( $_POST['eventID'] ) ) {
 			$event_id = $_POST['eventID'];
+		}
+
+		if ( isset( $_POST['widgetID'] ) ) {
+			$widget_id = $_POST['widgetID'];
 		}
 
 		self::check_nonce( $nonce, 'bpt-event-list-nonce' );

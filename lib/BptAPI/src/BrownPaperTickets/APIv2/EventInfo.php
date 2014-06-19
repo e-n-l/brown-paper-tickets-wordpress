@@ -41,7 +41,8 @@ class EventInfo extends BptAPI
         $eventsXML = $this->parseXML($apiResults);
 
         if (isset($eventsXML['error'])) {
-            return $eventsXML;
+            $events[] = $eventsXML;
+            return $events;
         }
 
         $events = array();
