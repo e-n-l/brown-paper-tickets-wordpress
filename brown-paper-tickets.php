@@ -15,7 +15,7 @@
  * Plugin Name:       Brown Paper Tickets
  * Plugin URI:        http://www.brownpapertickets.com
  * Description:       Display your events!
- * Version:           0.1
+ * Version:           0.1.1
  * Author:            Chandler Blum
  * Author URI:        http://www.brownpapertickets.com
  * Text Domain:       brown-paper-tickets-locale
