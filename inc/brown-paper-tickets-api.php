@@ -103,7 +103,6 @@ class BPTFeed {
 		$_bpt_events = new EventInfo( $this->dev_id );
 
 		if ( $event_id ) {
-
 			$client_id = null;
 			$event_id  = explode( ' ', $event_id );
 			$events    = array();
@@ -115,8 +114,6 @@ class BPTFeed {
 			foreach ( $events as $event ) {
 				$_bpt_eventList[] = $event[0];
 			}
-
-			exit( json_encode( $_bpt_eventList ) );
 		}
 
 		if ( ! $event_id ) {

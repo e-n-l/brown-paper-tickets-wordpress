@@ -132,6 +132,10 @@ API errors weren't being returned as an array.
 * Fixed bug where using the event ID of an event not belonging to the
 default producer would call the BPT API using the default client ID.
 
+* Fixed issue with loading gif not displaying.
+
+* Fixed issue where data from the API was returned too early.
+
 **Miscellaneous**
 
 * Updated Readme to reflect WP version requirement. has_shortcode()

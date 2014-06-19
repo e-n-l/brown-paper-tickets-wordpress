@@ -1,7 +1,6 @@
 <?php 
     $post_id = $_GET['post_id'];
     $wp_object = 'bptEventFeedAjaxPost' . $post_id;
-
 ?>
 
 (function($) {
@@ -12,13 +11,12 @@
 
         var self = this;
         
-        self.init();
-
         this.postID = postID;
 
         this.allEvents = [];
 
         this.bptWpObject = {};
+      
 
         this.eventList = new Ractive({
             el: '#bpt-event-list-' + self.postID,
@@ -71,6 +69,7 @@
             }
         });
 
+        self.init();
     };
 
     BptEventList.prototype.getEvents = function getEvents() {
@@ -79,18 +78,20 @@
                 action: 'bpt_get_events',
                 bptNonce: this.bptWpObject.bptNonce,
                 postID: this.bptWpObject.postID
-            };
-
+            };            
 
             if ( this.bptWpObject.clientID ) {
+
                 bptData.clientID = this.bptWpObject.clientID;
             }
 
             if ( this.bptWpObject.eventID ) {
+
                 bptData.eventID = this.bptWpObject.eventID
             }
 
-            $('div.bpt-loading-' + this.postID).fadeIn();
+            console.log($('div.bpt-loading-' + self.postID) );
+            $('div.bpt-loading-' + self.postID).fadeIn();
 
             $.ajax(
                 this.bptWpObject.ajaxurl,
@@ -102,7 +103,7 @@
                 }
             )
             .always(function() {
-                $('div.bpt-loading-' + this.postID).hide();
+                $('div.bpt-loading-' + self.postID).hide();
             })
             .fail(function() {
 
@@ -140,10 +141,10 @@
         this.bptWpObject = <?php echo $wp_object; ?>;
 
         this.getEvents();
+
     }
     
     $(document).ready(function() {
-
         var bptEventList<?php echo $post_id; ?> = new BptEventList( <?php echo $post_id; ?> );
     });
 

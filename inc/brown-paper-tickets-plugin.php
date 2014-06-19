@@ -437,7 +437,7 @@ class BPTPlugin {
 	public function list_event_shortcode( $atts ) {
 
 		global $post;
-		
+
 		if ( is_home() ||
 				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-events' ) || 
 				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list_events' ) ||
@@ -482,7 +482,7 @@ class BPTPlugin {
 
 			self::load_ajax_required();
 
-			wp_enqueue_script( 'event_feed_js_' . $post->ID, plugins_url( '/public/assets/js/event-feed-test.js.php?post_id=' . $post->ID, dirname( __FILE__ ) ), array( 'jquery', 'underscore' ), null, true );
+			wp_enqueue_script( 'event_feed_js_' . $post->ID, plugins_url( '/public/assets/js/event-feed.js.php?post_id=' . $post->ID, dirname( __FILE__ ) ), array( 'jquery', 'underscore' ), null, true );
 
 			wp_localize_script(
 				'event_feed_js_' . $post->ID,
