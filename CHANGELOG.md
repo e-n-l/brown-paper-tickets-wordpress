@@ -1,4 +1,16 @@
 # Changelog
+## v0.1.2
+
+### Improvements
+* Added proper uninstall functions.
+
+### Bug Fixes
+* Fixed issue where event calendar wasn't being displayed if a widget
+wasn't in place.
+* Fixed issue where the cache wasn't being deleted properly. 
+
+### Miscellaneous
+* Updated header in main plugin file.
 
 ## v0.1.1
 ### Improvements
