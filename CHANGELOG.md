@@ -1,4 +1,27 @@
 # Changelog
+
+### v0.1.3
+
+#### New Option in Settings
+* Added Calendar Options settings. You can now set the "Show upcoming
+Events in Calendar" option. When enabled, this will show the next 5 
+events in the event listing if the clicked day does not have any events.
+When switching months, it will also show all of the upcoming events in 
+that month.
+
+#### Improvements
+* Refactored Calendar Javascript
+
+#### Bug Fixes
+* Fixed issue where shortcodes weren't being placed in the proper place.
+* Fixed various typos and grammatical errors.
+
+#### Improvements
+
+#### Bug Fixes
+* Fixed issue where shortcodes weren't being placed in the proper place.
+* Fixed various typos and grammatical errors.
+
 ## v0.1.2
 
 ### Improvements
