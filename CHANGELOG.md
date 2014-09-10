@@ -16,12 +16,6 @@ that month.
 * Fixed issue where shortcodes weren't being placed in the proper place.
 * Fixed various typos and grammatical errors.
 
-#### Improvements
-
-#### Bug Fixes
-* Fixed issue where shortcodes weren't being placed in the proper place.
-* Fixed various typos and grammatical errors.
-
 ## v0.1.2
 
 ### Improvements
