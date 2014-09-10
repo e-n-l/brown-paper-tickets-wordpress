@@ -4,7 +4,7 @@
 * Tags: bpt, brown paper tickets
 * Requires at least: 3.0.1
 * Tested up to: 4.0
-* Stable tag: 0.1.3
+* Stable tag: 0.1.31
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,14 @@ The ability to easily add your custom style sheet is a top priority for the next
 No upgrade notes.
 
 ## Changelog
+
+### v0.1.31
+
+#### Bug Fix
+* Fixed rogue console.log();
+
+* Fixed issue where the default title "New Title" was being displayed 
+above shortcode calendars.
 
 ### v0.1.3
 

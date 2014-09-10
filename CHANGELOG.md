@@ -1,6 +1,12 @@
 # Changelog
 
-### v0.1.3
+### v0.1.31
+
+#### Bug Fix
+* Fixed rogue console.log();
+
+* Fixed issue where the default title "New Title" was being displayed 
+above shortcode calendars.
 
 #### New Option in Settings
 * Added Calendar Options settings. You can now set the "Show upcoming
