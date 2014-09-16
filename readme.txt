@@ -4,7 +4,7 @@ Donate Link: N/A
 Tags: bpt, brown paper tickets
 Requires at least: 3.6
 Tested up to: 4.0
-Stable tag: 0.1.31
+Stable tag: 0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -108,6 +108,24 @@ The ability to easily add your custom style sheet is a top priority for the next
 No upgrade notes.
 
 == Changelog ==
+
+= v0.2 =
+
+**New Feature**
+
+* Users can now manually hide prices that they do not wish to make
+public.
+    * __Hiding Prices__: When logged into Wordpress as an admin,
+    view the post that contains the event listing. You'll see a
+    (HIDE PRICE) button.
+    Clicking that will prevent the price from being displayed to
+    anyone who isn't an admin. 
+
+    * __Showing Prices__: After hiding a price, the hide price link
+    will become a (DISPLAY PRICE) link.
+    You can also go to the plugin's options page and go to the 
+    "Password Price Settings" tab and choose to display them
+    there.
 
 = v0.1.31 =
 

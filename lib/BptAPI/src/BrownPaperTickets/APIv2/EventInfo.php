@@ -59,7 +59,7 @@ class EventInfo extends BptAPI
                 'address2'=>(string) $event->e_address2,
                 'city'=> (string) $event->e_city,
                 'state'=> (string) $event->e_state,
-                'zip'=> (integer) $event->e_zip,
+                'zip'=> (string) $event->e_zip,
                 'shortDescription'=> (string) $event->description,
                 'fullDescription'=> (string) $event->e_description
             );

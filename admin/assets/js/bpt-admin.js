@@ -49,7 +49,7 @@
             var tabs = [];
 
             $('#brown_paper_tickets_settings ul li').each(function() {
-               tabs.push($(this).children('a').attr('href')); 
+               tabs.push($(this).children('a').attr('href'));
             });
 
             return tabs;
@@ -59,7 +59,7 @@
             if (tab === this.getAnchor()) {
                 return;
             }
-            
+
             document.location.replace(tab);
 
         }
@@ -134,7 +134,7 @@
             )
             .always(function() {
                 $('.bpt-loading').hide();
-                
+
             }).done(function(data) {
 
                 $('.bpt-loading').hide();
@@ -157,6 +157,38 @@
                 .fadeIn(500)
                 .delay(2000)
                 .fadeOut(500);
+            });
+        },
+        unhidePrice: function unhidePrice(event) {
+            var priceLink = $(event.target),
+                price = {
+                    priceId: priceLink.data('price-id')
+                };
+
+            $.ajax(
+                bptWP.ajaxurl,
+                {
+                    type: 'POST',
+                    data: {
+                        action: 'bpt_unhide_prices',
+                        bptNonce: bptWP.bptNonce,
+                        admin: true,
+                        prices: [price]
+                    },
+                    accepts: 'json',
+                    dataType: 'json'
+                }
+            )
+            .always(function() {
+
+            })
+            .done(function(data) {
+                if (data.success) {
+                    priceLink.parent().parent().fadeOut();
+                }
+            })
+            .fail(function(data) {
+
             });
         }
     };
@@ -197,6 +229,11 @@
             event.preventDefault();
             $('.bpt-loading').show();
             bptAPI.deleteCache();
+        });
+
+        $('a.bpt-unhide-price').click(function(event) {
+            event.preventDefault();
+            bptAPI.unhidePrice(event);
         });
 
         bptWelcomePanel = new Ractive({

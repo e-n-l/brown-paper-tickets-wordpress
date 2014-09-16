@@ -41,7 +41,7 @@ class BPTPlugin {
 
 		$this->load_shared();
 		$this->load_public();
-		
+
 		if ( is_admin() ) {
 			$this->load_admin();
 		}
@@ -137,7 +137,11 @@ class BPTPlugin {
 		add_action( 'wp_ajax_nopriv_bpt_get_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_events' ) );
 		add_action( 'wp_ajax_nopriv_bpt_get_account', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_account' ) );
 		add_action( 'wp_ajax_nopriv_bpt_get_calendar_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_calendar_events' ) );
-		
+		add_action( 'wp_ajax_bpt_hide_prices', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_hide_prices' ) );
+		add_action( 'wp_ajax_bpt_unhide_prices', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_unhide_prices' ) );
+
+
+
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_public_scripts' ) );
 	}
 
@@ -154,7 +158,7 @@ class BPTPlugin {
 		// 		register_widget( 'BrownPaperTickets\BPTEventListWidget' );
 		// 	}
 		// );
-		
+
 	}
 
 	public function load_admin_scripts( $hook ) {
@@ -174,17 +178,17 @@ class BPTPlugin {
 				)
 			);
 		}
-		
+
 		if ( $hook === 'admin_page_brown_paper_tickets_settings_setup_wizard' ) {
 
 			self::load_ajax_required();
-			
+
 			wp_enqueue_style( 'bpt_admin_css', plugins_url( '/admin/assets/css/bpt-admin.css', dirname( __FILE__ ) ), false, VERSION );
 
 			wp_enqueue_style( 'bpt_setup_wizard_css', plugins_url( '/admin/assets/css/bpt-setup-wizard.css', dirname( __FILE__ ) ), false, VERSION );
-			
-			wp_enqueue_script( 'bpt_setup_wizard_js', plugins_url( '/admin/assets/js/bpt-setup-wizard.js', dirname( __FILE__ ) ), array( 'jquery' ), true ); 
-			
+
+			wp_enqueue_script( 'bpt_setup_wizard_js', plugins_url( '/admin/assets/js/bpt-setup-wizard.js', dirname( __FILE__ ) ), array( 'jquery' ), true );
+
 			wp_localize_script(
 				'bpt_setup_wizard_js', 'bptSetupWizardAjax',
 				array(
@@ -235,6 +239,7 @@ class BPTPlugin {
 		$this->register_bpt_event_list_settings();
 		$this->register_bpt_calendar_settings();
 		$this->register_bpt_purchase_settings();
+		$this->register_bpt_password_prices_settings();
 	}
 
 	public function bpt_show_wizard() {
@@ -266,7 +271,7 @@ class BPTPlugin {
 		add_settings_section( $section_title, $section_title, null, self::$menu_slug . $section_suffix );
 
 		add_settings_field( $setting_prefix . 'cache_time', 'Cache Settings', array( $this->settings_fields, 'get_cache_time_input' ), self::$menu_slug . $section_suffix, $section_title );
-		
+
 	}
 
 	public function register_bpt_event_list_settings() {
@@ -310,7 +315,7 @@ class BPTPlugin {
 		// Event Fields
 		add_settings_field( $setting_prefix . 'show_full_description', 'Display Full Description by Default', array( $this->settings_fields, 'get_show_full_description_input' ), self::$menu_slug . $section_suffix, $section_title );
 		add_settings_field( $setting_prefix . 'how_location_after_description', 'Display Location After Description', array( $this->settings_fields, 'get_show_location_after_description_input' ), self::$menu_slug . $section_suffix, $section_title );
-		
+
 		// Date Fields
 		add_settings_field( $setting_prefix . 'show_dates', 'Display Dates', array( $this->settings_fields, 'get_show_dates_input' ), self::$menu_slug . $section_suffix, $date_section_title );
 		add_settings_field( $setting_prefix . 'show_past_dates', 'Display Past Dates', array( $this->settings_fields, 'get_show_past_dates_input' ), self::$menu_slug . $section_suffix, $date_section_title );
@@ -336,15 +341,58 @@ class BPTPlugin {
 		register_setting( self::$menu_slug, $setting_prefix . 'show_upcoming_events_calendar' );
 
 		add_settings_section( $section_title, $section_title, null, self::$menu_slug . $section_suffix );
-		
+
 		add_settings_field( $setting_prefix . 'show_upcoming_events_calendar', 'Display Upcoming Events in Calendar', array( $this->settings_fields, 'get_show_upcoming_events_calendar_input' ), self::$menu_slug . $section_suffix, $section_title );
 
 	}
 
+	public function register_bpt_password_prices_settings() {
+		$setting_prefix = '_bpt_';
+		$section_suffix = '_password_prices';
+		$section_title  = 'Password Protected Prices';
+
+		register_setting( self::$menu_slug, $setting_prefix . 'hidden_prices' );
+		add_settings_section( $section_title, $section_title, null, self::$menu_slug . $section_suffix );
+		add_settings_field( $setting_prefix . 'hidden_prices', 'Hidden Prices', array( $this->settings_fields, 'get_hidden_prices_input' ), self::$menu_slug . $section_suffix, $section_title );
+
+	}
+
+	/**
+	 * Register the API Credential Settings Fields
+	 *
+	 * Set the $section title variable to what you want the
+	 */
+	public function register_bpt_api_settings() {
+		$setting_prefix = '_bpt_';
+		$section_suffix = '_api';
+		$section_title  = 'API Credentials';
+
+		register_setting( self::$menu_slug, $setting_prefix . 'dev_id' );
+		register_setting( self::$menu_slug, $setting_prefix . 'client_id' );
+
+		add_settings_section( $section_title, $section_title, array( $this, 'render_bpt_options_page' ), self::$menu_slug . $section_suffix );
+
+		add_settings_field( $setting_prefix . 'dev_id', 'Developer ID', array( $this->settings_fields, 'get_developer_id_input' ), self::$menu_slug . $section_suffix, $section_title );
+		add_settings_field( $setting_prefix . 'client_id', 'Client ID', array( $this->settings_fields, 'get_client_id_input' ), self::$menu_slug . $section_suffix, $section_title );
+	}
+
+
+	public function register_bpt_purchase_settings() {
+		$setting_prefix = '_bpt_';
+		$section_suffix = '_purchase';
+		$section_title  = 'Ticket Purchase Settings';
+
+		register_setting( self::$menu_slug, $setting_prefix . 'allow_purchase' );
+
+		add_settings_section( $section_title, $section_title, array( $this, 'render_bpt_options_page' ), self::$menu_slug . $section_suffix );
+
+		add_settings_field( $setting_prefix . 'allow_purchase', 'Allow Purchase from Within Event List', array( $this->settings_fields, 'get_allow_purchase_input' ), self::$menu_slug . $section_suffix, $section_title );
+
+	}
 	/**
 	 * Set the Default Values
 	 */
-	
+
 	private static function set_default_general_option_values() {
 		$setting_prefix = '_bpt_';
 		$section_suffix = '_general';
@@ -383,6 +431,10 @@ class BPTPlugin {
 
 	private static function set_default_calendar_option_values() {
 		add_option( self::$menu_slug . $setting_prefix . 'show_upcoming_events_calendar', 'false' );
+	}
+
+	private static function set_default_password_prices_values() {
+		add_option( self::$menu_slug . $setting_prefix . 'hidden_prices', array() );
 	}
 
 	private static function remove_general_options() {
@@ -439,7 +491,7 @@ class BPTPlugin {
 		if ( ! empty( $bpt_options ) ) {
 
 			foreach ( $bpt_options as $bpt_option ) {
-				
+
 				$option_name = $bpt_option->option_name;
 
 				delete_option( $option_name );
@@ -448,45 +500,12 @@ class BPTPlugin {
 	}
 
 
-	/**
-	 * Register the API Credential Settings Fields
-	 *
-	 * Set the $section title variable to what you want the 
-	 */
-	public function register_bpt_api_settings() {
-		$setting_prefix = '_bpt_';
-		$section_suffix = '_api';
-		$section_title  = 'API Credentials';
-
-		register_setting( self::$menu_slug, $setting_prefix . 'dev_id' );
-		register_setting( self::$menu_slug, $setting_prefix . 'client_id' );
-
-		add_settings_section( $section_title, $section_title, array( $this, 'render_bpt_options_page' ), self::$menu_slug . $section_suffix );
-
-		add_settings_field( $setting_prefix . 'dev_id', 'Developer ID', array( $this->settings_fields, 'get_developer_id_input' ), self::$menu_slug . $section_suffix, $section_title );
-		add_settings_field( $setting_prefix . 'client_id', 'Client ID', array( $this->settings_fields, 'get_client_id_input' ), self::$menu_slug . $section_suffix, $section_title );
-	}
-
-
-	public function register_bpt_purchase_settings() {
-		$setting_prefix = '_bpt_';
-		$section_suffix = '_purchase';
-		$section_title  = 'Ticket Purchase Settings';
-
-		register_setting( self::$menu_slug, $setting_prefix . 'allow_purchase' );
-
-		add_settings_section( $section_title, $section_title, array( $this, 'render_bpt_options_page' ), self::$menu_slug . $section_suffix );
-
-		add_settings_field( $setting_prefix . 'allow_purchase', 'Allow Purchase from Within Event List', array( $this->settings_fields, 'get_allow_purchase_input' ), self::$menu_slug . $section_suffix, $section_title );
-
-	}
-
 	public function list_event_shortcode( $atts ) {
 
 		global $post;
 
 		if ( is_home() ||
-				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-events' ) || 
+				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-events' ) ||
 				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list_events' ) ||
 				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-event' ) ||
 				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list_event' )
@@ -538,7 +557,7 @@ class BPTPlugin {
 			);
 
 		}
-		
+
 		$event_list_path = plugin_dir_path( __FILE__ ) . '../public/event-list-shortcode.php';
 
 		return require($event_list_path);
@@ -559,7 +578,7 @@ class BPTPlugin {
 		$calendar_instance['title'] = $title;
 
 		if ( $calendar_attributes['client_id'] ) {
-			
+
 			$client_id = $calendar_attributes['client_id'];
 			$calendar_instance = array(
 				'client_id' => $client_id,

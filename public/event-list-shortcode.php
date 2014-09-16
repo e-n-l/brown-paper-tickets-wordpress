@@ -1,20 +1,10 @@
 <?php
+namespace BrownPaperTickets;
 
-/**
- * The ShortCode HTML Container.
- * Contents will be populated by javascript after successfull ajax call.
- */
+require_once( plugin_dir_path( __FILE__ ).'../lib/bptWordpress.php' );
 
-/**
- * This file keeps the logic to a bare minimum. It simply checks for certain
- * options that need to be displayed at this level and displays it.
- *
- * For example, if the user has decided to show the full event description
- * by default. checks that variable and displays the necessary html.
- *
- *
- * @var [type]
- */
+use BrownPaperTickets\BptWordpress;
+
 $_bpt_show_prices = get_option( '_bpt_show_prices' );
 $_bpt_show_dates = get_option( '_bpt_show_dates' );
 $_bpt_show_full_description = get_option( '_bpt_show_full_description' );
@@ -297,6 +287,7 @@ $countries = array(
 	'Zimbabwe',
 );
 
+
 ob_start();
 ?>
 <div class="bpt-loading-<?php esc_attr_e( $post->ID );?> hidden">
@@ -305,8 +296,7 @@ ob_start();
 	<img src="<?php echo esc_url( plugins_url( 'public/assets/img/loading.gif', dirname( __FILE__ ) ) ); ?>">
 </div>
 
-<div id="bpt-event-list-<?php esc_attr_e( $post->ID );?>">
-
+<div id="bpt-event-list-<?php esc_attr_e( $post->ID );?>" class="bpt-event-list" data-post-id="<?php esc_attr_e( $post->ID );?>">
 
 </div>
 <script type="text/html" id="bpt-event-template">
@@ -321,7 +311,7 @@ ob_start();
 	{{ ^.error }}
 	<div intro="slide" class="bpt-event bpt-default-theme">
 		<h2 class="bpt-event-title">{{{ unescapeHTML(title) }}}</h2>
-		
+
 
 		<?php if ( $_bpt_show_location_after_description === 'false' ) { ?>
 
@@ -371,7 +361,7 @@ ob_start();
 		<?php }
 
 	if ( $_bpt_show_dates === 'true' ) { ?>
-			<form method ="post" class="add-to-cart" action="http://www.brownpapertickets.com/addtocart.html" target="_blank">
+			<form data-event-id="{{ id }}" data-event-title="{{ title }}" method ="post" class="add-to-cart" action="http://www.brownpapertickets.com/addtocart.html" target="_blank">
 				<input type="hidden" name="event_id" value="{{ id }}" />
 				<div class="event-dates">
 					<label for="dates-{{ id }}">Select a Date:</label>
@@ -395,8 +385,18 @@ ob_start();
 						<th>Quantity</th>
 					</tr>
 					{{ #prices }}
-					<tr>
-						<td>{{ name }}</td>
+					<tr data-price-id="{{ id }}" class="{{ isHidden(hidden) }}" >
+						<td class="bpt-price-name">
+						{{ name }}
+						{{ #hidden }}
+							<?php echo ( BptWordpress::is_user_an_admin() ? '<br/><a href="#" on-click="unhidePrice" class="bpt-unhide-price" data-price-name="{{ name }}" data-price-id="{{ id }}">(Display Price)</a>' : '' ); ?>
+						{{ /hidden}}
+						
+						{{ ^hidden }}
+							<?php echo ( BptWordpress::is_user_an_admin() ? '<br/><a href="#" on-click="hidePrice" class="bpt-hide-price" data-price-name="{{ name }}" data-price-id="{{ id }}">(Hide Price)</a>' : '' ); ?>
+						{{ /hidden }}
+
+						</td>
 						<td>{{ formatPrice(value, '<?php esc_attr_e( $_bpt_currency ); ?>' ) }}</td>
 						<td>
 							<select class="bpt-shipping-qty" name="price_{{ id }}">
@@ -412,7 +412,7 @@ ob_start();
 							</select>
 						</td>
 					</tr>
-					{{ /}}
+					{{ / }}
 					</table>
 					<div class="shipping-info">
 						<label for="shipping_{{ id }}">Delivery Method</label>

@@ -40,6 +40,7 @@ $plugin_version = BPTPlugin::get_plugin_version();
 			<li><a class="bpt-admin-tab" href="#general-settings">General Settings</a></li>
 			<li><a class="bpt-admin-tab" href="#event-settings">Event List Settings</a></li>
 			<li><a class="bpt-admin-tab" href="#calendar-settings">Calendar Settings</a></li>
+			<li><a class="bpt-admin-tab" href="#password-prices">Password Prices Settings</a></li>
 			<!-- <li><a class="bpt-admin-tab" href="#purchase-settings">Purchase Settings</a></li> -->
 			<li><a class="bpt-admin-tab" href="#help">Help</a></li>
 			<li><a class="bpt-admin-tab" href="#credits">Credits</a></li>
@@ -106,6 +107,12 @@ $plugin_version = BPTPlugin::get_plugin_version();
 		<div id="event-settings">
 			<div>
 				<?php do_settings_sections( $menu_slug . '_event' ); ?>
+				<input name="Submit" type="submit" class="button-primary" value="<?php esc_attr_e( 'Save Changes' ); ?>" />
+			</div>
+		</div>
+		<div id="password-prices">
+			<div>
+				<?php do_settings_sections( $menu_slug . '_password_prices' ); ?>
 				<input name="Submit" type="submit" class="button-primary" value="<?php esc_attr_e( 'Save Changes' ); ?>" />
 			</div>
 		</div>

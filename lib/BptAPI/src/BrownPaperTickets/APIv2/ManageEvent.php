@@ -47,7 +47,7 @@ class ManageEvent extends BptAPI
         $apiOptions['e_description'] = $eventParams['fullDescription'];
 
         if (isset($eventParams['address1'])) {
-            $apiOptioons['e_address1'] = $eventParams['address1'];
+            $apiOptions['e_address1'] = $eventParams['address1'];
         }
         if (isset($eventParams['address2'])) {
             $apiOptions['e_address2'] = $eventParams['address2'];
@@ -112,7 +112,7 @@ class ManageEvent extends BptAPI
         }
 
         $createEvent = array(
-            'id' => $createEventXML['event_id']
+            'id' => (integer) $createEventXML->event_id
         );
 
         return $createEvent;
@@ -129,77 +129,118 @@ class ManageEvent extends BptAPI
 
     public function changeEvent($userName, $eventParams)
     {
+        if (!$userName) {
+            throw new \InvalidArgumentException('No username was passed.');
+        }
+
+        if (!$eventParams) {
+            throw new \InvalidArgumentException('No event parameters passed.');
+        }
+
+        if (!isset($eventParams['id'])) {
+            throw new \InvalidArgumentException('No Event ID was passed.');
+        }
+
+
+        $apiOptions['endpoint'] = 'changeevent';
+        $apiOptions['account'] = $userName;
+        $apiOptions['event_id'] = $eventParams['id'];
 
         if (isset($eventParams['name'])) {
             $apiOptions['e_name'] = $eventParams['name'];
         }
-        if (isset($eventParams['e_city'])) {
-            $apiOptioons['e_city'] = $eventParams['city'];
+
+        if (isset($eventParams['city'])) {
+            $apiOptions['e_city'] = $eventParams['city'];
         }
-        if (isset($eventParams['e_state'])) {
-            $apiOptioons['e_state'] = $eventParams['state'];
+
+        if (isset($eventParams['state'])) {
+            $apiOptions['e_state'] = $eventParams['state'];
         }
-        if (isset($eventParams['e_short_description'])) {
-            $apiOptioons['e_short_description'] = $eventParams['shortDescription'];
+
+        if (isset($eventParams['shortDescription'])) {
+            $apiOptions['e_short_description'] = $eventParams['shortDescription'];
         }
-        if (isset($eventParams['e_description'])) {
-            $apiOptioons['e_description'] = $eventParams['fullDescription'];
+
+        if (isset($eventParams['fullDescription'])) {
+            $apiOptions['e_description'] = $eventParams['fullDescription'];
         }
+
         if (isset($eventParams['address1'])) {
-            $apiOptioons['e_address1'] = $eventParams['address1'];
+            $apiOptions['e_address1'] = $eventParams['address1'];
         }
+
         if (isset($eventParams['address2'])) {
             $apiOptions['e_address2'] = $eventParams['address2'];
         }
+
         if (isset($eventParams['zip'])) {
             $apiOptions['e_zip'] = $eventParams['zip'];
         }
+
         if (isset($eventParams['phone'])) {
             $apiOptions['e_phone'] = $eventParams['phone'];
         }
+
         if (isset($eventParams['web'])) {
             $apiOptions['e_web'] = $eventParams['web'];
         }
+
         if (isset($eventParams['endOfEventMessage'])) {
             $apiOptions['end_of_event_message'] = $eventParams['endOfEventMessage'];
         }
+
         if (isset($eventParams['endOfSaleMessage'])) {
             $apiOptions['end_of_sale_message'] = $eventParams['endOfSaleMessage'];
         }
+
         if (isset($eventParams['dateNotes'])) {
             $apiOptions['date_notes'] = $eventParams['dateNotes'];
         }
+
         if (isset($eventParams['notes'])) {
             $apiOptions['e_notes'] = $eventParams['notes'];
         }
+
         if (isset($eventParams['contactName'])) {
             $apiOptions['c_name'] = $eventParams['contactName'];
         }
+
         if (isset($eventParams['contactEmail'])) {
             $apiOptions['c_email'] = $eventParams['contactEmail'];
         }
+
         if (isset($eventParams['contactPhone'])) {
             $apiOptions['c_phone'] = $eventParams['contactPhone'];
         }
+
         if (isset($eventParams['contactFax'])) {
             $apiOptions['c_fax'] = $eventParams['contactFax'];
         }
+
         if (isset($eventParams['contactAddress1'])) {
             $apiOptions['c_address1'] = $eventParams['contactAddress1'];
         }
+
         if (isset($eventParams['contactAddress2'])) {
             $apiOptions['c_address2'] = $eventParams['contactAddress2'];
         }
+
         if (isset($eventParams['contactCity'])) {
             $apiOptions['c_city'] = $eventParams['contactCity'];
         }
-        if (isset($eventParams['contactCountry'])) {
-            $apiOptions['c_zip'] = $eventParams['contactCountry'];
-        }
-        if (isset($eventParams['public'])) {
-            $apiOptions['c_zip'] = $eventParams['public'];
+
+        if (isset($eventParams['contactState'])) {
+            $apiOptions['c_state'] = $eventParams['contactState'];
         }
 
+        if (isset($eventParams['contactCountry'])) {
+            $apiOptions['c_country'] = $eventParams['contactCountry'];
+        }
+
+        if(isset($eventParams['activated'])) {
+            $apiOptions['activated'] = $eventParams['activated'];
+        }
 
         $apiResults = $this->callAPI($apiOptions);
 
@@ -213,7 +254,7 @@ class ManageEvent extends BptAPI
             'result' => 'success'
         );
 
-        return $createEvent;
+        return $changeEvent;
     }
 
     /**

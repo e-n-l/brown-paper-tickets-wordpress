@@ -33,7 +33,7 @@ class AccountInfo extends BptAPI
 
         $account = array(
             'id' => (integer) $accountXML->client_id,
-            'name' => (string) $accountXML->c_client_name,
+            'username' => (string) $accountXML->c_client_name,
             'firstName' => (string) $accountXML->c_fname,
             'lastName' => (string) $accountXML->c_lname,
             'address' => (string) $accountXML->c_address,

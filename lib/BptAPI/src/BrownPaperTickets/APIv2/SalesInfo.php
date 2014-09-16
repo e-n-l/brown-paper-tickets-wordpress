@@ -21,7 +21,7 @@ class SalesInfo extends BptAPI
      */
     public function getEventSales(
         $userName,
-        $eventID = '',
+        $eventID,
         $dateID = '',
         $getOnlyCurrent = false
     ) {
@@ -45,13 +45,13 @@ class SalesInfo extends BptAPI
 
         foreach ($eventSalesXML as $eventSale) {
             $singleEventSale = array(
-                'title' => $eventSale->title,
-                'link' => $eventSale->link,
-                'eventID' => $eventSale->e_number,
-                'eventStatus' => $eventSale->event_status,
-                'ticketsSold' => $eventSale->tickets_sold,
-                'collectedValue' => $eventSale->collected_value,
-                'paidValue' => $eventSale->paid_value
+                'title' => (string) $eventSale->title,
+                'link' => (string) $eventSale->link,
+                'id' => (integer) $eventSale->e_number,
+                'eventStatus' => (string) $eventSale->event_status,
+                'ticketsSold' => (integer) $eventSale->tickets_sold,
+                'collectedValue' => (integer) $eventSale->collected_value,
+                'paidValue' => (integer) $eventSale->paid_value
             );
 
             $eventSales[] = $singleEventSale;
@@ -100,20 +100,20 @@ class SalesInfo extends BptAPI
         foreach ($dateSalesXML as $dateSale) {
 
             $singleDate = array(
-                'id' => $dateSale->date_id,
-                'beginTime' => $dateSale->begin_time,
-                'endTime' => $dateSale->end_time,
-                'ticketsSold' => $dateSale->date_tickets_sold,
-                'collectedValue' => $dateSale->date_collected_value,
+                'id' => (integer) $dateSale->date_id,
+                'beginTime' => (string) $dateSale->begin_time,
+                'endTime' => (string) $dateSale->end_time,
+                'ticketsSold' => (integer) $dateSale->date_tickets_sold,
+                'collectedValue' => (integer) $dateSale->date_collected_value,
                 'prices' => array()
             );
 
             foreach ($dateSale->price as $price) {
                 $singlePrice = array(
-                    'id' => $price->price_id,
-                    'name' => $price->price_name,
-                    'ticketsSold' => $price->price_tickets_sold,
-                    'collectedValue' => $price->price_collected_value
+                    'id' => (integer) $price->price_id,
+                    'name' => (string) $price->price_name,
+                    'ticketsSold' => (integer) $price->price_tickets_sold,
+                    'collectedValue' => (integer) $price->price_collected_value
                 );
 
                 $singleDate['prices'][] = $singlePrice;
@@ -163,26 +163,26 @@ class SalesInfo extends BptAPI
         foreach ($ordersXML->item as $sale) {
 
             $singleOrder = array(
-                'time' => $sale->order_time,
-                'dateID' => $sale->date_id,
-                'priceID' => $sale->price_id,
-                'quantity' => $sale->quantity,
-                'firstName' => $sale->fname,
-                'lastName' => $sale->lname,
-                'address' => $sale->address,
-                'city' => $sale->city,
-                'state' => $sale->state,
-                'zip' => $sale->zip,
-                'country' => $sale->country,
-                'email' => $sale->email,
-                'phone' => $sale->phone,
-                'creditCard' => $sale->cc,
-                'shippingMethod' => $sale->shipping_method,
-                'notes' => $sale->order_notes,
-                'ticketNumber' => $sale->ticket_number,
-                'section' => $sale->section,
-                'row' => $sale->row,
-                'seat' => $sale->seat
+                'time' => (string) $sale->order_time,
+                'dateID' => (integer) $sale->date_id,
+                'priceID' => (integer) $sale->price_id,
+                'quantity' => (integer) $sale->quantity,
+                'firstName' => (string) $sale->fname,
+                'lastName' => (string) $sale->lname,
+                'address' => (string) $sale->address,
+                'city' => (string) $sale->city,
+                'state' => (string) $sale->state,
+                'zip' => (string) $sale->zip,
+                'country' => (string) $sale->country,
+                'email' => (string) $sale->email,
+                'phone' => (string) $sale->phone,
+                'creditCard' => (integer) $sale->cc,
+                'shippingMethod' => (string) $sale->shipping_method,
+                'notes' => (string) $sale->order_notes,
+                'ticketNumber' => (string) $sale->ticket_number,
+                'section' => (string) $sale->section,
+                'row' => (string) $sale->row,
+                'seat' => (string) $sale->seat
             );
 
             // put the singleSale into the sales array

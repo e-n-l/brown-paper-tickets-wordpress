@@ -1,28 +1,24 @@
-<?php 
-	$post_id = $_GET['post_id'];
-	$wp_object = 'bptEventFeedAjaxPost' . $post_id;
-?>
-
 (function($) {
 	'use strict';
 	var BptEventList;
 
-	BptEventList = function BptEventList(postID) {
+	BptEventList = function BptEventList(eventListOptions) {
 
-		var self = this;
-		
-		this.postID = postID;
+		var self = this,
+			bpt,
+			init,
+			showOrHidePrice,
+			clickHidePrice,
+			getEvents,
+			postID = eventListOptions.postID,
+			allEvents = [],
+			eventList;
 
-		this.allEvents = [];
-
-		this.bptWpObject = {};
-	  
-
-		this.eventList = new Ractive({
-			el: '#bpt-event-list-' + self.postID,
+		eventList = new Ractive({
+			el: '#bpt-event-list-' + postID,
 			template: '#bpt-event-template',
 			data: {
-
+				bptEvents: undefined,
 				formatDate: function formatDate(newFormat, date) {
 					var singleDate = moment(date, 'YYYY-MM-DD');
 					return singleDate.format(newFormat);
@@ -54,95 +50,170 @@
 					if (!priceArr[1]) {
 						price = priceArr[0] + separator + '00';
 					} else {
-						price = priceArr[0] + separator + priceArr[1]; 
+						price = priceArr[0] + separator + priceArr[1];
 					}
 
 					return currency + '' + price;
+				},
+
+				isHidden: function isHidden(hidden) {
+
+					if (hidden) {
+						return 'bpt-hidden-price';
+					}
 				}
 			}
 		});
 
-		this.eventList.on({
-			showFullDescription: function showFullDescription(event) {
-				event.original.preventDefault();
-				$(event.node).parent().next('.bpt-event-full-description').toggle('hidden');
+		getEvents = function(){
+			var	bptData = {
+					action: 'bpt_get_events',
+					bptNonce: eventListOptions.bptNonce,
+					postID: eventListOptions.postID
+				};
+
+				if ( eventListOptions.clientID ) {
+
+					bptData.clientID = eventListOptions.clientID;
+				}
+
+				if ( eventListOptions.eventID ) {
+
+					bptData.eventID = eventListOptions.eventID;
+				}
+
+				$('div.bpt-loading-' + postID).fadeIn();
+
+				$.ajax(
+					eventListOptions.ajaxurl,
+					{
+						type: 'POST',
+						data: bptData,
+						accepts: 'json',
+						dataType: 'json'
+					}
+				)
+				.always(function() {
+					$('div.bpt-loading-' + postID).hide();
+				})
+				.fail(function() {
+
+					eventList.set({
+						bptError: 'Unknown Error'
+					});
+
+				})
+				.done(function(data) {
+					if (data.error) {
+
+						eventList.set({
+							bptError: data
+						});
+
+					}
+
+					if ( !data.error ) {
+
+						eventList.set({
+							bptEvents: data
+						});
+
+					}
+				})
+				.always(function() {
+
+				});
+		};
+
+
+		showOrHidePrice = function(event, showPrice) {
+			var priceLink = $(event.original.target),
+				price = {
+					priceId: priceLink.data('price-id'),
+					priceName: priceLink.data('price-name'),
+					eventTitle: priceLink.parents('form').data('event-title'),
+					eventId: priceLink.parents('form').data('event-id')
+				},
+				ajaxAction = 'bpt_hide_prices',
+				dateKeyPath = event.keypath.replace('.selectedDate', '.dates') + '.hidden',
+				selectedKeyPath =  event.keypath + '.hidden';
+
+			event.original.preventDefault();
+
+			if (!showPrice) {
+				showPrice = false;
 			}
-		});
 
-		self.init();
-	};
-
-	BptEventList.prototype.getEvents = function getEvents() {
-		var self = this,
-			bptData = {
-				action: 'bpt_get_events',
-				bptNonce: this.bptWpObject.bptNonce,
-				postID: this.bptWpObject.postID
-			};            
-
-			if ( this.bptWpObject.clientID ) {
-
-				bptData.clientID = this.bptWpObject.clientID;
+			if (showPrice) {
+				ajaxAction = 'bpt_unhide_prices';
 			}
-
-			if ( this.bptWpObject.eventID ) {
-
-				bptData.eventID = this.bptWpObject.eventID
-			}
-
-			$('div.bpt-loading-' + self.postID).fadeIn();
 
 			$.ajax(
-				this.bptWpObject.ajaxurl,
+				eventListOptions.ajaxurl,
 				{
 					type: 'POST',
-					data: bptData,
+					data: {
+						action: ajaxAction,
+						bptNonce: eventListOptions.bptNonce,
+						prices: [price]
+					},
 					accepts: 'json',
 					dataType: 'json'
 				}
-			)
-			.always(function() {
-				$('div.bpt-loading-' + self.postID).hide();
-			})
-			.fail(function() {
+			).always(function() {
 
-				self.eventList.set({
-					bptError: 'Unknown Error'
-				});
+			}).done(function(data) {
 
-			})
-			.done(function(data) {
+				if (data.success) {
+					if (showPrice) {
+						eventList.set(dateKeyPath, false);
+						eventList.set(selectedKeyPath, false);
+					} else {
+						eventList.set(dateKeyPath, true);
+						eventList.set(selectedKeyPath, true);
+					}
+				}
+
 				if (data.error) {
 
-					self.eventList.set({
-						bptError: data
-					});
-
 				}
 
-				if ( !data.error ) {
+			}).fail();
+		};
 
-					self.eventList.set({
-						bptEvents: data
-					});
+		eventList.on({
+			showFullDescription: function showFullDescription(event) {
+				event.original.preventDefault();
+				$(event.node).parent().next('.bpt-event-full-description').toggle('hidden');
+			},
+			hidePrice: function(event) {
+				showOrHidePrice(event);
+			},
+			unhidePrice: function(event) {
+				showOrHidePrice(event, true);
+			}
+		});
 
-				}
-			})
-			.always(function() {
-				
-			});
+
+		this.init = init = function() {
+			getEvents();
+		};
+
 	};
 
-	BptEventList.prototype.init = function init() {
 
-		this.bptWpObject = <?php echo $wp_object; ?>;
-
-		this.getEvents();
-
-	}
-	
 	$(document).ready(function() {
-		var bptEventList<?php echo $post_id; ?> = new BptEventList( <?php echo $post_id; ?> );
+
+		var eventListContainers = $('.bpt-event-list'),
+			eventLists = [];
+
+		eventListContainers.each(function() {
+			var postId = $(this).data('post-id'),
+				eventListOptions = window['bptEventFeedAjaxPost' + postId];
+
+			eventLists[postId] = new BptEventList(eventListOptions);
+			eventLists[postId].init();
+		});
 	});
 
 })(jQuery);

@@ -39,7 +39,7 @@ class BrownPaperTicketsGetEventInfoTest extends \PHPUnit_Framework_TestCase
             $this->assertInternalType('string', $event['address2']);
             $this->assertInternalType('string', $event['city']);
             $this->assertInternalType('string', $event['state']);
-            $this->assertInternalType('integer', $event['zip']);
+            $this->assertInternalType('string', $event['zip']);
             $this->assertInternalType('string', $event['shortDescription']);
             $this->assertInternalType('string', $event['fullDescription']);
 
@@ -74,7 +74,7 @@ class BrownPaperTicketsGetEventInfoTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('string', $event[0]['address2']);
         $this->assertInternalType('string', $event[0]['city']);
         $this->assertInternalType('string', $event[0]['state']);
-        $this->assertInternalType('integer', $event[0]['zip']);
+        $this->assertInternalType('string', $event[0]['zip']);
         $this->assertInternalType('string', $event[0]['shortDescription']);
         $this->assertInternalType('string', $event[0]['fullDescription']);
 

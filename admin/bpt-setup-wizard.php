@@ -97,7 +97,9 @@
 		<h3>You can always edit these options later by going to the "BPT Settings" section at the bottom left of the Wordpress Admin screen.</h3>
 		<hr />
 		<div class="bpt-setup-wizard-advanced-settings">
-		<?php do_settings_sections( $menu_slug . '_event' ); ?>
+		<?php do_settings_sections( $menu_slug . '_general' ); ?>
+		<?php do_settings_sections( $menu_slug . '_calendar' ); ?>
+		<?php do_settings_sections( $menu_slug . '_password_prices' ); ?>
 			<div class="bpt-setup-wizard-bpt-setup-wizard-button-container">
 				<button class="bpt-setup-wizard-prev-step button-secondary button-large">&laquo; Previous</button>
 				<button class="button-primary button-large bpt-setup-wizard-save">Save</button>

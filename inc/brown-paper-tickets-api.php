@@ -2,7 +2,7 @@
 
 namespace BrownPaperTickets;
 
-require_once( plugin_dir_path( __FILE__ ).'/../lib/BptAPI/vendor/autoload.php' );
+require_once( plugin_dir_path( __FILE__ ).'../lib/BptAPI/vendor/autoload.php' );
 use BrownPaperTickets\APIv2\EventInfo;
 use BrownPaperTickets\APIv2\AccountInfo;
 /**
@@ -36,7 +36,7 @@ class BPTFeed {
 	 * @return json              The JSON string of the event Data.
 	 */
 	public function get_json_calendar_events( $client_id = null, $dates = true, $prices = false ) {
-		
+
 		if ( isset( $_POST['clientID'] ) &&  $_POST['clientID'] !== '' ) {
 			$client_id = $_POST['clientID'];
 		}
@@ -90,7 +90,7 @@ class BPTFeed {
 
 		/**
 		 * Get Event List Setting Options
-		 * 
+		 *
 		 */
 		$_bpt_dates                = get_option( '_bpt_show_dates' );
 		$_bpt_prices               = get_option( '_bpt_show_prices' );
@@ -132,9 +132,9 @@ class BPTFeed {
 		}
 
 		if ( $_bpt_prices === 'true ' && $_bpt_show_sold_out_prices === 'false' ) {
-			$_bpt_eventList = $this->remove_bad_prices( $_bpt_eventList );   
+			$_bpt_eventList = $this->remove_bad_prices( $_bpt_eventList );
 		}
-		
+
 		return json_encode( $_bpt_eventList );
 
 	}
@@ -170,14 +170,14 @@ class BPTFeed {
 	/**
 	 * Event Methods
 	 */
-	
 	public function get_event_count() {
 		$events = new EventInfo( $this->dev_id );
 		return count( $events->getEvents( $this->client_id ) );
 	}
+
 	/**
 	 * Date Methods
-	 * 
+	 *
 	 */
 	public function date_has_past( $date ) {
 
@@ -223,7 +223,7 @@ class BPTFeed {
 	 */
 	/**
 	 * Convert Date. Converst the Date to a human readable date.
-	 * 
+	 *
 	 * @param  string $date The String that needs to be formatted.
 	 * @return string       The formatted date string.
 	 */
@@ -259,7 +259,7 @@ class BPTFeed {
 		foreach ( $_bpt_eventList as $eventIndex => $event ) {
 
 			foreach ( $event['dates'] as $dateIndex => $date ) {
-				
+
 				if ( $this->date_has_past( $date ) || ! $this->date_is_live( $date ) ) {
 
 					unset( $event['dates'][$dateIndex] );
@@ -278,14 +278,14 @@ class BPTFeed {
 		foreach ( $eventList as $eventIndex => $event ) {
 
 			foreach ( $event['dates'] as $dateIndex => $date ) {
-				
+
 				foreach ( $date['prices'] as $priceIndex => $price ) {
 
 					if ( $this->price_is_live( $price ) === false ) {
 						unset( $date['prices'][$priceIndex] );
 					}
 				}
-				
+
 				$date['prices'] = array_values( $date['prices'] );
 
 				$event['dates'][$dateIndex] = $date;
@@ -303,11 +303,11 @@ class BPTFeed {
 		foreach ( $_bpt_eventList as $eventIndex => $event ) {
 
 			foreach ( $event['dates'] as $dateIndex => $date ) {
-				
+
 				if ( $sort_method === 'alpha_asc' ) {
 					$date['prices'] = $this->sort_by_key( $date['prices'], 'name', true );
 				}
-				
+
 				if ( $sort_method === 'alpha_desc' ) {
 					$date['prices'] = $this->sort_by_key( $date['prices'], 'name' );
 				}
@@ -345,7 +345,7 @@ class BPTFeed {
 			arsort( $b );
 
 		}
-		
+
 		foreach ( $b as $k => $v ) {
 			$c[] = $array[$k];
 		}

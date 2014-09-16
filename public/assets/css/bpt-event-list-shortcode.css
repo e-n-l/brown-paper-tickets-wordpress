@@ -160,4 +160,22 @@
         float: left;
     }
 
-    
+/**
+ * Hidden Prices Styling
+ */
+
+a.bpt-hide-price {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: red;
+    padding: 0 3px;
+    text-decoration: none;
+}
+
+a.bpt-unhide-price {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: green;
+    padding: 0 3px;
+    text-decoration: none;
+}

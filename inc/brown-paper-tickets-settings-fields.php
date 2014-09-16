@@ -72,17 +72,17 @@ class BPTSettingsFields {
 				<span>?</span>
 				<div>
 					<p>
-						This option determines whether or not your event's prices will appear in your event listing. 
+						This option determines whether or not your event's prices will appear in your event listing.
 					</p>
 				</div>
 			</div>
 		</div>
 
-		<?php 
+		<?php
 	}
 
 	public function get_show_prices_input() {
-	
+
 		?>
 		<div class="show-prices-wrapper">
 			<input id="show-prices-true" name="_bpt_show_prices" <?php esc_attr_e( $this->is_selected( 'true', '_bpt_show_prices', 'checked' ) );?> value="true" type="radio" />
@@ -93,13 +93,13 @@ class BPTSettingsFields {
 				<span>?</span>
 				<div>
 					<p>
-						This option determines whether or not your event's prices will appear in your event listing. 
+						This option determines whether or not your event's prices will appear in your event listing.
 					</p>
 				</div>
 			</div>
 		</div>
 
-		<?php 
+		<?php
 	}
 
 	public function get_show_end_time_input() {
@@ -120,7 +120,7 @@ class BPTSettingsFields {
 			</div>
 		</div>
 
-		<?php       
+		<?php
 	}
 
 	public function get_date_format_input() {
@@ -137,7 +137,7 @@ class BPTSettingsFields {
 		?>
 		<div class="date-format-wrapper">
 			<select id="date-format" name="_bpt_date_format">
-		<?php 
+		<?php
 
 		foreach ( $date_formats as $format => $description ) {
 			?>
@@ -176,7 +176,7 @@ class BPTSettingsFields {
 		?>
 		<div class="time-format-wrapper">
 			<select id="time-format" name="_bpt_time_format">
-		<?php 
+		<?php
 
 		foreach ( $time_formats as $format => $description ) {
 			?>
@@ -207,16 +207,16 @@ class BPTSettingsFields {
 		<div class="shipping-methods-wrapper">
 			<label for="print-at-home">Print at Home</label>
 			<input id="print-at-home" value="print_at_home" name="_bpt_shipping_methods[]"  type="checkbox" <?php esc_attr_e( $this->is_selected( 'print_at_home', '_bpt_shipping_methods', 'checked' ) );?>/>
-			
+
 			<label for="will-call">Will-Call</label>
 			<input id="will-call" value="will_call" name="_bpt_shipping_methods[]"  type="checkbox" <?php esc_attr_e( $this->is_selected( 'will_call', '_bpt_shipping_methods', 'checked' ) );?>/>
-			
+
 			<label for="physical">Physical</label>
 			<input id="physical" value="physical" name="_bpt_shipping_methods[]"  type="checkbox" <?php esc_attr_e( $this->is_selected( 'physical', '_bpt_shipping_methods', 'checked' ) );?>/>
-			
+
 			<label for="mobile">Mobile</label>
 			<input id="mobile" value="mobile" name="_bpt_shipping_methods[]"  type="checkbox" <?php esc_attr_e( $this->is_selected( 'mobile', '_bpt_shipping_methods', 'checked' ) );?>/>
-			
+
 			<div class="<?php esc_attr_e( BPTPlugin::get_menu_slug() ); ?>_help">
 				<span>?</span>
 				<div>
@@ -493,14 +493,14 @@ class BPTSettingsFields {
 			<label for="united-states">Default Country</label>
 			<select name="_bpt_shipping_countries">
 
-		<?php 
+		<?php
 		foreach ( $countries as $country ) {
-						echo '<option value="' . $country . '"' . $this->is_selected( $country, '_bpt_shipping_countries', 'selected' ) . '>' . $country . '</option>'; 
-					} 
+						echo '<option value="' . $country . '"' . $this->is_selected( $country, '_bpt_shipping_countries', 'selected' ) . '>' . $country . '</option>';
+					}
 				?>
 
 			</select>
-			
+
 			<div class="<?php esc_attr_e( BPTPlugin::get_menu_slug() ); ?>_help">
 				<span>?</span>
 				<div>
@@ -522,7 +522,7 @@ class BPTSettingsFields {
 				<option value="gbp" <?php esc_attr_e( $this->is_selected( 'gbp', '_bpt_currency', 'selected' ) );?>>GBP £</option>
 				<option value="eur" <?php esc_attr_e( $this->is_selected( 'eur', '_bpt_currency', 'selected' ) );?>>EUR €</option>
 			</select>
-			
+
 			<div class="<?php esc_attr_e( BPTPlugin::get_menu_slug() ); ?>_help">
 				<span>?</span>
 				<div>
@@ -543,7 +543,7 @@ class BPTSettingsFields {
 				<option value="value_asc" <?php esc_attr_e( $this->is_selected( 'value_asc', '_bpt_price_sort', 'selected' ) );?>>Price Value - Low to High</option>
 				<option value="value_desc" <?php esc_attr_e( $this->is_selected( 'value_desc', '_bpt_price_sort', 'selected' ) );?>>Price Value - High to Low</option>
 			</select>
-			
+
 			<div class="<?php esc_attr_e( BPTPlugin::get_menu_slug() ); ?>_help">
 				<span>?</span>
 				<div>
@@ -574,7 +574,7 @@ class BPTSettingsFields {
 			</div>
 		</div>
 
-		<?php       
+		<?php
 	}
 
 	public function get_show_location_after_description_input() {
@@ -595,7 +595,7 @@ class BPTSettingsFields {
 			</div>
 		</div>
 
-		<?php       
+		<?php
 	}
 
 	public function get_show_past_dates_input() {
@@ -616,7 +616,7 @@ class BPTSettingsFields {
 			</div>
 		</div>
 
-		<?php       
+		<?php
 	}
 
 	public function get_show_sold_out_dates_input() {
@@ -637,7 +637,7 @@ class BPTSettingsFields {
 			</div>
 		</div>
 
-		<?php       
+		<?php
 	}
 
 	public function get_show_sold_out_prices_input() {
@@ -658,7 +658,7 @@ class BPTSettingsFields {
 			</div>
 		</div>
 
-		<?php       
+		<?php
 	}
 
 
@@ -675,7 +675,7 @@ class BPTSettingsFields {
 				<select id="cache-time-increment" name="_bpt_cache_time">
 					<option value="false" <?php esc_attr_e( selected( $cache_time, '0' ) );?>>Do Not Cache</option>
 					<option value="0" <?php esc_attr_e( selected( $cache_time, '0' ) );?>>Cache Indefinitely</option>
-		<?php 
+		<?php
 		while ( $increment < 50 ) {
 						echo '<option value="' . $increment . '"' . selected( $cache_time, $increment ) . '>' . $increment . '</option>';
 						$increment++;
@@ -711,7 +711,7 @@ class BPTSettingsFields {
 	/**
 	 * Purchase Fields
 	 */
-	
+
 	// public function get_allow_purchase_input() {
 
 	// }
@@ -719,10 +719,10 @@ class BPTSettingsFields {
 	/**
 	 * Show Upcoming Dates in Calendar
 	 */
-	
+
 	public function get_show_upcoming_events_calendar_input() {
 		?>
-		<div class="show-upcming-dates-calendar-wrapper">
+		<div class="show-upcoming-dates-calendar-wrapper">
 			<input id="show-upcoming-dates-calendar-true" name="_bpt_show_upcoming_events_calendar" <?php esc_attr_e( $this->is_selected( 'true', '_bpt_show_upcoming_events_calendar', 'checked' ) );?> value="true" type="radio" />
 			<label for="show-upcoming-events-calendar-true">Yes</label>
 			<input id="show-upcoming-events-calendar-false" name="_bpt_show_upcoming_events_calendar" <?php esc_attr_e( $this->is_selected( 'false', '_bpt_show_upcoming_events_calendar', 'checked' ) ); ?> value="false" type="radio" />
@@ -739,6 +739,57 @@ class BPTSettingsFields {
 		<?php
 	}
 
+
+	public function get_hidden_prices_input() {
+
+		$hidden_prices = get_option( '_bpt_hidden_prices' );
+		?>
+
+		<div class="hidden-prices-wrapper">
+
+		<?php if ( !$hidden_prices ) { ?>
+			You have not hidden any prices.
+		<?php return; }
+				if ( array_key_exists( '', $hidden_prices ) ) {
+
+					unset($hidden_prices['']);
+
+					update_option('_bpt_hidden_prices_', $hidden_prices);
+
+					$hidden_prices = get_option( '_bpt_hidden_prices' );
+				}
+
+		?>
+			<table id="hidden-prices">
+				<thead>
+					<tr>
+						<th>Event Name</th>
+						<th>Price Name</th>
+						<th>Event Id</th>
+						<th>Price Id</th>
+						<th>Display Price</th>
+					</tr>
+				</thead>
+			<?php foreach ( $hidden_prices as $hidden_price ) {
+			?>
+				<tbody>
+					<tr>
+						<td><?php esc_html_e( $hidden_price['eventTitle'] ); ?></td>
+						<td><?php esc_html_e( $hidden_price['priceName'] ); ?></td>
+						<td><?php esc_html_e( $hidden_price['eventId'] ); ?></td>
+						<td><?php esc_html_e( $hidden_price['priceId'] ); ?></td>
+						<td>
+							<a href="" class="bpt-unhide-price" data-price-id="<?php esc_html_e( $hidden_price['priceId'] ); ?>">
+							Display Price</a>
+						</td>
+					</tr>
+				</tbody>
+
+			<?php } ?>
+			</table>
+		</div>
+		<?php
+	}
 	/**
 	 * Utilites
 	 */
@@ -750,7 +801,7 @@ class BPTSettingsFields {
 		if ( is_array( $opt ) ) {
 
 			foreach ( $opt as $single_opt ) {
-				
+
 				if ( $value === $single_opt && $type === null ) {
 					return true;
 				}
@@ -758,7 +809,7 @@ class BPTSettingsFields {
 				if ( $value === $single_opt && $type === 'checked' ) {
 					return 'checked';
 				}
-				
+
 				if ( $value === $single_opt && $type === 'selected' ) {
 					return 'selected="true"';
 				}
@@ -772,7 +823,7 @@ class BPTSettingsFields {
 		if ( $value === $opt && $type === 'checked' ) {
 			return 'checked';
 		}
-		
+
 		if ( $value === $opt && $type === 'selected' ) {
 			return 'selected="true"';
 		}
