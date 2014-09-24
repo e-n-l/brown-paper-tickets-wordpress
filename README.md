@@ -109,7 +109,11 @@ No upgrade notes.
 
 ### v0.2
 
-#### New Feature
+#### New Features
+* Users can now add custom CSS for the event listing and calendar 
+widget/shortcode rules by going to new "Appearance" tab in the
+plugin settings.
+
 * Users can now manually hide prices that they do not wish to make
 public.
     * **Hiding Prices**: When logged into Wordpress as an admin,
@@ -123,6 +127,9 @@ public.
     You can also go to the plugin's options page and go to the 
     "Password Price Settings" tab and choose to display them
     there.
+    
+#### Bug Fixes
+* Fixed issue with calendar not loading properly if using as a widget.
 
 ### v0.1.31
 

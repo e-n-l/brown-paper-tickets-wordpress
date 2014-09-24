@@ -15,6 +15,7 @@ $_bpt_currency = get_option( '_bpt_currency' );
 $_bpt_date_format = esc_html( get_option( '_bpt_date_format' ) );
 $_bpt_time_format = esc_html( get_option( '_bpt_time_format' ) );
 $_bpt_show_end_time = get_option( '_bpt_show_end_time' );
+$_bpt_event_list_style = get_option( '_bpt_event_list_style' );
 
 //$_bpt_event_list_template = get_option( '_bpt_show_event_list_template' );
 
@@ -42,253 +43,28 @@ if ( $_bpt_currency === 'eur' ) {
 	$_bpt_currency = '€';
 }
 
-$countries = array(
-	'Afghanistan',
-	'Aland Islands',
-	'Albania',
-	'Algeria',
-	'American Samoa',
-	'Andorra',
-	'Angola',
-	'Anguilla',
-	'Antarctica',
-	'Antigua And Barbuda',
-	'Argentina',
-	'Armenia',
-	'Aruba',
-	'Australia',
-	'Austria',
-	'Azerbaijan',
-	'Azores',
-	'Bahamas',
-	'Bahrain',
-	'Bangladesh',
-	'Barbados',
-	'Belarus',
-	'Belgium',
-	'Belize',
-	'Benin',
-	'Bermuda',
-	'Bhutan',
-	'Bolivia',
-	'Bosnia And Herzegovina',
-	'Botswana',
-	'Bouvet Island',
-	'Brazil',
-	'British Indian Ocean Territory',
-	'Brunei Darussalam',
-	'Bulgaria',
-	'Burkina Faso',
-	'Burundi',
-	'Cambodia',
-	'Cameroon',
-	'Canada',
-	'Cape Verde',
-	'Cayman Islands',
-	'Central African Republic',
-	'Chad',
-	'Chile',
-	'China',
-	'Christmas Island',
-	'Cocos (keeling) Islands',
-	'Colombia',
-	'Comoros',
-	'Congo',
-	'Congo, The Democratic Republic Of The',
-	'Cook Islands',
-	'Costa Rica',
-	'Cote Divoire',
-	'Croatia',
-	'Cyprus',
-	'Czech Republic',
-	'Denmark',
-	'Djibouti',
-	'Dominica',
-	'Dominican Republic',
-	'Ecuador',
-	'Egypt',
-	'El Salvador',
-	'Equatorial Guinea',
-	'Eritrea',
-	'Estonia',
-	'Ethiopia',
-	'Falkland Islands',
-	'Faroe Islands',
-	'Fiji',
-	'Finland',
-	'France',
-	'French Guiana',
-	'French Polynesia',
-	'French Southern Territories',
-	'Gabon',
-	'Gambia',
-	'Georgia',
-	'Germany',
-	'Ghana',
-	'Gibraltar',
-	'Greece',
-	'Greenland',
-	'Grenada',
-	'Guadeloupe',
-	'Guam',
-	'Guatemala',
-	'Guernsey',
-	'Guinea',
-	'Guinea-Bissau',
-	'Guyana',
-	'Haiti',
-	'Heard Island And Mcdonald Islands',
-	'Holy See',
-	'Honduras',
-	'Hong Kong',
-	'Hungary',
-	'Iceland',
-	'India',
-	'Indonesia',
-	'Iraq',
-	'Ireland',
-	'Isle Of Man',
-	'Israel',
-	'Italy',
-	'Jamaica',
-	'Japan',
-	'Jersey',
-	'Jordan',
-	'Kazakhstan',
-	'Kenya',
-	'Kiribati',
-	'Korea, Republic Of',
-	'Kosovo',
-	'Kyrgyzstan',
-	'Latvia',
-	'Lebanon',
-	'Lesotho',
-	'Liberia',
-	'Libyan Arab Jamahiriya',
-	'Liechtenstein',
-	'Lithuania',
-	'Luxembourg',
-	'Macao',
-	'Macedonia, The Former Yugoslav Republic Of',
-	'Madagascar',
-	'Madeira',
-	'Malawi',
-	'Malaysia',
-	'Maldives',
-	'Mali',
-	'Malta',
-	'Marshall Islands',
-	'Martinique',
-	'Mauritania',
-	'Mauritius',
-	'Mayotte',
-	'Mexico',
-	'Micronesia, Federated States Of',
-	'Moldova',
-	'Monaco',
-	'Mongolia',
-	'Montenegro',
-	'Montserrat',
-	'Morocco',
-	'Mozambique',
-	'Myanmar',
-	'Namibia',
-	'Nauru',
-	'Nepal',
-	'Netherlands',
-	'Netherlands Antilles',
-	'New Caledonia',
-	'New Zealand',
-	'Nicaragua',
-	'Niger',
-	'Nigeria',
-	'Niue',
-	'Norfolk Island',
-	'Northern Mariana Islands',
-	'Norway',
-	'Oman',
-	'Pakistan',
-	'Palau',
-	'Palestinian Territory, Occupied',
-	'Panama',
-	'Papua New Guinea',
-	'Paraguay',
-	'Peru',
-	'Philippines',
-	'Pitcairn',
-	'Poland',
-	'Portugal',
-	'Puerto Rico',
-	'Qatar',
-	'Réunion',
-	'Romania',
-	'Russian Federation',
-	'Rwanda',
-	'Saint Barthélemy',
-	'Saint Helena',
-	'Saint Kitts And Nevis',
-	'Saint Lucia',
-	'Saint Martin',
-	'Saint Pierre And Miquelon',
-	'Saint Vincent And The Grenadines',
-	'Samoa',
-	'San Marino',
-	'Sao Tome And Principe',
-	'Saudi Arabia',
-	'Senegal',
-	'Serbia',
-	'Seychelles',
-	'Sierra Leone',
-	'Singapore',
-	'Slovakia',
-	'Slovenia',
-	'Solomon Islands',
-	'Somalia',
-	'South Africa',
-	'South Georgia And The South Sandwich Islands',
-	'Spain',
-	'Sri Lanka',
-	'Suriname',
-	'Svalbard And Jan Mayen',
-	'Swaziland',
-	'Sweden',
-	'Switzerland',
-	'Taiwan',
-	'Tajikistan',
-	'Tanzania, United Republic Of',
-	'Thailand',
-	'Timor-Leste',
-	'Togo',
-	'Tokelau',
-	'Tonga',
-	'Trinidad And Tobago',
-	'Tunisia',
-	'Turkey',
-	'Turkmenistan',
-	'Turks And Caicos Islands',
-	'Tuvalu',
-	'Uganda',
-	'Ukraine',
-	'United Arab Emirates',
-	'United Kingdom',
-	'United States',
-	'United States Minor Outlying Islands',
-	'Uruguay',
-	'Uzbekistan',
-	'Vanuatu',
-	'Venezuela',
-	'Vietnam',
-	'Virgin Islands, British',
-	'Virgin Islands, US',
-	'Wallis And Futuna',
-	'Western Sahara',
-	'Yemen',
-	'Zambia',
-	'Zimbabwe',
-);
+$countries = BptWordpress::get_country_list();
 
+if ( $_bpt_event_list_style ) {
+	$use_style = ( isset( $_bpt_event_list_style['use_style'] ) ? true : false );
+
+	if ( $use_style ) {
+		$css = '<style type="text/css">' . esc_html( $_bpt_event_list_style['custom_css'] ) . '</style>';
+	}
+}
 
 ob_start();
+
+if ( isset( $css ) ) {
+	$allowed_html = array(
+		'style' => array(
+			'type' => array(),
+		),
+	);
+
+	echo wp_kses( $css, $allowed_html );
+}
+
 ?>
 <div class="bpt-loading-<?php esc_attr_e( $post->ID );?> hidden">
 	Loading Events
@@ -378,7 +154,7 @@ ob_start();
 				<fieldset>
 				{{ #selectedDate }}
 					<input name="date_id" value="{{ id }}" type="hidden">
-					<table id="price-list-{{ id }}">
+					<table id="price-list-{{ id }}" class="bpt-event-list-prices">
 					<tr>
 						<th>Price Name</th>
 						<th>Price Value</th>
@@ -397,7 +173,7 @@ ob_start();
 						{{ /hidden }}
 
 						</td>
-						<td>{{ formatPrice(value, '<?php esc_attr_e( $_bpt_currency ); ?>' ) }}</td>
+						<td class="bpt-price-value">{{ formatPrice(value, '<?php esc_attr_e( $_bpt_currency ); ?>' ) }}</td>
 						<td>
 							<select class="bpt-shipping-qty" name="price_{{ id }}">
 
@@ -415,7 +191,7 @@ ob_start();
 					{{ / }}
 					</table>
 					<div class="shipping-info">
-						<label for="shipping_{{ id }}">Delivery Method</label>
+						<label class="bpt-shipping-method" for="shipping_{{ id }}">Delivery Method</label>
 						<select class="bpt-shipping-method" id="shipping_{{ id }}" name="shipping_{{ id }}">
 		<?php
 		foreach ( $_bpt_shipping_methods as $shipping_method ) {
@@ -438,7 +214,7 @@ ob_start();
 		?>
 						</select>
 						<br />
-						<label class="bpt-shipping-country-label" for="country-id-{{ id }}">Delivery Country</label>
+						<label class="bpt-shipping-country" class="bpt-shipping-country-label" for="country-id-{{ id }}">Delivery Country</label>
 						<select class="bpt-shipping-country" id="country-id-{{   id }}" name="country_id">
 		<?php
 								$country_incr = 1;

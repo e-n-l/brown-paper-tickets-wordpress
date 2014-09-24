@@ -5,7 +5,8 @@
         customDateFormat,
         customTimeFormat,
         bptWelcomePanel,
-        bptAPI;
+        bptAPI,
+        appearanceTab;
 
     navigation = {
         loadTab: function loadTab() {
@@ -63,6 +64,103 @@
             document.location.replace(tab);
 
         }
+    };
+
+    appearanceTab = function() {
+        var calendarHelp = $('#bpt-appearance-help-calendar'),
+            eventListHelp = $('#bpt-appearance-help-event-list'),
+            calendarCSS = $('#bpt-calendar-css'),
+            eventListCSS = $('#bpt-event-list-css'),
+            bindings,
+            init,
+            showCSSBox;
+
+        bindings = function() {
+            $('#bpt-appearance-show-event-list-help').click(function(event) {
+                event.preventDefault();
+
+                eventListHelp.toggle(function(showOrHide) {
+
+                    if (showOrHide) {
+                        eventListHelp.slideDown();
+                    }
+                });
+            });
+
+            $('#bpt-appearance-show-calendar-help').click(function(event) {
+                event.preventDefault();
+
+                calendarHelp.toggle(function(showOrHide) {
+
+                    if (showOrHide) {
+                        calendarHelp.slideDown();
+                    }
+                });
+            });
+
+            $('#bpt-event-list-use-style').click(function(event) {
+                showCSSBox(event);
+            });
+
+            $('#bpt-calendar-use-style').click(function(event) {
+                showCSSBox(event, true);
+            });
+        };
+
+        showCSSBox = function(event, calendar) {
+            if (!event) {
+                var eventListUseStyle = $('#bpt-event-list-use-style'),
+                    calendarUseStyle = $('#bpt-calendar-use-style');
+
+                    console.log(eventListUseStyle.prop('checked'));
+                    console.log(calendarUseStyle.prop('checked'));
+
+                if (!eventListUseStyle.prop('checked')) {
+                    eventListCSS.hide();
+                }
+
+                if (!calendarUseStyle.prop('checked')) {
+                    calendarCSS.hide();
+                }
+
+                return;
+            }
+
+            if (calendar) {
+
+                if (event.target.checked) {
+
+                    calendarCSS.show();
+
+                } else {
+
+                    calendarCSS.hide();
+
+                }
+
+            } else {
+
+                if (event.target.checked) {
+
+                    eventListCSS.show();
+
+                } else {
+
+                    eventListCSS.hide();
+
+                }
+
+            }
+        };
+
+        init = function() {
+            calendarHelp.hide();
+            eventListHelp.hide();
+            showCSSBox();
+            bindings();
+        };
+
+        init();
     };
 
     customDateFormat = function() {
@@ -193,12 +291,7 @@
         }
     };
 
-
-
     $(document).ready(function() {
-
-
-
         navigation.switchTabs(navigation.getAnchor());
 
         $('a.bpt-admin-tab').click(function(e) {
@@ -206,7 +299,6 @@
             var tab = $(this).attr('href');
             navigation.switchTabs(tab);
         });
-
 
         customDateFormat();
         customTimeFormat();
@@ -244,5 +336,6 @@
 
         bptAPI.getAccount();
 
+        appearanceTab();
     });
 })(jQuery);

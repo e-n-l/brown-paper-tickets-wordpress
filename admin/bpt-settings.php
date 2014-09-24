@@ -41,6 +41,7 @@ $plugin_version = BPTPlugin::get_plugin_version();
 			<li><a class="bpt-admin-tab" href="#event-settings">Event List Settings</a></li>
 			<li><a class="bpt-admin-tab" href="#calendar-settings">Calendar Settings</a></li>
 			<li><a class="bpt-admin-tab" href="#password-prices">Password Prices Settings</a></li>
+			<li><a class="bpt-admin-tab" href="#appearance-settings">Appearance</a></li>
 			<!-- <li><a class="bpt-admin-tab" href="#purchase-settings">Purchase Settings</a></li> -->
 			<li><a class="bpt-admin-tab" href="#help">Help</a></li>
 			<li><a class="bpt-admin-tab" href="#credits">Credits</a></li>
@@ -122,13 +123,17 @@ $plugin_version = BPTPlugin::get_plugin_version();
 				<input name="Submit" type="submit" class="button-primary" value="<?php esc_attr_e( 'Save Changes' ); ?>" />
 			</div>
 		</div>
+		<div id="appearance-settings">
+			<div>
+				<?php do_settings_sections( $menu_slug . '_appearance' ); ?>
+				<input name="Submit" type="submit" class="button-primary" value="<?php esc_attr_e( 'Save Changes' ); ?>" />
+			</div>
+		</div>
 		<div id="purchase-settings">
 			<div>
 			<h2>In a future release you will be able to enable sales via the plugin.</h2>
 	<?php
-
 if ( ! is_ssl() ) {
-
 	?>
 						<h3 class="error">Sorry, you must connect via SSL (HTTPS) in order to use this option.</h3>
 						<p>
@@ -139,9 +144,7 @@ if ( ! is_ssl() ) {
 						</p>
 	<?php      
 } else {
-
 	do_settings_sections( $menu_slug . '_purchase' );
-
 	?>
 					<input name="Submit" type="submit" class="button-primary" value="<?php esc_attr_e( 'Save Changes' ); ?>" />
 	<?php
