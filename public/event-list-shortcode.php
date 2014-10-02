@@ -77,11 +77,6 @@ if ( isset( $css ) ) {
 </div>
 <script type="text/html" id="bpt-event-template">
 
-{{ #bptError }}
-	<div intro="slide" class="bpt-event bpt-default-theme">
-	<h2>Sorry, an error has occured while loading events.</h2>
-	<p>{{ error }}</p>
-{{ /bptError }}
 
 {{ #bptEvents }}
 	{{ ^.error }}
@@ -253,6 +248,14 @@ if ( isset( $css ) ) {
 	</div>
 	{{ /.error }}
 {{ /bptEvents }}
+
+
+{{ #bptError }}
+	<div intro="slide" class="bpt-event bpt-default-theme">
+	<h2>Sorry, an error has occured while loading events.</h2>
+	<p>{{ error }}</p>
+{{ /bptError }}
+
 </script>
 <?php
 	$event_list = ob_get_clean();

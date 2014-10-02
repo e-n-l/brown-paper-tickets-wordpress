@@ -4,7 +4,7 @@ namespace BrownPaperTickets;
 require_once( plugin_dir_path( __FILE__ ).'../bpt-option-class.php' );
 require_once( plugin_dir_path( __FILE__ ).'/appearance-inputs.php' );
 
-class Appearance extends BptOption {
+class AppearanceSettings extends BptOption {
 
 	public function register_settings() {
 		register_setting( self::$menu_slug, self::$setting_prefix . 'event_list_style' );
@@ -43,7 +43,6 @@ class Appearance extends BptOption {
 	}
 
 	public function set_default_setting_values() {
-
 		$event_list_options = get_option(
 			self::$setting_prefix . 'event_list_style'
 		);

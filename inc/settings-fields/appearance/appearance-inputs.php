@@ -12,7 +12,7 @@ require_once( plugin_dir_path( __FILE__ ).'../../../inc/brown-paper-tickets-plug
 use BrownPaperTickets\BPTPlugin;
 
 class AppearanceInputs {
-	public function section() {
+	public static function section() {
 		?>
 		<div class="bpt-appearance">
 			<p>Customize the appearance of the event widget and the calendar.</p>

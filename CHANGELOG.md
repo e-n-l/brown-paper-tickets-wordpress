@@ -26,6 +26,7 @@ public.
 
 #### Improvements
 * Updated BptAPI library to latest version.
+* Updated Ractive to version 0.5.8
 
 ### v0.1.31
 

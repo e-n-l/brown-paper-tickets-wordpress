@@ -23,23 +23,16 @@ class BptOption {
 
 		self::$menu_slug = BPTPlugin::$menu_slug;
 		self::$setting_prefix = '_bpt_';
+	}
 
+	public function load_settings() {
 		$this->register_settings();
 		$this->register_sections();
-
-		register_activation_hook(
-			BptWordpress::plugin_root_dir() . 'brown-paper-tickets.php',
-			array( $this, 'activate' )
-		);
-
-		register_deactivation_hook(
-			BptWordpress::plugin_root_dir() . 'brown-paper-tickets.php',
-			array( $this, 'deactivate' )
-		);
 
 		if ( is_admin() ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_js' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_css' ) );
+			add_action( 'admin_menu', array( $this, 'load_menus' ) );
 			$this->load_admin_ajax_actions();
 		}
 
@@ -52,7 +45,6 @@ class BptOption {
 		$this->load_public_ajax_actions();
 
 		$this->custom_functions();
-
 	}
 
 	public function load_admin_js( $hook ) {
@@ -83,6 +75,10 @@ class BptOption {
 
 	}
 
+	public function load_menus() {
+
+	}
+
 	public function load_public_ajax_actions() {
 
 	}
@@ -99,11 +95,12 @@ class BptOption {
 
 	}
 
-	public function set_default_setting_values() {
+
+	public function custom_functions() {
 
 	}
 
-	public function custom_functions() {
+	public function set_default_setting_values() {
 
 	}
 
@@ -112,12 +109,10 @@ class BptOption {
 	}
 
 	public function activate() {
-		exit('activation!');
 		$this->set_default_setting_values();
 	}
 
 	public function deactivate() {
-		exit('deactivation!');
 		$this->remove_setting_values();
 	}
 

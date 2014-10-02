@@ -18,7 +18,7 @@
 			el: '#bpt-event-list-' + postID,
 			template: '#bpt-event-template',
 			data: {
-				bptEvents: undefined,
+
 				formatDate: function formatDate(newFormat, date) {
 					var singleDate = moment(date, 'YYYY-MM-DD');
 					return singleDate.format(newFormat);
@@ -113,11 +113,9 @@
 					}
 
 					if ( !data.error ) {
-
 						eventList.set({
 							bptEvents: data
 						});
-
 					}
 				})
 				.always(function() {
@@ -198,7 +196,6 @@
 		this.init = init = function() {
 			getEvents();
 		};
-
 	};
 
 
@@ -208,12 +205,15 @@
 			eventLists = [];
 
 		eventListContainers.each(function() {
-			var postId = $(this).data('post-id'),
+			var postId = $(this).data('post-id').toString(),
 				eventListOptions = window['bptEventFeedAjaxPost' + postId];
 
-			eventLists[postId] = new BptEventList(eventListOptions);
-			eventLists[postId].init();
+			eventLists['post' + postId] = new BptEventList(eventListOptions);
+			eventLists['post' + postId].init();
 		});
+
+
+
 	});
 
 })(jQuery);

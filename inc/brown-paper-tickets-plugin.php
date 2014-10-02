@@ -12,6 +12,7 @@ const PLUGIN_SLUG = 'brown_paper_tickets';
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-settings-fields.php' );
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-ajax.php' );
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-widgets.php' );
+require_once( plugin_dir_path( __FILE__ ).'../inc/settings-fields/appearance/appearance.php' );
 
 use BrownPaperTickets\BPTSettingsFields;
 use BrownPaperTickets\BPTAjaxActions;
@@ -24,6 +25,8 @@ class BPTPlugin {
 	protected static $plugin_slug;
 	protected static $plugin_version;
 	protected static $instance = null;
+
+	protected $appearance_settings;
 
 	public function __construct() {
 
@@ -41,6 +44,8 @@ class BPTPlugin {
 		if ( is_admin() ) {
 			$this->load_admin();
 		}
+
+		$this->appearance_settings = new AppearanceSettings;
 
 	}
 
@@ -69,11 +74,14 @@ class BPTPlugin {
 			return;
 		}
 
-		update_option( '_bpt_show_wizard', 'true' );
+		if ( ! get_option( '_bpt_dev_id' ) && ! get_option( '_bpt_client_id' ) ) {
+			update_option( '_bpt_show_wizard', 'true' );
+			self::set_default_event_option_values();
+			self::set_default_calendar_option_values();
+			self::set_default_password_prices_values();
+		}
 
-		self::set_default_event_option_values();
-		self::set_default_calendar_option_values();
-		self::set_default_password_prices_values();
+		$this->appearance_settings->activate();
 	}
 
 	public static function deactivate() {
@@ -86,8 +94,6 @@ class BPTPlugin {
 		if ( __FILE__ != WP_UNINSTALL_PLUGIN ) {
 			return;
 		}
-
-
 	}
 
 	public static function uninstall() {
@@ -233,7 +239,8 @@ class BPTPlugin {
 		$this->register_bpt_calendar_settings();
 		$this->register_bpt_purchase_settings();
 		$this->register_bpt_password_prices_settings();
-		$this->load_appearance_settings();
+
+		$this->appearance_settings->load_settings();
 	}
 
 	public function bpt_show_wizard() {
@@ -385,7 +392,7 @@ class BPTPlugin {
 	public function load_appearance_settings() {
 		require_once( plugin_dir_path( __FILE__ ).'../inc/settings-fields/appearance/appearance.php' );
 
-		$appearanceSettings = new Appearance();
+		
 
 	}
 

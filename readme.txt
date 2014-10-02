@@ -134,6 +134,9 @@ public.
 **Bug Fix**
 * Fixed issue with calendar not loading properly if using as a widget.
 
+**Other**
+* Updated Ractive to version 0.5.8
+
 = v0.1.31 =
 
 **Bug Fix**
