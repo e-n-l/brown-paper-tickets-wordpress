@@ -106,16 +106,23 @@
 				.done(function(data) {
 					if (data.error) {
 
-						eventList.set({
-							bptError: data
-						});
+						eventList.set(
+							{
+								bptError: data
+							}
+						);
 
 					}
 
 					if ( !data.error ) {
-						eventList.set({
-							bptEvents: data
-						});
+
+						eventList.set(
+							{
+								bptEvents: data
+							}
+						);
+
+						$(document).trigger('bptEventListLoaded');
 					}
 				})
 				.always(function() {
@@ -169,6 +176,8 @@
 					} else {
 						eventList.set(dateKeyPath, true);
 						eventList.set(selectedKeyPath, true);
+
+
 					}
 				}
 
@@ -192,10 +201,9 @@
 			}
 		});
 
-
-		this.init = init = function() {
+		init = (function() {
 			getEvents();
-		};
+		})();
 	};
 
 
@@ -209,11 +217,8 @@
 				eventListOptions = window['bptEventFeedAjaxPost' + postId];
 
 			eventLists['post' + postId] = new BptEventList(eventListOptions);
-			eventLists['post' + postId].init();
+
 		});
-
-
-
 	});
 
 })(jQuery);

@@ -17,6 +17,9 @@ class BptWordpress {
 		return plugin_dir_path( __DIR__ );
 	}
 
+	static function plugin_root_url() {
+		return plugins_url( '', plugin_dir_path( __FILE__ ) );
+	}
 	/**
 	 * Determiner whether or not the user is an administrator.
 	 * @param  integer  $user_id The Id of the user.

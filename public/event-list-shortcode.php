@@ -132,7 +132,7 @@ if ( isset( $css ) ) {
 		<?php }
 
 	if ( $_bpt_show_dates === 'true' ) { ?>
-			<form data-event-id="{{ id }}" data-event-title="{{ title }}" method ="post" class="add-to-cart" action="http://www.brownpapertickets.com/addtocart.html" target="_blank">
+			<form data-event-id="{{ id }}" data-event-title="{{ title }}" method ="post" class="add-to-cart" action="https://www.brownpapertickets.com/addtocart.html" target="_blank">
 				<input type="hidden" name="event_id" value="{{ id }}" />
 				<div class="event-dates">
 					<label for="dates-{{ id }}">Select a Date:</label>

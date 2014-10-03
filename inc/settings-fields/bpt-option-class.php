@@ -23,11 +23,6 @@ class BptOption {
 
 		self::$menu_slug = BPTPlugin::$menu_slug;
 		self::$setting_prefix = '_bpt_';
-	}
-
-	public function load_settings() {
-		$this->register_settings();
-		$this->register_sections();
 
 		if ( is_admin() ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_js' ) );
@@ -38,11 +33,15 @@ class BptOption {
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_public_js' ) );
 		add_action( 'wp_enqueue_styles', array( $this, 'load_public_css' ) );
-
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_shared_js' ) );
 		add_action( 'wp_enqueue_styles', array( $this, 'load_shared_css' ) );
 
 		$this->load_public_ajax_actions();
+	}
+
+	public function load_settings() {
+		$this->register_settings();
+		$this->register_sections();
 
 		$this->custom_functions();
 	}

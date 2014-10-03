@@ -13,6 +13,7 @@ require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-settings-f
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-ajax.php' );
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-widgets.php' );
 require_once( plugin_dir_path( __FILE__ ).'../inc/settings-fields/appearance/appearance.php' );
+require_once( plugin_dir_path( __FILE__ ).'../inc/settings-fields/purchase/purchase.php' );
 
 use BrownPaperTickets\BPTSettingsFields;
 use BrownPaperTickets\BPTAjaxActions;
@@ -46,6 +47,7 @@ class BPTPlugin {
 		}
 
 		$this->appearance_settings = new AppearanceSettings;
+		$this->purchase_settings = new PurchaseSettings;
 
 	}
 
@@ -79,9 +81,10 @@ class BPTPlugin {
 			self::set_default_event_option_values();
 			self::set_default_calendar_option_values();
 			self::set_default_password_prices_values();
-		}
 
-		$this->appearance_settings->activate();
+			$this->appearance_settings->activate();
+			$this->purchase_settings->activate();
+		}
 	}
 
 	public static function deactivate() {
@@ -237,10 +240,10 @@ class BPTPlugin {
 		$this->register_bpt_api_settings();
 		$this->register_bpt_event_list_settings();
 		$this->register_bpt_calendar_settings();
-		$this->register_bpt_purchase_settings();
 		$this->register_bpt_password_prices_settings();
 
 		$this->appearance_settings->load_settings();
+		$this->purchase_settings->load_settings();
 	}
 
 	public function bpt_show_wizard() {
@@ -375,24 +378,10 @@ class BPTPlugin {
 		add_settings_field( $setting_prefix . 'client_id', 'Client ID', array( $this->settings_fields, 'get_client_id_input' ), self::$menu_slug . $section_suffix, $section_title );
 	}
 
-
-	public function register_bpt_purchase_settings() {
-		$setting_prefix = '_bpt_';
-		$section_suffix = '_purchase';
-		$section_title  = 'Ticket Purchase Settings';
-
-		register_setting( self::$menu_slug, $setting_prefix . 'allow_purchase' );
-
-		add_settings_section( $section_title, $section_title, array( $this, 'render_bpt_options_page' ), self::$menu_slug . $section_suffix );
-
-		add_settings_field( $setting_prefix . 'allow_purchase', 'Allow Purchase from Within Event List', array( $this->settings_fields, 'get_allow_purchase_input' ), self::$menu_slug . $section_suffix, $section_title );
-
-	}
-
 	public function load_appearance_settings() {
 		require_once( plugin_dir_path( __FILE__ ).'../inc/settings-fields/appearance/appearance.php' );
 
-		
+
 
 	}
 
@@ -499,11 +488,18 @@ class BPTPlugin {
 				$atts
 			);
 
+
 			$localized_variables = array(
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
 				'bptNonce' => wp_create_nonce( 'bpt-event-list-nonce' ),
 				'postID' => $post->ID,
 			);
+
+			$purchase_options = get_option( '_bpt_purchase_settings' );
+
+			if ( isset( $purchase_options['enable_sales'] ) ) {
+				$localized_variables['enableSales'] = $purchase_options['enable_sales'];
+			}
 
 			if ( $event_list_attributes['event_id'] ) {
 				$localized_variables['eventID'] = $event_list_attributes['event_id'];
@@ -521,12 +517,13 @@ class BPTPlugin {
 				$localized_variables['clientID'] = $event_list_attributes['client_id'];
 			}
 
-
 			wp_enqueue_style( 'bpt_event_list_css', plugins_url( '/public/assets/css/bpt-event-list-shortcode.css', dirname( __FILE__ ) ), array(), VERSION );
 
 			self::load_ajax_required();
 
-			wp_enqueue_script( 'event_feed_js_' . $post->ID, plugins_url( '/public/assets/js/event-feed.js', dirname( __FILE__ ) ), array( 'jquery', 'underscore' ), null, true );
+			wp_register_script( 'event_feed_js_' . $post->ID, plugins_url( '/public/assets/js/event-feed.js', dirname( __FILE__ ) ), array( 'jquery', 'underscore' ), null, true );
+
+			wp_enqueue_script( 'event_feed_js_' . $post->ID );
 
 			wp_localize_script(
 				'event_feed_js_' . $post->ID,
