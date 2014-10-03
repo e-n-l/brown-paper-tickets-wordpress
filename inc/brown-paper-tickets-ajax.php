@@ -54,8 +54,15 @@ class BPTAjaxActions {
 
 		$events = get_transient( '_bpt_event_list_events' . $post_id  );
 
+		if ( $event_id ) {
+			$single_event = self::get_single_event( $event_id, $events );
 
-		$events = self::filter_hidden_prices($events);
+			if ( $single_event ) {
+				$events = $single_event;
+			}
+		}
+
+		$events = self::filter_hidden_prices( $events );
 
 		exit( json_encode( $events ) );
 	}
@@ -254,15 +261,15 @@ class BPTAjaxActions {
 					exit(json_encode($response));
 				}
 
-				if (empty($price['priceName'])) {
+				if ( empty( $price['priceName'] ) ) {
 					$response['error'] = 'Price name is required.';
 
-					exit(json_encode($response));
+					exit( json_encode( $response ) );
 				}
 
 				$id = $price['priceId'];
 
-				$hidden_prices[$id] = $price;
+				$hidden_prices[ $id ] = $price;
 
 			}
 
@@ -284,14 +291,13 @@ class BPTAjaxActions {
 
 				exit( json_encode( $response ) );
 			}
-
 		} else {
 
 			$response = array(
-				'error' => 'Not authorized.'
+				'error' => 'Not authorized.',
 			);
 
-			exit(json_encode($response));
+			exit( json_encode( $response ) );
 		}
 	}
 
@@ -315,17 +321,17 @@ class BPTAjaxActions {
 
 			$hidden_prices = get_option( '_bpt_hidden_prices' );
 
-			if (!$hidden_prices) {
+			if ( ! $hidden_prices ) {
 				$response['error'] = 'No hidden prices';
-				exit(json_encode($response));
+				exit( json_encode( $response ) );
 			}
 
 			$prices = $_POST['prices'];
 			$response['prices'] = $prices;
 
-			foreach( $prices as $price ) {
+			foreach ( $prices as $price ) {
 				$id = $price['priceId'];
-				unset( $hidden_prices[$id] );
+				unset( $hidden_prices[ $id ] );
 			}
 
 			$response['hiddenPrices'] = $hidden_prices;
@@ -340,14 +346,13 @@ class BPTAjaxActions {
 				$response['priceID'] = $price['priceId'];
 				exit( json_encode( $response ) );
 			}
-
 		} else {
 
 			$response = array(
-				'error' => 'Not authorized.'
+				'error' => 'Not authorized.',
 			);
 
-			exit(json_encode($response));
+			exit( json_encode( $response ) );
 		}
 	}
 
@@ -384,11 +389,33 @@ class BPTAjaxActions {
 	}
 
 	/**
+	 * Gets a specific event from an array of events.
+	 * @param  integer $eventId The event ID.
+	 * @param  mixed $events Either a json string or an array of events.
+	 * @return mixed            Returns the single event array or false if no event.
+	 */
+	private static function get_single_event( $event_id, $events ) {
+		if ( is_string( $events ) ) {
+			$events = json_decode( $events, true );
+		}
+
+		$single_event = false;
+
+		foreach ( $events as $event ) {
+			if ( $event['id'] === (integer) $event_id ) {
+				$single_event = $event;
+			}
+		}
+
+		return $single_event;
+	}
+
+	/**
 	 * Filter Hidden Prices
 	 * @param  mixed $events Either a json string or an array of events.
 	 * @return array         The modified/filtered array.
 	 */
-	private static function filter_hidden_prices($events) {
+	private static function filter_hidden_prices( $events ) {
 
 		if ( is_string( $events ) ) {
 			$events = json_decode( $events, true );
@@ -396,15 +423,15 @@ class BPTAjaxActions {
 
 		$hidden_prices = get_option( '_bpt_hidden_prices' );
 
-		if ( $hidden_prices && !empty( $hidden_prices ) ) {
+		if ( $hidden_prices && ! empty( $hidden_prices ) ) {
 
 			// If the user is an admin, we'll just add a property "hidden" to the
 			// price.
 			if ( BptWordpress::is_user_an_admin() ) {
 
 				foreach ( $events as &$event ) { /// The & is a reference. Makes it so
-												 // you work on the actual array, not
-												 // just a copy of it
+												// you work on the actual array, not
+												// just a copy of it
 
 					foreach ( $event['dates'] as &$date ) {
 
@@ -415,17 +442,14 @@ class BPTAjaxActions {
 								$price['hidden'] = true;
 
 							}
-
 						}
-
 					}
 				}
-
 			} else {
-			// If the user is not an admin, we'll remove that price.
+				// If the user is not an admin, we'll remove that price.
 				foreach ( $events as &$event ) { // The & is a reference. Makes it so
-												 // you work on the actual array, not
-												 // just a copy of it.
+												// you work on the actual array, not
+												// just a copy of it.
 
 					foreach ( $event['dates'] as &$date ) {
 
@@ -435,17 +459,16 @@ class BPTAjaxActions {
 
 							if ( array_key_exists( $price['id'], $hidden_prices ) ) {
 
-								unset( $date['prices'][$i] );
+								unset( $date['prices'][ $i ] );
 
 							}
 
 							$i++;
 						}
 
-						$date['prices'] = array_values($date['prices']);
+						$date['prices'] = array_values( $date['prices'] );
 					}
 				}
-
 			}
 		}
 

@@ -5,7 +5,7 @@
 
 namespace BrownPaperTickets;
 
-const VERSION = '0.2';
+const VERSION = '0.2.1';
 
 const PLUGIN_SLUG = 'brown_paper_tickets';
 

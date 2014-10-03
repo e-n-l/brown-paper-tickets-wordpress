@@ -1,5 +1,11 @@
 # Changelog
 
+### v0.2.1
+
+#### Improvements
+* Event listing now properly displays a single event when `event_id`
+is passed in the shortcode without clearing the cache.
+
 ### v0.2
 
 #### New Features
