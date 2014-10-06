@@ -10,8 +10,10 @@ class BptWordpress {
 	}
 
 	/**
-	 * Get the absolute path of the plugin root directory. 
-	 * @return [type] [description]
+	 * Get the absolute path of the plugin root directory.
+	 *
+	 * @return string The path to the plugin's directory with
+	 * trailing slash.
 	 */
 	static function plugin_root_dir() {
 		return plugin_dir_path( __DIR__ );

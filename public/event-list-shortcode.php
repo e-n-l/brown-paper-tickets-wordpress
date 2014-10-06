@@ -170,7 +170,7 @@ if ( isset( $css ) ) {
 						</td>
 						<td class="bpt-price-value">{{ formatPrice(value, '<?php esc_attr_e( $_bpt_currency ); ?>' ) }}</td>
 						<td>
-							<select class="bpt-shipping-qty" name="price_{{ id }}">
+							<select class="bpt-price-qty" name="price_{{ id }}" data-price-id="{{ id }}">
 
 		<?php
 		$shipping_incr = 0;
@@ -210,7 +210,7 @@ if ( isset( $css ) ) {
 						</select>
 						<br />
 						<label class="bpt-shipping-country" class="bpt-shipping-country-label" for="country-id-{{ id }}">Delivery Country</label>
-						<select class="bpt-shipping-country" id="country-id-{{   id }}" name="country_id">
+						<select class="bpt-shipping-country" id="country-id-{{ id }}" name="country_id">
 		<?php
 								$country_incr = 1;
 		foreach ( $countries as $country ) {

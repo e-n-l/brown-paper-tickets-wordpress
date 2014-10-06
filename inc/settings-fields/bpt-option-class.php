@@ -30,13 +30,13 @@ class BptOption {
 			add_action( 'admin_menu', array( $this, 'load_menus' ) );
 			$this->load_admin_ajax_actions();
 		}
+		$this->load_public_ajax_actions();
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_public_js' ) );
 		add_action( 'wp_enqueue_styles', array( $this, 'load_public_css' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_shared_js' ) );
 		add_action( 'wp_enqueue_styles', array( $this, 'load_shared_css' ) );
 
-		$this->load_public_ajax_actions();
 	}
 
 	public function load_settings() {

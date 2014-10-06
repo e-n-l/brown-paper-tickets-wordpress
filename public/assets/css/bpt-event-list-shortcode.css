@@ -102,7 +102,7 @@
     .bpt-default-theme.bpt-event .shipping-info label.bpt-shipping-country-label {
         font-size: .8em;
     }
-    .bpt-default-theme.bpt-event select.bpt-shipping-qty {
+    .bpt-default-theme.bpt-event select.bpt-price-qty {
         margin: 0 auto;
     }
 
