@@ -16,7 +16,6 @@ $_bpt_date_format = esc_html( get_option( '_bpt_date_format' ) );
 $_bpt_time_format = esc_html( get_option( '_bpt_time_format' ) );
 $_bpt_show_end_time = get_option( '_bpt_show_end_time' );
 $_bpt_event_list_style = get_option( '_bpt_event_list_style' );
-$_bpt_enable_sales = get_option( '_bpt_enable_sales' );
 
 //$_bpt_event_list_template = get_option( '_bpt_show_event_list_template' );
 
@@ -66,12 +65,6 @@ if ( isset( $css ) ) {
 	echo wp_kses( $css, $allowed_html );
 }
 
-
-if ( $_bpt_enable_sales ) {
-	?>
-	<div id="bpt-shopping-cart-<?php esc_attr_e( $post->ID );?>"></div>
-	<?php
-}
 ?>
 <div class="bpt-loading-<?php esc_attr_e( $post->ID );?> hidden">
 	Loading Events
@@ -164,7 +157,7 @@ if ( $_bpt_enable_sales ) {
 					</tr>
 					{{ #prices }}
 					<tr data-price-id="{{ id }}" class="{{ isHidden(hidden) }}" >
-						<td class="bpt-price-name">
+						<td class="bpt-price-name" data-price-name="{{name}}">
 						{{ name }}
 						{{ #hidden }}
 							<?php echo ( BptWordpress::is_user_an_admin() ? '<br/><a href="#" on-click="unhidePrice" class="bpt-unhide-price" data-price-name="{{ name }}" data-price-id="{{ id }}">(Display Price)</a>' : '' ); ?>
@@ -175,7 +168,7 @@ if ( $_bpt_enable_sales ) {
 						{{ /hidden }}
 
 						</td>
-						<td class="bpt-price-value">{{ formatPrice(value, '<?php esc_attr_e( $_bpt_currency ); ?>' ) }}</td>
+						<td class="bpt-price-value" data-price-value="{{ formatPrice(value, '<?php esc_attr_e( $_bpt_currency ); ?>' ) }}">{{ formatPrice(value, '<?php esc_attr_e( $_bpt_currency ); ?>' ) }}</td>
 						<td>
 							<select class="bpt-price-qty" name="price_{{ id }}" data-price-id="{{ id }}">
 

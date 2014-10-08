@@ -39,6 +39,7 @@ class BPTPlugin {
 
 		self::$plugin_version = VERSION;
 
+		add_action( 'wp_enqueue_script', array( $this, 'register_plugin_scripts' ) );
 		$this->load_shared();
 		$this->load_public();
 
@@ -203,13 +204,17 @@ class BPTPlugin {
 	}
 
 	public static function load_ajax_required() {
-
+		wp_register_script( 'ractive_js', plugins_url( '/public/assets/js/ractive.js', dirname( __FILE__ ) ), array(), false, true );
+		wp_register_script( 'ractive_transitions_slide_js', plugins_url( '/public/assets/js/ractive-transitions-slide.js', dirname( __FILE__ ) ), array( 'ractive_js' ), false, true );
+		wp_register_script( 'moment_with_langs_min', plugins_url( '/public/assets/js/moment-with-langs.min.js', dirname( __FILE__ ) ), array(), false, true );
+	
 		// Include Ractive Templates
-		wp_enqueue_script( 'ractive_js', plugins_url( '/public/assets/js/ractive.js', dirname( __FILE__ ) ), array(), false, true );
-		wp_enqueue_script( 'ractive_transitions_slide_js', plugins_url( '/public/assets/js/ractive-transitions-slide.js', dirname( __FILE__ ) ), array(), false, true );
-		wp_enqueue_script( 'moment_with_langs_min', plugins_url( '/public/assets/js/moment-with-langs.min.js', dirname( __FILE__ ) ), array(), false, true );
+		wp_enqueue_script( 'ractive_js' );
+		wp_enqueue_script( 'ractive_transitions_slide_js' );
+		wp_enqueue_script( 'moment_with_langs_min' );
 
 	}
+
 
 	public function load_public_scripts() {
 
@@ -521,7 +526,13 @@ class BPTPlugin {
 
 			self::load_ajax_required();
 
-			wp_register_script( 'event_feed_js_' . $post->ID, plugins_url( '/public/assets/js/event-feed.js', dirname( __FILE__ ) ), array( 'jquery', 'underscore' ), null, true );
+			wp_register_script(
+				'event_feed_js_' . $post->ID,
+				plugins_url( '/public/assets/js/event-feed.js', dirname( __FILE__ ) ),
+				array( 'jquery', 'underscore' ),
+				null,
+				true
+			);
 
 			wp_enqueue_script( 'event_feed_js_' . $post->ID );
 

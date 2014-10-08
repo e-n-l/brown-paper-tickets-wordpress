@@ -1,6 +1,9 @@
 <?php
 
 namespace BrownPaperTickets\APIv2;
+require_once('CartInfo.php');
+
+use CartInfo;
 
 class ManageCart extends BptAPI
 {
@@ -95,6 +98,8 @@ class ManageCart extends BptAPI
             $addSinglePrice = array(
                 'result' => 'success',
                 'priceID' => $priceID,
+                'quantity' => $apiOptions['quantity'],
+                'shipping' => $apiOptions['shipping'],
                 'status' => 'Price has been added.'
             );
 
@@ -144,11 +149,15 @@ class ManageCart extends BptAPI
             'cartID' => $params['cartID']
         );
 
+        $cartInfo = new CartInfo($this->devID);
+
         foreach ($params['prices'] as $priceID => $values) {
 
             if ($values['quantity'] !== 0 || $values['quantity'] !== '0') {
                 continue;
             }
+            
+            $currentCart = $cartInfo->getCartContents($params['cartID']);
 
             $apiOptions['price_id'] = $priceID;
             $apiOptions['quantity'] = 0;
