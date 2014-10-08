@@ -16,6 +16,7 @@ $_bpt_date_format = esc_html( get_option( '_bpt_date_format' ) );
 $_bpt_time_format = esc_html( get_option( '_bpt_time_format' ) );
 $_bpt_show_end_time = get_option( '_bpt_show_end_time' );
 $_bpt_event_list_style = get_option( '_bpt_event_list_style' );
+$_bpt_enable_sales = get_option( '_bpt_enable_sales' );
 
 //$_bpt_event_list_template = get_option( '_bpt_show_event_list_template' );
 
@@ -65,6 +66,12 @@ if ( isset( $css ) ) {
 	echo wp_kses( $css, $allowed_html );
 }
 
+
+if ( $_bpt_enable_sales ) {
+	?>
+	<div id="bpt-shopping-cart-<?php esc_attr_e( $post->ID );?>"></div>
+	<?php
+}
 ?>
 <div class="bpt-loading-<?php esc_attr_e( $post->ID );?> hidden">
 	Loading Events

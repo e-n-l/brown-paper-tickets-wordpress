@@ -165,8 +165,6 @@ class BptAPI
         }
 
         return $xmlTree;
-
-
     }
     /**
     * Handle the xml if an error was give
@@ -220,7 +218,7 @@ class BptAPI
      */
     protected function convertToBool($value)
     {
-        if ($value == 'n') {
+        if ($value === 'n') {
             return false;
         } else {
             return true;

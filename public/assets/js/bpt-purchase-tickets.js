@@ -1,6 +1,12 @@
 (function($) {
     'use strict';
 
+    var shoppingCart = new Ractive({
+        el: '#bpt-shopping-cart' + eventListOptions.postID,
+        template: bptPurchaseTickets.templateUrl,
+        data: {}
+    });
+
     var manageCart = function(params) {
         var ajaxOptions = {
             url: bptPurchaseTickets.ajaxurl,
@@ -8,20 +14,20 @@
             dataType: 'json'
         };
         if (!params.stage) {
-            params.stage = 1;
+            params.stage = 'cartInfo';
         }
 
         if (!params.form) {
             return false;
         }
 
-        if (params.stage === 1) {
-            console.log(params);
+        if (params.stage === 'addTickets') {
+
             ajaxOptions.data = {
                 action: 'bpt_purchase_tickets',
                 tickets: parseTicketForm(params.form),
                 nonce: bptPurchaseTickets.nonce,
-                stage: 1
+                stage: 'addTickets'
             };
 
             $.ajax(ajaxOptions)
@@ -30,9 +36,13 @@
             })
             .done(function(data) {
                 console.log(data);
+                shoppingCart.set({
+                    message: data.message,
+                    contents: ''
+                })
             })
             .fail(function(xhr) {
-
+                console.log(xhr.responseText);
             });
         }
 
@@ -76,12 +86,16 @@
                 event.preventDefault();
 
                 var params = {
-                    stage: 1,
+                    stage: 'addTickets',
                     form: $form
                 };
                 manageCart(params);
             });
         });
+    });
+
+    $(document).ready(function() {
+
     });
 
 })(jQuery);

@@ -1,6 +1,7 @@
 <?php
 
 namespace BrownPaperTickets;
+
 require_once( plugin_dir_path( __FILE__ ).'../bpt-option-class.php' );
 require_once( plugin_dir_path( __FILE__ ).'/purchase-inputs.php' );
 require_once( BptWordpress::plugin_root_dir() . 'lib/BptAPI/vendor/autoload.php');
@@ -56,6 +57,7 @@ class PurchaseSettings extends BptOption {
 				'bpt_purchase_tickets', 'bptPurchaseTickets', array(
 					'ajaxurl' => admin_url( 'admin-ajax.php' ),
 					'nonce' => wp_create_nonce( 'bpt-purchase-tickets' ),
+					'templateUrl' => BptWordpress::plugin_root_url() . '/public/assets/templates/shopping-cart.html'
 				)
 			);
 		}
@@ -88,16 +90,15 @@ class PurchaseSettings extends BptOption {
 
 	public function purchase_tickets() {
 		$response = array();
-
 		$nonce = ( isset( $_POST['nonce'] ) ? esc_html( $_POST['nonce'] ): false );
 		$dev_id    = ( get_option( '_bpt_dev_id' ) ? get_option( '_bpt_dev_id' ) : false );
 
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'bpt-purchase-tickets' ) ) {
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'bpt-purchase-tickets' ) || ! $dev_id  ) {
 			http_response_code( 401 );
-			exit( 'Not authorized' );
+			exit( 'Not authorized.' );
 		}
 
-		if ( empty( $_POST['stage'] ) || ! $dev_id  ) {
+		if ( empty( $_POST['stage'] ) ) {
 			http_response_code( 400 );
 			exit( 'No stage was sent.' );
 		}
@@ -110,16 +111,79 @@ class PurchaseSettings extends BptOption {
 			session_start();
 		}
 
-		if ( empty( $_SESSION['bpt_purchase_tickets'] ) ) {
-			$_SESSION['bpt_purchase_tickets'] = array( 'cart_id' => $manage_cart->getCartID() );
-			$response['cartID'] = $_SESSION['bpt_purchase_tickets']['cart_id'];
+		$cart_expired = false;
+
+		if ( isset( $_SESSION['bpt_purchase_tickets']['cart_created_at'] ) ) {
+			$expiration = $_SESSION['bpt_purchase_tickets']['cart_created_at'] + 15 * 60;
+			if ( time() >= $expiration ) {
+				$cart_expired = true;
+			}
 		}
 
-		$response['tickets'] = $_POST['tickets'];
+		if ( empty( $_SESSION['bpt_purchase_tickets'] ) || $cart_expired ) {
 
-		$response['cartID'] = $_SESSION['bpt_purchase_tickets']['cart_id'];
+			$cart_id = $manage_cart->getCartID();
+
+			if ( isset( $cart_id['error'] ) ) {
+				http_response_code( 400 );
+				exit( 'Could not initialize cart.' );
+			}
+
+			$bpt_session = array(
+				'cart_id' => $cart_id,
+				'cart_created_at' => time(),
+			);
+
+			$_SESSION['bpt_purchase_tickets'] = $bpt_session;
+		}
+
+		$bpt_session = $_SESSION['bpt_purchase_tickets'];
+
+		if ( $_POST['stage'] === 'addTickets' ) {
+			$bpt_session['tickets'] = $_POST['tickets']['prices'];
+
+			if ( ! isset( $_POST['tickets'] ) || count( $_POST['tickets'] ) === 0 ) {
+				http_response_code( 400 );
+				exit( 'No tickets were sent.');
+			}
+
+			$params = array(
+				'cartID' => $bpt_session['cart_id'],
+				'prices' => $bpt_session['tickets'],
+			);
+
+			$add_tickets = $manage_cart->addPricesToCart($params);
+
+			if ( isset( $add_tickets['error'] ) ) {
+				http_response_code( 400 );
+			}
+
+			$response = $add_tickets;
+
+			exit( json_encode( $response ) );
+		}
+
+		if ( $_POST['stage'] === 'addShippingInfo' ) {
+			exit( json_encode( $response ) );
+		}
+
+		if ( $_POST['stage'] === 'addBillingInfo' ) {
+			exit( json_encode( $response ) );
+		}
+
+		if ( $_POST['stage'] === 'submitOrder' ) {
+			exit( json_encode( $response ) );
+		}
+
+		if ( $_POST['stage'] === 'cartInfo' ) {
+			exit( json_encode( $response ) );
+		}
+
+		if ( $_POST['stage'] === 'checkout' ) {
+			exit( json_encode( $response ) );
+		}
 
 		exit( json_encode( $response ) );
-		// $manage_cart = new ManageCart;
+
 	}
 }
