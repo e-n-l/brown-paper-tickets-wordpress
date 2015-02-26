@@ -1,5 +1,11 @@
 # Changelog
 
+### v0.3.1 
+
+#### Bug Fixes
+
+* Fixed bug where events without dates would throw errors.
+
 ### v0.3.0
 
 #### New Features
