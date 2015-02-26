@@ -9,6 +9,7 @@ const VERSION = '0.3.0';
 
 const PLUGIN_SLUG = 'brown_paper_tickets';
 
+
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-settings-fields.php' );
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-ajax.php' );
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-widgets.php' );

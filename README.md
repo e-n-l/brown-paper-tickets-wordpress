@@ -32,7 +32,7 @@ From there, activate the plugin as normal. The plugin should take you through a 
 
 To obtain your developer ID, you must first have developer tools added to your Brown Paper Tickets account. First log into BPT, then go to [Account Functions](https://www.brownpapertickets.com/user/functions.html). Click Developer Tools and then add. You'll see a new link in the BPT navigation titled "Developer". Click that and you'll see your developer ID listed at the top.
 
-Your client ID is typically whatever you use to log into Brown Paper Tickets.
+Your client ID is typically whatever you use to log into Brown Paper Tickets. If you are having issues with your client ID, please contact [client services](mailto:support@brownpapertickets.com).
 
 ## Plugin Usage
 
@@ -41,7 +41,7 @@ or page that you want the listing to appear.
 
 ## All Events
 
-[list_events]
+```[list_events]```
 
 ### Single Event Listing
 Use the ```[list_events event_id="XXXXXX"]``` shortcode to display a single event (XXXXXX is the event ID).
@@ -66,9 +66,9 @@ This plugin makes use of the following Free/Open Source Software:
 
 ## Frequently Asked Questions
 
-### I've updated some of my event's on Brown Paper Tickets but the changes are not showing up in the plugin. Why is that?
+### I've updated some of my events on Brown Paper Tickets but the changes are not showing up in the plugin. Why is that?
 
-You most likely have enabled the plugin the cache the data the plugin pulls in from Brown Paper Tickets.
+You have most likely enabled the plugin's cache so it's not pulling in the new event data.
 
 There are a few ways to solve this:
     * You could wait for the cache to expire.
@@ -91,15 +91,11 @@ To add your account:
 
 ### My password protected prices are being displayed by the plugin, how do I prevent that?
 
-Unfortunately, you cannot at this time.
-
-The ability to prevent specific prices from being displayed is a top priority for the next release
+When you're logged into Wordpress as an Administrator, go to the post/page where the event list is being displayed. You should see a green "HIDE PRICE" link under the prices. Clicking that will hide the price from any visitor to the site who is not logged in as an admin.
 
 ### How can I customize the look and feel of the event list or the calendar?
 
-At the moment, not easily. You could edit the event-list's style sheet directly (located plugin directory under ```brown-paper-tickets/assets/css/event-list-short-code.css```).
-
-The ability to easily add your custom style sheet is a top priority for the next release.
+Go to BPT Settings and click on the appearance tab. You can add custom CSS there.
 
 ## Upgrade Notice
 
