@@ -1,10 +1,10 @@
 <?php
 
-namespace BrownPaperTickets;
-require_once( plugin_dir_path( __FILE__ ).'../bpt-option-class.php' );
+namespace BrownPaperTickets\Modules;
+require_once( plugin_dir_path( __FILE__ ).'../bpt-module-class.php' );
 require_once( plugin_dir_path( __FILE__ ).'/appearance-inputs.php' );
 
-class AppearanceSettings extends BptOption {
+class Appearance extends Module {
 
 	public function register_settings() {
 		register_setting( self::$menu_slug, self::$setting_prefix . 'event_list_style' );
@@ -16,7 +16,7 @@ class AppearanceSettings extends BptOption {
 		$section_title = 'Appearance Settings';
 		$section_suffix = '_appearance';
 
-		$inputs = new AppearanceInputs();
+		$inputs = new Appearance\Inputs();
 
 		add_settings_section(
 			$section_title,

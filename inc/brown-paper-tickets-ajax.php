@@ -42,7 +42,6 @@ class BPTAjaxActions {
 		$events = new BPTFeed;
 
 		if ( ! self::cache_data() ) {
-
 			exit( $events->get_json_events( $client_id, $event_id ) );
 		}
 
@@ -388,27 +387,6 @@ class BPTAjaxActions {
 		return true;
 	}
 
-	/**
-	 * Gets a specific event from an array of events.
-	 * @param  integer $eventId The event ID.
-	 * @param  mixed $events Either a json string or an array of events.
-	 * @return mixed            Returns the single event array or false if no event.
-	 */
-	private static function get_single_event( $event_id, $events ) {
-		if ( is_string( $events ) ) {
-			$events = json_decode( $events, true );
-		}
-
-		$single_event = false;
-
-		foreach ( $events as $event ) {
-			if ( $event['id'] === (integer) $event_id ) {
-				$single_event = $event;
-			}
-		}
-
-		return $single_event;
-	}
 
 	/**
 	 * Filter Hidden Prices

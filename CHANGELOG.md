@@ -1,10 +1,15 @@
 # Changelog
 
-### v0.2.1
+### v0.3.0
 
-#### Improvements
-* Event listing now properly displays a single event when `event_id`
-is passed in the shortcode without clearing the cache.
+#### New Features
+
+* Users can now choose to have the service fee included in the price value.
+* Added ability to set a max quantity sold per price. 
+
+#### Bug Fixes
+
+* Fixed issue where prices were not hidden if the data was not cached.
 
 ### v0.2
 
@@ -27,12 +32,21 @@ public.
     "Password Price Settings" tab and choose to display them
     there.
 
+#### Improvements
+* Event listing now properly displays a single event when `event_id`
+is passed in the shortcode without clearing the cache.
+
 #### Bug Fixes
 * Fixed issue with calendar not loading properly if using as a widget.
+* Fixed issue where deactivated prices were showing. #6
+* Fixed issue where the error field in the event list template was not 
+displaying properly.
+* Fixed issue where the selectedDate in the ractive instance was not being
+set upon data load.
 
-#### Improvements
+#### Misc
 * Updated BptAPI library to latest version.
-* Updated Ractive to version 0.5.8
+* Updated Ractive to version 0.6
 
 ### v0.1.31
 

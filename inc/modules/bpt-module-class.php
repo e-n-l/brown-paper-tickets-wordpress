@@ -5,24 +5,23 @@
  *
  * Here lies the callbacks for the add_settings_fields() function.
  */
-namespace BrownPaperTickets;
+namespace BrownPaperTickets\Modules;
 
 require_once( plugin_dir_path( __FILE__ ).'../brown-paper-tickets-plugin.php');
 require_once( plugin_dir_path( __FILE__ ).'../../lib/bptWordpress.php');
 use BrownPaperTickets\BPTPlugin;
-use BrownPaperTickets\BptWordpress;
+use BrownPaperTickets\BptWordpress as Utilities;
 
-class BptOption {
+class Module {
 
-	protected static $menu_slug;
-	protected static $setting_prefix;
+	protected static $menu_slug = null;
+	protected static $setting_prefix = '_bpt_';
 	static $section_title;
 	static $section_suffix;
 
 	public function __construct() {
 
 		self::$menu_slug = BPTPlugin::$menu_slug;
-		self::$setting_prefix = '_bpt_';
 
 		if ( is_admin() ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_js' ) );
@@ -30,13 +29,13 @@ class BptOption {
 			add_action( 'admin_menu', array( $this, 'load_menus' ) );
 			$this->load_admin_ajax_actions();
 		}
-		$this->load_public_ajax_actions();
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_public_js' ) );
-		add_action( 'wp_enqueue_styles', array( $this, 'load_public_css' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_public_css' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_shared_js' ) );
-		add_action( 'wp_enqueue_styles', array( $this, 'load_shared_css' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_shared_css' ) );
 
+		$this->load_shortcode();
 	}
 
 	public function load_settings() {
@@ -75,6 +74,10 @@ class BptOption {
 	}
 
 	public function load_menus() {
+
+	}
+
+	public function load_shortcode() {
 
 	}
 

@@ -7,16 +7,20 @@ use PHPUnit_Framework_TestCase;
 class BrownPaperTicketsCreateEventTest extends \PHPUnit_Framework_TestCase
 {
 
+    public $bpt = null;
+
     public function __construct()
     {
-        $this->bptApi = new ManageEvent('p9ny29gi5h');
+        $this->bpt = new ManageEvent(getenv('DEVID'));
+        $this->bpt->setOption('logErrors', true);
     }
 
     // public function testCreateEvent()
     // {
-    //     $bpt = $this->bptApi;
+    //     $this->bpt = $this->bpt;
 
     //     $eventParams = array(
+    //         'username' => 'chandler_api',
     //         'name' => 'Chandler PHP API Wrapper Test - Please Delete',
     //         'city' => 'Seattle',
     //         'state' => 'WA',
@@ -24,55 +28,63 @@ class BrownPaperTicketsCreateEventTest extends \PHPUnit_Framework_TestCase
     //         'fullDescription' => 'This is a Full Description. So long.'
     //     );
 
-    //     $createEvent = $bpt->createEvent('chandler_api', $eventParams);
+    //     $createEvent = $this->bpt->createEvent($eventParams);
+    //     $this->assertInternalType('integer', $createEvent);
 
-    //     $this->assertArrayHasKey('id', $createEvent);
+    //     $dateParams = array(
+    //         'username' => 'chandler_api',
+    //     );
     // }
+
+     /**
+     * @expectedException        InvalidArgumentException
+     */
+    public function testChangeEventNoParams()
+    {
+        $params = array();
+        $this->bpt->createEvent($params);
+        $this->bpt->changeEvent($params);
+
+    }
+
 
     /**
      * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage No username was passed.
      */
     public function testChangeEventInvalidArgumentUsername()
     {
-        $bpt = $this->bptApi;
 
-        $fail = $bpt->changeEvent(null, null);
+        $this->bpt->changeEvent(null, null);
     }
 
     /**
      * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage No event parameters passed.
      */
     public function testChangeEventInvalidArgumentEventParams()
     {
-        $bpt = $this->bptApi;
-
-        $fail = $bpt->changeEvent('chandler_api', null);
+        $this->bpt->changeEvent(null);
     }
-
 
     /**
      * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage No Event ID was passed.
      */
     public function testChangeEventInvalidArgumentEventID()
     {
-        $bpt = $this->bptApi;
 
         $eventParams = array(
             'name' => 'Test Event'
         );
 
-        $fail = $bpt->changeEvent('chandler_api', $eventParams);
+        $this->bpt->changeEvent($eventParams);
     }
 
     public function testChangeEvent()
     {
-        $bpt = $this->bptApi;
+        $this->bpt = $this->bpt;
 
         $originalEventParams = array(
-            'id' => 445143,
+            'username' => 'chandler_api',
+            'eventID' => 445143,
             'name' => 'Another Test Event!',
             'city' => 'Seattle',
             'state' => 'WA',
@@ -102,7 +114,8 @@ class BrownPaperTicketsCreateEventTest extends \PHPUnit_Framework_TestCase
         );
 
         $newEventParams = array(
-            'id' => 445143,
+            'username' => 'chandler_api',
+            'eventID' => 445143,
             'name' => 'API Test Event',
             'shortDescription' => 'A New Event Description!',
             'fullDescription' => 'Changing the event description!',
@@ -129,14 +142,10 @@ class BrownPaperTicketsCreateEventTest extends \PHPUnit_Framework_TestCase
             //'activated' => 'f'
         );
 
-        $changeEvent = $bpt->changeEvent('chandler_api', $newEventParams);
+        $this->assertTrue($this->bpt->changeEvent($newEventParams));
 
-        $this->assertArrayHasKey('result', $changeEvent);
-        $this->assertContains('success', $changeEvent['result']);
+        $this->assertTrue($this->bpt->changeEvent($originalEventParams));
 
-        $changeEvent = $bpt->changeEvent('chandler_api', $originalEventParams);
-        $this->assertArrayHasKey('result', $changeEvent);
-        $this->assertContains('success', $changeEvent['result']);
 
     }
 }

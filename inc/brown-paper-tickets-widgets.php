@@ -64,12 +64,8 @@ class BPTCalendarWidget extends \WP_Widget {
 
 		if ( is_active_widget( false, false, $this->id_base, true ) || $args['widget_id'] === 'shortcode' ) {
 
-			BPTPlugin::load_ajax_required();
-
 			wp_enqueue_style( 'bpt_calendar_widget_css', plugins_url( 'public/assets/css/bpt-calendar-widget.css', dirname( __FILE__ ) ), false, VERSION );
-			wp_enqueue_script( 'ractive_transitions_fade_js', plugins_url( 'public/assets/js/ractive-transitions-fade.js', dirname( __FILE__ ) ), array(), false, true );
-			wp_enqueue_script( 'bpt_clndr_min_js', plugins_url( 'public/assets/js/clndr.min.js', dirname( __FILE__ ) ), array( 'underscore', 'jquery' ), false, true ); 
-			wp_enqueue_script( 'bpt_calendar_widget_js', plugins_url( 'public/assets/js/bpt-calendar.js', dirname( __FILE__ ) ), array( 'jquery' ), false, true );
+			wp_enqueue_script( 'bpt_calendar_widget_js', plugins_url( 'public/assets/js/bpt-calendar.js', dirname( __FILE__ ) ), array( 'jquery', 'ractive_js', 'ractive_transitions_slide_js', 'moment_with_langs_min', 'clndr_min_js' ), false, true );
 			
 
 			if ( $widget_id === 'shortcode' ) {

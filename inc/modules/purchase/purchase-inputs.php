@@ -5,13 +5,13 @@
  *
  * Here lies the callbacks for the add_settings_fields() function.
  */
-namespace BrownPaperTickets;
+namespace BrownPaperTickets\Modules\Purchase;
 
 require_once( plugin_dir_path( __FILE__ ).'../../../inc/brown-paper-tickets-plugin.php');
 
 use BrownPaperTickets\BPTPlugin;
 
-class PurchaseInputs {
+class Inputs {
 
 	public static function section() {
 		if ( ! is_ssl() ) {

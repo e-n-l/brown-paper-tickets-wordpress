@@ -39,7 +39,7 @@ $plugin_version = BPTPlugin::get_plugin_version();
 			<li><a class="bpt-admin-tab" href="#general-settings">General Settings</a></li>
 			<li><a class="bpt-admin-tab" href="#event-settings">Event List Settings</a></li>
 			<li><a class="bpt-admin-tab" href="#calendar-settings">Calendar Settings</a></li>
-			<li><a class="bpt-admin-tab" href="#password-prices">Password Prices Settings</a></li>
+			<li><a class="bpt-admin-tab" href="#password-prices">Password Protected Prices</a></li>
 			<li><a class="bpt-admin-tab" href="#appearance-settings">Appearance</a></li>
 			<?php echo ( is_ssl() ? '<li><a class="bpt-admin-tab" href="#purchase-settings">Purchase Settings</a></li>' : '' ); ?>
 			<li><a class="bpt-admin-tab" href="#help">Help</a></li>

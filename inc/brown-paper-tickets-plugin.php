@@ -5,15 +5,16 @@
 
 namespace BrownPaperTickets;
 
-const VERSION = '0.2.1';
+const VERSION = '0.3.0';
 
 const PLUGIN_SLUG = 'brown_paper_tickets';
 
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-settings-fields.php' );
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-ajax.php' );
 require_once( plugin_dir_path( __FILE__ ).'../inc/brown-paper-tickets-widgets.php' );
-require_once( plugin_dir_path( __FILE__ ).'../inc/settings-fields/appearance/appearance.php' );
-require_once( plugin_dir_path( __FILE__ ).'../inc/settings-fields/purchase/purchase.php' );
+require_once( plugin_dir_path( __FILE__ ).'../inc/modules/appearance/appearance.php' );
+require_once( plugin_dir_path( __FILE__ ).'../inc/modules/purchase/purchase.php' );
+require_once( plugin_dir_path( __FILE__ ).'../inc/modules/event-list/event-list.php' );
 
 use BrownPaperTickets\BPTSettingsFields;
 use BrownPaperTickets\BPTAjaxActions;
@@ -39,7 +40,6 @@ class BPTPlugin {
 
 		self::$plugin_version = VERSION;
 
-		add_action( 'wp_enqueue_script', array( $this, 'register_plugin_scripts' ) );
 		$this->load_shared();
 		$this->load_public();
 
@@ -47,8 +47,9 @@ class BPTPlugin {
 			$this->load_admin();
 		}
 
-		$this->appearance_settings = new AppearanceSettings;
-		$this->purchase_settings = new PurchaseSettings;
+		$this->appearance_settings = new Modules\Appearance;
+		$this->purchase_settings = new Modules\Purchase;
+		$this->event_list_settings = new Modules\EventList;
 
 	}
 
@@ -79,12 +80,12 @@ class BPTPlugin {
 
 		if ( ! get_option( '_bpt_dev_id' ) && ! get_option( '_bpt_client_id' ) ) {
 			update_option( '_bpt_show_wizard', 'true' );
-			self::set_default_event_option_values();
 			self::set_default_calendar_option_values();
 			self::set_default_password_prices_values();
 
 			$this->appearance_settings->activate();
 			$this->purchase_settings->activate();
+			$this->event_list_settings->activate();
 		}
 	}
 
@@ -122,7 +123,6 @@ class BPTPlugin {
 		add_action( 'admin_menu', array( $this, 'create_bpt_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_scripts' ) );
 
-		add_action( 'wp_ajax_bpt_get_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_events' ) );
 		add_action( 'wp_ajax_bpt_get_account', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_account' ) );
 		add_action( 'wp_ajax_bpt_get_calendar_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_calendar_events' ) );
 
@@ -131,25 +131,18 @@ class BPTPlugin {
 	}
 
 	public function load_public() {
-		add_shortcode( 'list-event', array( $this, 'list_event_shortcode' ) );
-		add_shortcode( 'list_event', array( $this, 'list_event_shortcode' ) );
-
-		add_shortcode( 'list-events', array( $this, 'list_event_shortcode' ) );
-		add_shortcode( 'list_events', array( $this, 'list_event_shortcode' ) );
 
 		add_shortcode( 'event-calendar', array( $this, 'event_calendar_shortcode' ) );
 		add_shortcode( 'event_calendar', array( $this, 'event_calendar_shortcode' ) );
 
-		add_action( 'wp_ajax_nopriv_bpt_get_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_events' ) );
 		add_action( 'wp_ajax_nopriv_bpt_get_account', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_account' ) );
 		add_action( 'wp_ajax_nopriv_bpt_get_calendar_events', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_get_calendar_events' ) );
-		add_action( 'wp_ajax_bpt_hide_prices', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_hide_prices' ) );
-		add_action( 'wp_ajax_bpt_unhide_prices', array( 'BrownPaperTickets\BPTAjaxActions', 'bpt_unhide_prices' ) );
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_public_scripts' ) );
 	}
 
 	public function load_shared() {
+		add_action( 'init', array( $this, 'register_js_libs' ) );
 
 		add_action(
 			'widgets_init', function() {
@@ -203,16 +196,19 @@ class BPTPlugin {
 		}
 	}
 
+	public static function register_js_libs()
+	{
+		wp_register_script( 'ractive_js', plugins_url( '/public/assets/js/lib/ractive.min.js', dirname( __FILE__ ) ), array(), false, true );
+		wp_register_script( 'ractive_transitions_slide_js', plugins_url( '/public/assets/js/lib/ractive-transitions-slide.js', dirname( __FILE__ ) ), array( 'ractive_js' ), false, true );
+		wp_register_script( 'moment_with_langs_min', plugins_url( '/public/assets/js/lib/moment-with-langs.min.js', dirname( __FILE__ ) ), array(), false, true );
+		wp_register_script( 'clndr_min_js', plugins_url( 'public/assets/js/lib/clndr.min.js', dirname( __FILE__ ) ), array( 'underscore', 'jquery' ), false, true ); 
+	}
+
 	public static function load_ajax_required() {
-		wp_register_script( 'ractive_js', plugins_url( '/public/assets/js/ractive.js', dirname( __FILE__ ) ), array(), false, true );
-		wp_register_script( 'ractive_transitions_slide_js', plugins_url( '/public/assets/js/ractive-transitions-slide.js', dirname( __FILE__ ) ), array( 'ractive_js' ), false, true );
-		wp_register_script( 'moment_with_langs_min', plugins_url( '/public/assets/js/moment-with-langs.min.js', dirname( __FILE__ ) ), array(), false, true );
-	
 		// Include Ractive Templates
 		wp_enqueue_script( 'ractive_js' );
 		wp_enqueue_script( 'ractive_transitions_slide_js' );
 		wp_enqueue_script( 'moment_with_langs_min' );
-
 	}
 
 
@@ -243,12 +239,14 @@ class BPTPlugin {
 
 		$this->register_bpt_general_settings();
 		$this->register_bpt_api_settings();
-		$this->register_bpt_event_list_settings();
+		// Transitioning to the more modular approach.
+		// $this->register_bpt_event_list_settings();
 		$this->register_bpt_calendar_settings();
 		$this->register_bpt_password_prices_settings();
 
 		$this->appearance_settings->load_settings();
 		$this->purchase_settings->load_settings();
+		$this->event_list_settings->load_settings();
 	}
 
 	public function bpt_show_wizard() {
@@ -284,62 +282,7 @@ class BPTPlugin {
 	}
 
 	public function register_bpt_event_list_settings() {
-		$setting_prefix = '_bpt_';
-		$section_suffix = '_event';
-		$section_title  = 'Event Display Settings';
-		$date_section_title  = 'Date Display Settings';
-		$price_section_title = 'Price Display Settings';
 
-		// Event Settings
-		register_setting( self::$menu_slug, $setting_prefix . 'show_location_after_description' );
-		register_setting( self::$menu_slug, $setting_prefix . 'show_full_description' );
-
-		// Date Settings
-		register_setting( self::$menu_slug, $setting_prefix . 'show_dates' );
-		register_setting( self::$menu_slug, $setting_prefix . 'date_format' );
-		register_setting( self::$menu_slug, $setting_prefix . 'time_format' );
-		// custom_date_field is registered but it doesn't have a settings filed added.
-		// That is added manually in the settings-fields.
-		register_setting( self::$menu_slug, $setting_prefix . 'custom_date_format' );
-		register_setting( self::$menu_slug, $setting_prefix . 'custom_time_format' );
-		register_setting( self::$menu_slug, $setting_prefix . 'show_sold_out_dates' );
-		register_setting( self::$menu_slug, $setting_prefix . 'show_past_dates' );
-		register_setting( self::$menu_slug, $setting_prefix . 'show_end_time' );
-
-		// Price Settings
-		register_setting( self::$menu_slug, $setting_prefix . 'show_prices' );
-		register_setting( self::$menu_slug, $setting_prefix . 'shipping_methods' );
-		register_setting( self::$menu_slug, $setting_prefix . 'shipping_countries' );
-		register_setting( self::$menu_slug, $setting_prefix . 'currency' );
-		register_setting( self::$menu_slug, $setting_prefix . 'price_sort' );
-		register_setting( self::$menu_slug, $setting_prefix . 'show_sold_out_prices' );
-
-
-		add_settings_section( $section_title, $section_title, null, self::$menu_slug . $section_suffix );
-		add_settings_section( $date_section_title, $date_section_title, null, self::$menu_slug . $section_suffix );
-		add_settings_section( $price_section_title, $price_section_title, null, self::$menu_slug . $section_suffix );
-
-
-		// Add the settings fields.
-		// Event Fields
-		add_settings_field( $setting_prefix . 'show_full_description', 'Display Full Description by Default', array( $this->settings_fields, 'get_show_full_description_input' ), self::$menu_slug . $section_suffix, $section_title );
-		add_settings_field( $setting_prefix . 'how_location_after_description', 'Display Location After Description', array( $this->settings_fields, 'get_show_location_after_description_input' ), self::$menu_slug . $section_suffix, $section_title );
-
-		// Date Fields
-		add_settings_field( $setting_prefix . 'show_dates', 'Display Dates', array( $this->settings_fields, 'get_show_dates_input' ), self::$menu_slug . $section_suffix, $date_section_title );
-		add_settings_field( $setting_prefix . 'show_past_dates', 'Display Past Dates', array( $this->settings_fields, 'get_show_past_dates_input' ), self::$menu_slug . $section_suffix, $date_section_title );
-		add_settings_field( $setting_prefix . 'show_end_time', 'Display Event End Time', array( $this->settings_fields, 'get_show_end_time_input' ), self::$menu_slug . $section_suffix, $date_section_title );
-		add_settings_field( $setting_prefix . 'show_sold_out_dates', 'Display Sold Out Dates', array( $this->settings_fields, 'get_show_sold_out_dates_input' ), self::$menu_slug . $section_suffix, $date_section_title );
-		add_settings_field( $setting_prefix . 'date_format', 'Date Format', array( $this->settings_fields, 'get_date_format_input' ), self::$menu_slug . $section_suffix, $date_section_title );
-		add_settings_field( $setting_prefix . 'time_format', 'Time Format', array( $this->settings_fields, 'get_time_format_input' ), self::$menu_slug . $section_suffix, $date_section_title );
-
-		// Price Fields
-		add_settings_field( $setting_prefix . 'show_prices', 'Display Prices', array( $this->settings_fields, 'get_show_prices_input' ), self::$menu_slug . $section_suffix, $price_section_title );
-		add_settings_field( $setting_prefix . 'show_sold_out_prices', 'Display Sold Out Prices', array( $this->settings_fields, 'get_show_sold_out_prices_input' ), self::$menu_slug . $section_suffix, $price_section_title );
-		add_settings_field( $setting_prefix . 'shipping_methods', 'Shipping Methods', array( $this->settings_fields, 'get_shipping_methods_input' ), self::$menu_slug . $section_suffix, $price_section_title );
-		add_settings_field( $setting_prefix . 'shipping_countries', 'Default Shipping Country', array( $this->settings_fields, 'get_shipping_countries_input' ), self::$menu_slug . $section_suffix, $price_section_title );
-		add_settings_field( $setting_prefix . 'currency', 'Currency', array( $this->settings_fields, 'get_currency_input' ), self::$menu_slug . $section_suffix, $price_section_title );
-		add_settings_field( $setting_prefix . 'price_sort', 'Price Sort', array( $this->settings_fields, 'get_price_sort_input' ), self::$menu_slug . $section_suffix, $price_section_title );
 	}
 
 	public function register_bpt_calendar_settings() {
@@ -467,85 +410,6 @@ class BPTPlugin {
 				delete_option( $option_name );
 			}
 		}
-	}
-
-	/**
-	 * Shortcode stuff!
-	 */
-	public function list_event_shortcode( $atts ) {
-
-		global $post;
-
-		if ( is_home() ||
-				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-events' ) ||
-				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list_events' ) ||
-				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list-event' ) ||
-				is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'list_event' )
-			) {
-
-			$event_list_attributes = shortcode_atts(
-				array(
-					'event_id' => null,
-					'client_id' => null,
-					'event-id' => null,
-					'client-id' => null,
-				),
-				$atts
-			);
-
-
-			$localized_variables = array(
-				'ajaxurl' => admin_url( 'admin-ajax.php' ),
-				'bptNonce' => wp_create_nonce( 'bpt-event-list-nonce' ),
-				'postID' => $post->ID,
-			);
-
-			$purchase_options = get_option( '_bpt_purchase_settings' );
-
-			if ( isset( $purchase_options['enable_sales'] ) ) {
-				$localized_variables['enableSales'] = $purchase_options['enable_sales'];
-			}
-
-			if ( $event_list_attributes['event_id'] ) {
-				$localized_variables['eventID'] = $event_list_attributes['event_id'];
-			}
-
-			if ( $event_list_attributes['event-id'] ) {
-				$localized_variables['eventID'] = $event_list_attributes['event-id'];
-			}
-
-			if ( $event_list_attributes['client-id'] ) {
-				$localized_variables['clientID'] = $event_list_attributes['client-id'];
-			}
-
-			if ( $event_list_attributes['client_id'] ) {
-				$localized_variables['clientID'] = $event_list_attributes['client_id'];
-			}
-
-			wp_enqueue_style( 'bpt_event_list_css', plugins_url( '/public/assets/css/bpt-event-list-shortcode.css', dirname( __FILE__ ) ), array(), VERSION );
-
-			self::load_ajax_required();
-
-			wp_register_script(
-				'event_feed_js_' . $post->ID,
-				plugins_url( '/public/assets/js/event-feed.js', dirname( __FILE__ ) ),
-				array( 'jquery', 'underscore' ),
-				null,
-				true
-			);
-
-			wp_enqueue_script( 'event_feed_js_' . $post->ID );
-
-			wp_localize_script(
-				'event_feed_js_' . $post->ID,
-				'bptEventFeedAjaxPost' . $post->ID,
-				$localized_variables
-			);
-		}
-
-		$event_list_path = plugin_dir_path( __FILE__ ) . '../public/event-list-shortcode.php';
-
-		return require($event_list_path);
 	}
 
 	public function event_calendar_shortcode( $atts ) {

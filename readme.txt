@@ -3,8 +3,8 @@ Contributors: Chandler Blum
 Donate Link: N/A
 Tags: bpt, brown paper tickets
 Requires at least: 3.6
-Tested up to: 4.0
-Stable tag: 0.2.1
+Tested up to: 4.1.1
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,7 +109,22 @@ No upgrade notes.
 
 == Changelog ==
 
-= v0.2 =
+= v0.3.0 =
+
+** New Features **
+
+* Users can now choose to have the service fee included in the price value.
+* Added ability to set a max quantity sold per price. 
+
+** Bug Fixes **
+
+* Fixed issue where prices were not hidden if the data was not cached.
+
+= v0.2.1 =
+
+* Fixed bug with Ractive and the event listing.
+
+= v0.2.0 =
 
 **New Features**
 

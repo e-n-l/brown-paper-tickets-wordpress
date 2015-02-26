@@ -1,7 +1,10 @@
-.hidden { 
+.hidden {
     display: none;
 }
 
+
+.bpt-event-list {
+}
 .bpt-show-full-description {
     font-size: .8em;
 }
@@ -13,7 +16,7 @@
 .bpt-default-theme.bpt-event {
     float: left;
     width: 100%;
-
+    box-sizing: border-box;
 }
     .bpt-default-theme.bpt-event {
         background: #ECEDED;
@@ -22,7 +25,7 @@
         padding: 10px;
         margin-bottom: 10px;
     }
-    
+
     .bpt-default-theme.bpt-event h2.bpt-event-title {
         text-transform: none;
         font-size: 1.5em;
@@ -55,7 +58,7 @@
         padding: 5px 0;
         font-size: 1.1em;
     }
-    
+
     .bpt-default-theme.bpt-event table {
         float: left;
         width: 100%;
@@ -96,7 +99,7 @@
     }
 
     .bpt-default-theme.bpt-event .shipping-info label {
-        display: block; 
+        display: block;
     }
 
     .bpt-default-theme.bpt-event .shipping-info label.bpt-shipping-country-label {
@@ -112,6 +115,27 @@
 
     .bpt-default-theme.bpt-event select.bpt-shipping-country {
         font-size: .8em;
+    }
+
+
+    .bpt-default-theme.bpt-event input {
+        width: 100%;
+        display: inline-block;
+        border: 1px solid #D1D2D4;
+        padding: 5px;
+        clear: both;
+    }
+
+    .bpt-default-theme.bpt-event label.bpt-price-max-quantity {
+        font-size: 10px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .bpt-default-theme.bpt-event input.bpt-price-max-quantity {
+        font-size: 10px;
+        text-align: center;
+        width: 75px;
     }
 
     .bpt-default-theme.bpt-event button.bpt-submit {
@@ -146,7 +170,7 @@
         text-transform: uppercase;
         font-size: .5em;
     }
-    
+
     .bpt-default-theme.bpt-event div.bpt-powered-by span {
         display: inline-block;
         margin-right: 5px;

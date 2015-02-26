@@ -10,6 +10,62 @@ class BptWordpress {
 	}
 
 	/**
+	 * Checks whether the given nonce is valid. If it isn't it sends a json error.
+	 */
+	public static function check_nonce( $nonce, $nonce_title ) {
+
+		if ( ! wp_verify_nonce( $nonce, $nonce_title ) ) {
+			wp_send_json_error( 'Invalid nonce.' );
+		}
+
+		return true;
+	}
+
+	/**
+	 * @return boolean Returns whether or not the plugin should cache data.
+	 */
+	public static function cache_data() {
+
+		$cache_time = get_option( '_bpt_cache_time' );
+
+		if ( $cache_time === 'false' ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns the amount of time to cache the data for. This should
+	 * only be called if self::cache_data() is true.
+	 *
+	 * @return integer The amount of time in seconds the data should be
+	 * cached.
+	 */
+	public static function cache_time() {
+
+		$cache_time = get_option( '_bpt_cache_time' );
+
+		$cache_unit = get_option( '_bpt_cache_unit' );
+
+		if ( $cache_unit === 'minutes' ) {
+			return $cache_time * MINUTE_IN_SECONDS;
+		}
+
+		if ( $cache_unit === 'hours' ) {
+			return $cache_time * HOUR_IN_SECONDS;
+		}
+
+		if ( $cache_unit === 'days' ) {
+
+			return $cache_time * DAY_IN_SECONDS;
+		}
+
+		return 0;
+
+	}
+
+	/**
 	 * Get the absolute path of the plugin root directory.
 	 *
 	 * @return string The path to the plugin's directory with
@@ -27,6 +83,7 @@ class BptWordpress {
 	static function plugin_root_url() {
 		return plugins_url( '', plugin_dir_path( __FILE__ ) );
 	}
+
 	/**
 	 * Determiner whether or not the user is an administrator.
 	 * @param  integer  $user_id The Id of the user.
@@ -36,9 +93,7 @@ class BptWordpress {
 
 		if ( is_numeric( $user_id ) ) {
 			$user = get_userdata( $user_id );
-		}
-
-		else {
+		} else {
 
 			$user = wp_get_current_user();
 		}
@@ -50,6 +105,7 @@ class BptWordpress {
 		if ( in_array( 'administrator', (array) $user->roles ) ) {
 			return true;
 		}
+
 	}
 
 	static function get_country_list() {

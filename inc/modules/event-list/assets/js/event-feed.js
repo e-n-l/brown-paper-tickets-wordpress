@@ -12,13 +12,13 @@
 			getEvents,
 			postID = eventListOptions.postID,
 			allEvents = [],
-			eventList;
+			eventList,
+			setPriceMaxQuantity;
 
 		eventList = new Ractive({
 			el: '#bpt-event-list-' + postID,
 			template: '#bpt-event-template',
 			data: {
-
 				formatDate: function formatDate(newFormat, date) {
 					var singleDate = moment(date, 'YYYY-MM-DD');
 					return singleDate.format(newFormat);
@@ -55,13 +55,40 @@
 
 					return currency + '' + price;
 				},
+				getQuantityOptions: function(price) {
+					var options,
+						total = price.maxQuantity || 20,
+						i = 0;
 
+					while (i <= total) {
+						options = options + '<option value="' + i + '">' + i + '</option>';
+						i++;
+					}
+
+					return options;
+				},
 				isHidden: function isHidden(hidden) {
 
 					if (hidden) {
 						return 'bpt-hidden-price';
 					}
 				}
+			}
+		});
+
+		eventList.on({
+			showFullDescription: function showFullDescription(event) {
+				event.original.preventDefault();
+				$(event.node).parent().next('.bpt-event-full-description').toggleClass('hidden');
+			},
+			hidePrice: function(event) {
+				showOrHidePrice(event);
+			},
+			unhidePrice: function(event) {
+				showOrHidePrice(event, true);
+			},
+			setPriceMaxQuantity: function(event) {
+				setPriceMaxQuantity(event);
 			}
 		});
 
@@ -99,7 +126,7 @@
 				.fail(function() {
 
 					eventList.set({
-						bptError: 'Unknown Error'
+						error: 'Unknown Error'
 					});
 
 				})
@@ -108,19 +135,27 @@
 
 						eventList.set(
 							{
-								bptError: data
+								error: data
 							}
 						);
 
 					}
 
 					if ( !data.error ) {
-
 						eventList.set(
 							{
-								bptEvents: data
+								events: data,
 							}
 						);
+
+						// eventList.data.events.each(function(i, event) {
+
+						// });
+						//
+						for (var i = 0; i < eventList.data.events.length; i++) {
+							var currentEvent = eventList.data.events[i];
+							eventList.set('events[' + i +'].selectedDate', currentEvent.dates[0]);
+						}
 
 						$(document).trigger('bptEventListLoaded');
 					}
@@ -129,7 +164,6 @@
 
 				});
 		};
-
 
 		showOrHidePrice = function(event, showPrice) {
 			var priceLink = $(event.original.target),
@@ -176,8 +210,6 @@
 					} else {
 						eventList.set(dateKeyPath, true);
 						eventList.set(selectedKeyPath, true);
-
-
 					}
 				}
 
@@ -188,18 +220,39 @@
 			}).fail();
 		};
 
-		eventList.on({
-			showFullDescription: function showFullDescription(event) {
-				event.original.preventDefault();
-				$(event.node).parent().next('.bpt-event-full-description').toggle('hidden');
-			},
-			hidePrice: function(event) {
-				showOrHidePrice(event);
-			},
-			unhidePrice: function(event) {
-				showOrHidePrice(event, true);
+		setPriceMaxQuantity = function(event) {
+			event.original.preventDefault();
+
+			var quantity = {},
+				id = event.context.id.toString(),
+				max = event.original.target.value,
+				maxQuantity = {},
+				data = {
+					bptNonce: eventListOptions.bptNonce,
+					action: 'bpt_set_price_max_quantity',
+					maxQuantity: [],
+				};
+
+			maxQuantity[id] = max;
+
+			data.maxQuantity.push(maxQuantity);
+
+			if (!max) {
+				max = 0;
 			}
-		});
+
+			$.ajax(
+				eventListOptions.ajaxurl,
+				{
+					type: 'POST',
+					data: data
+				}
+			).always(function() {
+
+			}).done(function(data) {
+
+			});
+		};
 
 		init = (function() {
 			getEvents();
