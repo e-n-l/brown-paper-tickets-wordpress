@@ -120,6 +120,25 @@ class Inputs {
 		<?php
 	}
 
+	public function sort_events() {
+		$sort_by = array(
+			'Default' => 'default',
+			'Chronological' => 'chrono',
+			'Reverse Chronological' => 'reverse',
+		);
+		?>
+		<select id="sort-events" name="_bpt_sort_events">
+		<?php foreach ( $sort_by as $name => $value ) {
+			?>
+			<option value="<?php esc_attr_e( $value ); ?>" <?php esc_attr_e( Utils::is_selected( $value, '_bpt_sort_events', 'selected' ) ); ?>>
+				<?php esc_attr_e( $name ) ?>
+			</option>
+			<?php
+		} ?>
+		</select>
+		<?php
+	}
+
 	public function time_format() {
 			$time_formats = array(
 				'HH:mm' => '24:30',

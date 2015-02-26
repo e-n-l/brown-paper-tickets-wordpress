@@ -112,9 +112,6 @@
                 var eventListUseStyle = $('#bpt-event-list-use-style'),
                     calendarUseStyle = $('#bpt-calendar-use-style');
 
-                    console.log(eventListUseStyle.prop('checked'));
-                    console.log(calendarUseStyle.prop('checked'));
-
                 if (!eventListUseStyle.prop('checked')) {
                     eventListCSS.hide();
                 }

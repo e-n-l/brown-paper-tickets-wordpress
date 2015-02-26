@@ -44,7 +44,7 @@ class Ajax {
 			$events = $events->get_json_events( $client_id, $event_id );
 			$events = self::filter_hidden_prices( $events );
 
-			wp_send_json( $events );
+			wp_send_json( $events, true );
 		}
 
 		if ( ! get_transient( '_bpt_event_list_events' . $post_id ) && Utilities::cache_data() ) {
@@ -52,6 +52,7 @@ class Ajax {
 		}
 
 		$events = get_transient( '_bpt_event_list_events' . $post_id  );
+		$events = json_decode( $events, true );
 
 		if ( $event_id ) {
 			$single_event = self::get_single_event( $event_id, $events );
@@ -61,8 +62,8 @@ class Ajax {
 			}
 		}
 
+		$events = self::sort_events( $events );
 		$events = self::apply_price_options( $events );
-		$events = self::filter_hidden_prices( $events );
 
 		wp_send_json( $events );
 	}
@@ -260,6 +261,43 @@ class Ajax {
 		wp_send_json_error( 'Unable to update price quantity.' );
 	}
 
+	private static function sort_events( $events ) {
+		$sort = get_option( '_bpt_sort_events' );
+
+		if ( $sort ) {
+
+			if ( $sort === 'chrono' ) {
+				usort( $events,
+					function($a, $b) {
+						if ( $a['dates'][0]['dateStart'] < $b['dates'][0]['dateStart'] ) {
+							return -1;
+						}
+						if ( $a['dates'][0]['dateStart'] > $b['dates'][0]['dateStart'] ) {
+							return 1;
+						}
+						return 0;
+					}
+				);
+			}
+
+			if ( $sort === 'reverse' ) {
+				usort( $events,
+					function($a, $b) {
+						if ( $a['dates'][0]['dateStart'] > $b['dates'][0]['dateStart'] ) {
+							return -1;
+						}
+						if ( $a['dates'][0]['dateStart'] < $b['dates'][0]['dateStart'] ) {
+							return 1;
+						}
+						return 0;
+					}
+				);
+			}
+		}
+
+		return $events;
+	}
+
 	private static function apply_price_options( $events ) {
 		$events = self::filter_hidden_prices( $events );
 		$events = self::apply_max_quantity( $events );
@@ -283,8 +321,6 @@ class Ajax {
 				}
 			}
 		}
-
-
 
 		return $events;
 	}

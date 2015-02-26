@@ -35,6 +35,7 @@ class Module {
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_shared_js' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_shared_css' ) );
 
+		$this->load_public_ajax_actions();
 		$this->load_shortcode();
 	}
 

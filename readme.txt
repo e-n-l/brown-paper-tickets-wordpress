@@ -111,12 +111,13 @@ No upgrade notes.
 
 = v0.3.0 =
 
-** New Features **
+**New Features**
 
-* Users can now choose to have the service fee included in the price value.
-* Added ability to set a max quantity sold per price. 
+* Added ability to include service fee in price value.
+* Added ability to set a max quantity sold per price.
+* Added ability to sort events chronologically or reverse chronologically.
 
-** Bug Fixes **
+**Bug Fixes**
 
 * Fixed issue where prices were not hidden if the data was not cached.
 

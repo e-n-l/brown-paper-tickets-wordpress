@@ -21,7 +21,7 @@
  * Text Domain:       brown-paper-tickets-locale
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Domain Path:       /languages	
+ * Domain Path:       /languages
  */
 
 require_once( plugin_dir_path( __FILE__ ).'inc/brown-paper-tickets-plugin.php' );

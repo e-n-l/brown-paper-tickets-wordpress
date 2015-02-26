@@ -68,7 +68,7 @@ This plugin makes use of the following Free/Open Source Software:
 
 ### I've updated some of my event's on Brown Paper Tickets but the changes are not showing up in the plugin. Why is that?
 
-You most likely have enabled the plugin the cache the data the plugin pulls in from Brown Paper Tickets. 
+You most likely have enabled the plugin the cache the data the plugin pulls in from Brown Paper Tickets.
 
 There are a few ways to solve this:
     * You could wait for the cache to expire.
@@ -101,16 +101,28 @@ At the moment, not easily. You could edit the event-list's style sheet directly 
 
 The ability to easily add your custom style sheet is a top priority for the next release.
 
-## Upgrade Notice 
+## Upgrade Notice
 
 No upgrade notes.
 
 ## Changelog
 
+### v0.3
+
+#### New Features
+
+* Added ability to include service fee in price value.
+* Added ability to set a max quantity sold per price.
+* Added ability to sort events chronologically or reverse chronologically.
+
+#### Bug Fixes
+
+* Fixed issue where prices were not hidden if the data was not cached.
+
 ### v0.2
 
 #### New Features
-* Users can now add custom CSS for the event listing and calendar 
+* Users can now add custom CSS for the event listing and calendar
 widget/shortcode rules by going to new "Appearance" tab in the
 plugin settings.
 
@@ -120,14 +132,14 @@ public.
     view the post that contains the event listing. You'll see a
     (HIDE PRICE) button.
     Clicking that will prevent the price from being displayed to
-    anyone who isn't an admin. 
+    anyone who isn't an admin.
 
     * **Showing Prices**: After hiding a price, the hide price link
     will become a (DISPLAY PRICE) link.
-    You can also go to the plugin's options page and go to the 
+    You can also go to the plugin's options page and go to the
     "Password Price Settings" tab and choose to display them
     there.
-    
+
 #### Bug Fixes
 * Fixed issue with calendar not loading properly if using as a widget.
 
@@ -136,16 +148,16 @@ public.
 #### Bug Fix
 * Fixed rogue console.log();
 
-* Fixed issue where the default title "New Title" was being displayed 
+* Fixed issue where the default title "New Title" was being displayed
 above shortcode calendars.
 
 ### v0.1.3
 
 #### New Option in Settings
 * Added Calendar Options settings. You can now set the "Show upcoming
-Events in Calendar" option. When enabled, this will show the next 5 
+Events in Calendar" option. When enabled, this will show the next 5
 events in the event listing if the clicked day does not have any events.
-When switching months, it will also show all of the upcoming events in 
+When switching months, it will also show all of the upcoming events in
 that month.
 
 #### Improvements
@@ -154,7 +166,7 @@ that month.
 #### Bug Fixes
 * Fixed issue where shortcodes weren't being placed in the proper place.
 * Fixed various typos and grammatical errors.
- 
+
 ## v0.1.2
 
 ### Improvements
@@ -163,7 +175,7 @@ that month.
 ### Bug Fixes
 * Fixed issue where event calendar wasn't being displayed if a widget
 wasn't in place.
-* Fixed issue where the cache wasn't being deleted properly. 
+* Fixed issue where the cache wasn't being deleted properly.
 
 
 ### v0.1.1
@@ -184,7 +196,7 @@ default producer would call the BPT API using the default client ID.
 * Fixed issue with loading gif not displaying.
 * Fixed issue where data from the API was returned too early.
 
-#### Miscellaneous 
+#### Miscellaneous
 * Updated Readme to reflect WP version requirement. has_shortcode()
 was introduced in version 3.6.
 

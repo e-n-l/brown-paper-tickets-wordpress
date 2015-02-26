@@ -28,6 +28,7 @@ class EventList extends \BrownPaperTickets\Modules\Module {
 		// Event Settings
 		register_setting( self::$menu_slug, self::$setting_prefix . 'show_location_after_description' );
 		register_setting( self::$menu_slug, self::$setting_prefix . 'show_full_description' );
+		register_setting( self::$menu_slug, self::$setting_prefix . 'sort_events' );
 
 		// Date Settings
 		register_setting( self::$menu_slug, self::$setting_prefix . 'show_dates' );
@@ -63,7 +64,8 @@ class EventList extends \BrownPaperTickets\Modules\Module {
 		// Add the settings fields.
 		// Event Fields
 		add_settings_field( self::$setting_prefix . 'show_full_description', 'Display Full Description by Default', array( $input, 'show_full_description' ), self::$menu_slug . self::$section_suffix, self::$event_section_title );
-		add_settings_field( self::$setting_prefix . 'how_location_after_description', 'Display Location After Description', array( $input, 'show_location_after_description' ), self::$menu_slug . self::$section_suffix, self::$event_section_title );
+		add_settings_field( self::$setting_prefix . 'show_location_after_description', 'Display Location After Description', array( $input, 'show_location_after_description' ), self::$menu_slug . self::$section_suffix, self::$event_section_title );
+		add_settings_field( self::$setting_prefix . 'sort_events', 'Sort Events', array( $input, 'sort_events' ), self::$menu_slug . self::$section_suffix, self::$event_section_title );
 
 		// Date Fields
 		add_settings_field( self::$setting_prefix . 'show_dates', 'Display Dates', array( $input, 'show_dates' ), self::$menu_slug . self::$section_suffix, self::$date_section_title );
@@ -123,7 +125,6 @@ class EventList extends \BrownPaperTickets\Modules\Module {
 	}
 
 	public function load_public_ajax_actions() {
-		$ajax = new EventList\Ajax;
 		add_action( 'wp_ajax_nopriv_bpt_get_events', array( 'BrownPaperTickets\Modules\EventList\Ajax', 'get_events' ) );
 	}
 }
