@@ -105,7 +105,27 @@ No upgrade notes.
 
 == Changelog ==
 
-= v0.3.1 = 
+= v0.4.0 =
+
+**New Features**
+
+* Added ability to change the text of the calendar's event list text.
+* Added ability to change the text of the calendar's buy tickets links.
+
+**Improvements**
+
+* Updated FAQ.
+* Added some debug information gathering to the help tab.
+* Major reorganization of code base.
+
+**Bug Fixes**
+
+* Fixed link to the setup wizard on the help tab.
+* Fixed bug where the Welcome message wasn't being displayed properly when the
+data wasn't cached.
+* Fixed bug where custom date format wasn't being displayed properly on the calendar.
+
+= v0.3.1 =
 
 * Fixed bug where events without dates would throw errors.
 

@@ -41,18 +41,18 @@ or page that you want the listing to appear.
 
 ## All Events
 
-```[list_events]```
+`[list_events]`
 
 ### Single Event Listing
-Use the ```[list_events event_id="XXXXXX"]``` shortcode to display a single event (XXXXXX is the event ID).
+Use the `[list_events event_id="XXXXXX"]` shortcode to display a single event (XXXXXX is the event ID).
 
 **The default shipping options set by the plugin are Will-Call and Print at Home. If your events are using something different, go to the "BPT Settings" page in the Wordpress Admin to set them.**
 
 ### Calendar Format
 
-Display a calendar listing all of your events: ```[event_calendar]```
+Display a calendar listing all of your events: `[event_calendar]`
 
-You can optionally pass in a ```client_id``` attribute to display another producers events in a calendar.
+You can optionally pass in a `client_id` attribute to display another producers events in a calendar.
 
 ## About the Calendar
 
@@ -71,9 +71,9 @@ This plugin makes use of the following Free/Open Source Software:
 You have most likely enabled the plugin's cache so it's not pulling in the new event data.
 
 There are a few ways to solve this:
-    * You could wait for the cache to expire.
-    * You could delete the cache and force the plugin to refresh the data.
-        * To Do that, simply go to the "General Settings" tab above and click "Delete Cache".
+* You could wait for the cache to expire.
+* You could delete the cache and force the plugin to refresh the data.
+    * To Do that, simply go to the "General Settings" tab above and click "Delete Cache".
 
 ### I am 100% certain that my developer ID and client ID are correct. What is going on?
 
@@ -102,6 +102,25 @@ Go to BPT Settings and click on the appearance tab. You can add custom CSS there
 No upgrade notes.
 
 ## Changelog
+
+### v0.4.0
+
+#### New Features
+* Added ability to change the text of the calendar's event list text.
+* Added ability to change the text of the calendar's buy tickets links.
+
+#### Improvements
+
+* Updated FAQ.
+* Added some debug information gathering to the help tab.
+* Major reorganization of code base.
+
+#### Bug Fixes
+
+* Fixed link to the setup wizard on the help tab.
+* Fixed bug where the Welcome message wasn't being displayed properly when the
+data wasn't cached.
+* Fixed bug where custom date format wasn't being displayed properly on the calendar. Fixes #11
 
 ### v0.3.1
 

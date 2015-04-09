@@ -1,6 +1,25 @@
 # Changelog
 
-### v0.3.1 
+### v0.4.0
+
+#### New Features
+* Added ability to change the text of the calendar's event list text.
+* Added ability to change the text of the calendar's buy tickets links.
+
+#### Improvements
+
+* Updated FAQ.
+* Added some debug information gathering to the help tab.
+* Major reorganization of code base.
+
+#### Bug Fixes
+
+* Fixed link to the setup wizard on the help tab.
+* Fixed bug where the Welcome message wasn't being displayed properly when the
+data wasn't cached.
+* Fixed bug where custom date format wasn't being displayed properly on the calendar. Fixes #11
+
+### v0.3.1
 
 #### Bug Fixes
 
@@ -21,7 +40,7 @@
 ### v0.2
 
 #### New Features
-* Users can now add custom CSS for the event listing and calendar 
+* Users can now add custom CSS for the event listing and calendar
 widget/shortcode rules by going to new "Appearance" tab in the
 plugin settings.
 
@@ -31,11 +50,11 @@ public.
     view the post that contains the event listing. You'll see a
     (HIDE PRICE) button.
     Clicking that will prevent the price from being displayed to
-    anyone who isn't an admin. 
+    anyone who isn't an admin.
 
     * **Showing Prices**: After hiding a price, the hide price link
     will become a (DISPLAY PRICE) link.
-    You can also go to the plugin's options page and go to the 
+    You can also go to the plugin's options page and go to the
     "Password Price Settings" tab and choose to display them
     there.
 
@@ -46,7 +65,7 @@ is passed in the shortcode without clearing the cache.
 #### Bug Fixes
 * Fixed issue with calendar not loading properly if using as a widget.
 * Fixed issue where deactivated prices were showing. #6
-* Fixed issue where the error field in the event list template was not 
+* Fixed issue where the error field in the event list template was not
 displaying properly.
 * Fixed issue where the selectedDate in the ractive instance was not being
 set upon data load.
@@ -60,14 +79,14 @@ set upon data load.
 #### Bug Fix
 * Fixed rogue console.log();
 
-* Fixed issue where the default title "New Title" was being displayed 
+* Fixed issue where the default title "New Title" was being displayed
 above shortcode calendars.
 
 #### New Option in Settings
 * Added Calendar Options settings. You can now set the "Show upcoming
-Events in Calendar" option. When enabled, this will show the next 5 
+Events in Calendar" option. When enabled, this will show the next 5
 events in the event listing if the clicked day does not have any events.
-When switching months, it will also show all of the upcoming events in 
+When switching months, it will also show all of the upcoming events in
 that month.
 
 #### Improvements
@@ -85,7 +104,7 @@ that month.
 ### Bug Fixes
 * Fixed issue where event calendar wasn't being displayed if a widget
 wasn't in place.
-* Fixed issue where the cache wasn't being deleted properly. 
+* Fixed issue where the cache wasn't being deleted properly.
 
 ### Miscellaneous
 * Updated header in main plugin file.
@@ -108,7 +127,7 @@ default producer would call the BPT API using the default client ID.
 * Fixed issue with loading gif not displaying.
 * Fixed issue where data from the API was returned too early.
 
-### Miscellaneous 
+### Miscellaneous
 * Updated Readme to reflect WP version requirement. has_shortcode()
 was introduced in version 3.6.
 
