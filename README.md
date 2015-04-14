@@ -3,8 +3,8 @@
 * Donate Link: N/A
 * Tags: bpt, brown paper tickets
 * Requires at least: 3.0.1
-* Tested up to: 4.0
-* Stable tag: 0.3.0
+* Tested up to: 4.1.1
+* Stable tag: 0.4.1
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,6 +103,12 @@ No upgrade notes.
 
 ## Changelog
 
+### v0.4.1
+
+#### Bug Fixes
+* Fixed bug where event list display options weren't being applied if the cache wasn't enabled. #fixes 10
+* Added various empty index.php files to prevent directory listings on misconfigured servers.
+
 ### v0.4.0
 
 #### New Features
@@ -188,7 +194,7 @@ that month.
 * Fixed issue where shortcodes weren't being placed in the proper place.
 * Fixed various typos and grammatical errors.
 
-## v0.1.2
+### v0.1.2
 
 ### Improvements
 * Added proper uninstall functions.
