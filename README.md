@@ -103,6 +103,14 @@ No upgrade notes.
 
 ## Changelog
 
+### v0.5.0
+
+#### New Features
+* Added ability to set a price's interval.
+
+#### Bug Fixes
+* Fixed bug that made the price's quantity wacky when changing the max quantity or the interval.
+
 ### v0.4.1
 
 #### Bug Fixes
