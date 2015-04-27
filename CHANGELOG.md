@@ -1,5 +1,15 @@
 # Changelog
 
+### v0.6.0
+
+#### New Features
+
+* Added ability to set whether or not to include the service fee on an individual price.
+
+#### Bug Fixes
+* Fixed some input sanitization.
+* Fixed bug where the price name was undefined in the hidden prices section of the event list options.
+
 ### v0.5.0
 
 #### New Features
